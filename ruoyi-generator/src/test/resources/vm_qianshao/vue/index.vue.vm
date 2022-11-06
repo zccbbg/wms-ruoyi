@@ -1,0 +1,543 @@
+<template lang="pug">
+  .app-container.common_view
+    el-form.ry_form(:model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form")
+#set($count = 0)
+#foreach($column in $columns)
+#if($column.query)
+#set($dictType=$column.dictType)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($column.htmlType == "input")
+      el-form-item(label="${comment}" prop="${column.javaField}")
+        el-input(
+        v-model="queryParams.${column.javaField}"
+        placeholder="请输入${comment}"
+        clearable
+        size="small"
+        @keyup.enter.native="handleQuery")
+#elseif($column.htmlType == "select" || $column.htmlType == "radio")
+      el-form-item(label="${comment}" prop="${column.javaField}")
+        el-select(v-model="queryParams.${column.javaField}" placeholder="请选择${comment}" clearable size="small")
+#if("" != $dictType)
+          el-option(
+            v-for="dict in dict.type.${dictType}"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value")
+#elseif($dictType)
+          el-option(label="请选择字典生成" value="")
+#end
+#elseif($column.htmlType == "datetime" || $column.htmlType == "date")
+#set($valueFormat = 'yyyy-MM-dd HH:mm:ss')
+#if($column.htmlType == "date")
+#set($valueFormat = 'yyyy-MM-dd')
+#end
+#if($column.queryType != "BETWEEN")
+      el-form-item(label="${comment}" prop="${column.javaField}")
+        el-date-picker(
+          clearable
+          size="small"
+          v-model="queryParams.${column.javaField}"
+          type="datetime"
+          value-format="$valueFormat"
+          placeholder="选择${comment}")
+#else
+      el-form-item(label="${comment}")
+        el-date-picker(
+          v-model="daterange${AttrName}"
+          size="small"
+          style="width: 240px"
+          value-format="$valueFormat"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期")
+#end
+#elseif($column.htmlType == "time")
+      el-form-item(label="${comment}")
+        el-time-picker(
+          #if($column.queryType == "BETWEEN")is-range#end
+          v-model="queryParams.${column.javaField}"
+          range-separator="-"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          placeholder="选择时间范围")
+#end
+#set($count = $count + 1)
+#end
+#end
+      el-form-item(class="flex_one tr")
+        el-button(type="primary" icon="el-icon-search" size="mini" @click="handleQuery") 搜索
+        el-button(icon="el-icon-refresh" size="mini" @click="resetQuery") 重置
+    .ops.flex_space
+      .h1 ${functionName}
+      .ops
+        el-button(
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['${moduleName}:${businessName}:add']"
+          ) 新增
+    el-table.body_table(v-loading="loading" :data="${businessName}List")
+      el-table-column(type="index" width="55" align="center" label="序号")
+#set($count0 = 0)
+#foreach($column in $columns)
+#set($javaField=$column.javaField)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($column.pk)
+      el-table-column(label="${comment}" align="center" prop="${javaField}")
+#elseif($column.list)
+#if($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time")
+#set($valueFormat = '')
+#if($column.htmlType == "date")
+#set($valueFormat = '{y}-{m}-{d}')
+#elseif($column.htmlType == "time")
+#set($valueFormat = '{h}:{i}:{s}')
+#end
+      el-table-column(label="${comment}" align="center" prop="${javaField}" width="180")
+        template(slot-scope="scope")
+            span {{ parseTime(scope.row.${javaField}, '$valueFormat')}}
+#elseif("" != $column.dictType)
+      el-table-column(label="${comment}" align="center" prop="${javaField}")
+        template(slot-scope="scope")
+          dict-tag(:options="dict.type.${column.dictType}" :value="scope.row.${javaField}")
+#elseif("" != $javaField)
+      el-table-column(label="${comment}" align="center" prop="${javaField}")
+#end
+#set($count0 = $count0 + 1)
+#end
+#end
+      el-table-column(label="操作" align="center" class-name="small-padding fixed-width")
+        template(slot-scope="scope")
+          el-button(
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['${moduleName}:${businessName}:edit']"
+          ) 修改
+          el-button(
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['${moduleName}:${businessName}:remove']"
+          ) 删除
+    pagination.body_page(
+      v-show="total>0"
+      :total="total"
+      :page.sync="pageReq.page"
+      :limit.sync="pageReq.size"
+      @pagination="getList")
+
+    <!-- 添加或修改${functionName}对话框 -->
+    el-dialog(:title="title" :visible.sync="open" width="50%" append-to-body)
+      el-form(ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two")
+#foreach($column in $columns)
+#set($field=$column.javaField)
+#if($column.insert && !$column.pk && $column.htmlType != "editor" && (!$table.hasPct() || !$column.isPct()))
+#if(($column.usableColumn) || (!$column.superColumn))
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#set($dictType=$column.dictType)
+#if($column.htmlType == "input")
+        el-form-item(label="${comment}" prop="${field}")
+          el-input(v-model="form.${field}" placeholder="请输入${comment}")
+#elseif($column.htmlType == "imageUpload")
+        el-form-item(label="${comment}")
+          imageUpload(v-model="form.${field}")
+#elseif($column.htmlType == "fileUpload")
+        el-form-item(label="${comment}")
+          fileUpload(v-model="form.${field}")
+#elseif($column.htmlType == "select" && "" != $dictType)
+        el-form-item(label="${comment}" prop="${field}")
+          el-select(v-model="form.${field}" placeholder="请选择${comment}")
+            el-option(
+              v-for="dict in dict.type.${dictType}"
+              :key="dict.value"
+              :label="dict.label"
+              #if($column.javaType == "Integer" || $column.javaType == "Long"):value="parseInt(dict.value)"#else:value="dict.value"#end
+           )
+#elseif($column.htmlType == "select" && $dictType)
+        el-form-item(label="${comment}" prop="${field}")
+          el-select(v-model="form.${field}" placeholder="请选择${comment}")
+            el-option(label="请选择字典生成" value="" )
+#elseif($column.htmlType == "checkbox" && "" != $dictType)
+        el-form-item(label="${comment}")
+          el-checkbox-group(v-model="form.${field}")
+            el-checkbox(
+              v-for="dict in dict.type.${dictType}"
+              :key="dict.value"
+              :label="dict.value">
+              {{dict.label}})
+#elseif($column.htmlType == "checkbox" && $dictType)
+        el-form-item(label="${comment}")
+          el-checkbox-group(v-model="form.${field}")
+            el-checkbox 请选择字典生成
+#elseif($column.htmlType == "radio" && "" != $dictType)
+        el-form-item(label="${comment}")
+          el-radio-group(v-model="form.${field}")
+            el-radio(
+              v-for="dict in dict.type.${dictType}"
+              :key="dict.value"
+              #if($column.javaType == "Integer" || $column.javaType == "Long"):label="parseInt(dict.value)"#else:label="dict.value"#end
+            ) {{dict.label}}
+#elseif($column.htmlType == "radio" && $dictType)
+        el-form-item(label="${comment}")
+          el-radio-group(v-model="form.${field}")
+            el-radio(label="1") 请选择字典生成
+#elseif($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time")
+#set($valueFormat = 'yyyy-MM-dd HH:mm:ss')
+#if($column.htmlType == "date")
+#set($valueFormat = 'yyyy-MM-dd')
+#elseif($column.htmlType == "time")
+#set($valueFormat = 'HH:mm:ss')
+#end
+        el-form-item(label="${comment}" prop="${field}")
+          el-date-picker(clearable size="small"
+                        v-model="form.${field}"
+                        type="$column.htmlType"
+                        value-format="$valueFormat"
+                        placeholder="选择${comment}")
+#elseif($column.htmlType == "textarea")
+        el-form-item(label="${comment}" prop="${field}")
+          el-input(v-model="form.${field}" type="textarea" placeholder="请输入内容")
+#end
+#end
+#end
+#end
+
+#if($table.sub)
+      el-divider(content-position="center") ${subTable.functionName}信息
+      el-row(:gutter="10" class="mb8")
+        el-col(:span="1.5")
+          el-button(type="primary" icon="el-icon-plus" size="mini" @click="handleAdd${subClassName}") 添加
+        el-col(:span="1.5")
+          el-button(type="danger" icon="el-icon-delete" size="mini" @click="handleDelete${subClassName}") 删除
+      el-table(:data="${subclassName}List" :row-class-name="row${subClassName}Index" @selection-change="handle${subClassName}SelectionChange" ref="${subclassName}")
+        el-table-column(type="selection" width="50" align="center" )
+        el-table-column(label="序号" align="center" prop="index" width="50")
+#foreach($column in $subTable.columns)
+#set($javaField=$column.javaField)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($column.pk || $javaField == ${subTableFkclassName})
+#elseif($column.list && "" != $javaField)
+        el-table-column(label="$comment" prop="${javaField}")
+          template(slot-scope="scope")
+            el-input(v-model="scope.row.$javaField" placeholder="请输入$comment")
+#end
+#end
+#end
+      .dialog-footer(slot="footer")
+        el-button(type="primary" @click="submitForm") 确 定
+        el-button(@click="cancel") 取 消
+</template>
+
+<script>
+import { list${ClassName}, get${ClassName}, del${ClassName}, add${ClassName}, update${ClassName}, export${ClassName} } from "@/api/${moduleName}/${className}";
+import ImportData from '@/components/ImportData';
+#if($table.hasPct())
+#end
+export default {
+  name: "${ClassName}",
+  components: {ImportData},
+#if(${dicts} != '')
+  dicts: [${dicts}],
+#end
+  data() {
+    return {
+      // 遮罩层
+      loading: true,
+      // 导出遮罩层
+      exportLoading: false,
+      // 选中数组
+      ids: [],
+#if($table.sub)
+      // 子表选中数据
+      checked${subClassName}: [],
+#end
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+      // 总条数
+      total: 0,
+      // ${functionName}表格数据
+      ${businessName}List: [],
+#if($table.sub)
+      // ${subTable.functionName}表格数据
+      ${subclassName}List: [],
+#end
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      open: false,
+#foreach ($column in $columns)
+#if(($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time") && $column.queryType == "BETWEEN")
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+      // $comment时间范围
+      daterange${AttrName}: [],
+#end
+#end
+      pageReq: {
+        page: 1,
+        size: 10
+      },
+      // 查询参数
+      queryParams: {
+#foreach ($column in $columns)
+#if($column.query)
+        $column.javaField: null#if($velocityCount != $columns.size()),#end
+
+#end
+#end
+      },
+      // 表单参数
+      form: {},
+      // 表单校验
+      rules: {
+#foreach ($column in $columns)
+#if($column.required)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+        $column.javaField: [
+          { required: true, message: "$comment不能为空", trigger: #if($column.htmlType == "select")"change"#else"blur"#end }
+        ]#if($velocityCount != $columns.size()),#end
+
+#end
+#end
+      },
+      columns: [
+#set($count1 = 0)
+#foreach ($column in $columns)
+    #if($column.list)
+    { key: $count1, label: "$column.columnComment", visible: #{if}($column.htmlType == 'imageUpload' || $column.htmlType == 'fileUpload' || $foreach.count > 10) false #else true #end },
+    #end
+    #set($count1 = $count1 + 1)
+#end
+     ],
+#if($queryLength >= 8)
+      showMoreCondition: false
+#end
+    };
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    /** 查询${functionName}列表 */
+    getList() {
+      this.loading = true;
+#foreach ($column in $columns)
+#if(($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time") && $column.queryType == "BETWEEN")
+      this.queryParams.params = {};
+#break
+#end
+#end
+#foreach ($column in $columns)
+#if(($column.htmlType == "datetime"|| $column.htmlType == "date" || $column.htmlType == "time") && $column.queryType == "BETWEEN")
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+      if (null != this.daterange${AttrName} && '' != this.daterange${AttrName}) {
+        this.queryParams.params["begin${AttrName}"] = this.daterange${AttrName}[0];
+        this.queryParams.params["end${AttrName}"] = this.daterange${AttrName}[1];
+      }
+#end
+#end
+      const pageReq = {...this.pageReq}
+      pageReq.page -= 1
+      list${ClassName}(this.queryParams, pageReq).then(response => {
+        this.${businessName}List = response.content;
+        this.total = response.totalElements;
+        this.loading = false;
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+#foreach ($column in $columns)
+#if($column.htmlType == "radio")
+        $column.javaField: #if($column.javaType == "Integer" || $column.javaType == "Long")0#else"0"#end,
+#elseif($column.htmlType == "checkbox")
+        $column.javaField: [],
+#else
+        $column.javaField: null,
+#end
+#end
+        #if($table.hasPct())pct: [],#end
+
+      };
+#if($table.sub)
+      this.${subclassName}List = [];
+#end
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.pageReq.page = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+#foreach ($column in $columns)
+#if(($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time") && $column.queryType == "BETWEEN")
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+      this.daterange${AttrName} = [];
+#end
+#end
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = "添加${functionName}";
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset();
+      const ${pkColumn.javaField} = row.${pkColumn.javaField} || this.ids
+      get${ClassName}(${pkColumn.javaField}).then(response => {
+        const data = response.data;
+        #if($table.hasPct())data.pct = [data.provinceId, data.cityId, data.townId];#end
+
+        this.form = data;
+#foreach ($column in $columns)
+#if($column.htmlType == "checkbox")
+        this.form.$column.javaField = this.form.${column.javaField}.split(",");
+#end
+#end
+#if($table.sub)
+        this.${subclassName}List = response.data.${subclassName}List;
+#end
+        this.open = true;
+        this.title = "修改${functionName}";
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.#[[$]]#refs["form"].validate(valid => {
+        if (valid) {
+#if($table.hasPct())
+          const [provinceId, cityId, townId] = this.form.pct;
+          const form = {...this.form, provinceId, cityId, townId};
+#else
+          const form = {...this.form};
+#end
+
+#foreach ($column in $columns)
+#if($column.htmlType == "checkbox")
+          form.$column.javaField = this.form.${column.javaField}.join(",");
+#end
+#end
+#if($table.sub)
+          form.${subclassName}List = this.${subclassName}List;
+#end
+          if (form.${pkColumn.javaField} != null) {
+            update${ClassName}(form).then(response => {
+              this.#[[$modal]]#.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            add${ClassName}(form).then(response => {
+              this.#[[$modal]]#.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ${pkColumn.javaField}s = row.${pkColumn.javaField} || this.ids;
+      this.#[[$modal]]#.confirm('是否确认删除${functionName}编号为"' + ${pkColumn.javaField}s + '"的数据项？').then(function() {
+        return del${ClassName}(${pkColumn.javaField}s);
+      }).then(() => {
+        this.getList();
+        this.#[[$modal]]#.msgSuccess("删除成功");
+      }).catch(() => {});
+    },
+#if($table.sub)
+	/** ${subTable.functionName}序号 */
+    row${subClassName}Index({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** ${subTable.functionName}添加按钮操作 */
+    handleAdd${subClassName}() {
+      let obj = {};
+#foreach($column in $subTable.columns)
+#if($column.pk || $column.javaField == ${subTableFkclassName})
+#elseif($column.list && "" != $javaField)
+      obj.$column.javaField = "";
+#end
+#end
+      this.${subclassName}List.push(obj);
+    },
+    /** ${subTable.functionName}删除按钮操作 */
+    handleDelete${subClassName}() {
+      if (this.checked${subClassName}.length == 0) {
+        this.msgError("请先选择要删除的${subTable.functionName}数据");
+      } else {
+        const ${subclassName}List = this.${subclassName}List;
+        const checked${subClassName} = this.checked${subClassName};
+        this.${subclassName}List = ${subclassName}List.filter(function(item) {
+          return checked${subClassName}.indexOf(item.index) == -1
+        });
+      }
+    },
+    /** 复选框选中数据 */
+    handle${subClassName}SelectionChange(selection) {
+      this.checked${subClassName} = selection.map(item => item.index)
+    },
+#end
+    /** 导出按钮操作 */
+    handleExport() {
+      const queryParams = this.queryParams;
+      this.#[[$modal]]#.confirm('是否确认导出所有${functionName}数据项？').then(() => {
+        this.exportLoading = true;
+        return export${ClassName}(queryParams);
+      }).then(response => {
+        this.download(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
+    },
+    handleImport() {
+        this.$refs['ImportData'].start();
+    }
+  }
+};
+</script>

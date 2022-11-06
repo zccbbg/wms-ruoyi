@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.InventoryMovementMapper">
+    
+    <resultMap type="InventoryMovement" id="InventoryMovementResult">
+        <result property="id" column="id"/>
+        <result property="inventoryMovementNo" column="inventory_movement_no"/>
+        <result property="sourceRackId" column="source_rack_id"/>
+        <result property="targetRackId" column="target_rack_id"/>
+        <result property="status" column="status"/>
+        <result property="checkStatus" column="check_status"/>
+        <result property="checkUserId" column="check_user_id"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectInventoryMovementVo">
+        select id, inventory_movement_no, source_rack_id, target_rack_id, status, check_status, check_user_id, check_time, remark, del_flag, create_by, create_time, update_by, update_time   from wms_inventory_movement
+    </sql>
+
+    <select id="selectByEntity" parameterType="InventoryMovement" resultMap="InventoryMovementResult">
+        <include refid="selectInventoryMovementVo"/>
+        <where>  
+            <if test="inventoryMovementNo != null  and inventoryMovementNo != ''"> and inventory_movement_no = #{inventoryMovementNo}</if>
+            <if test="sourceRackId != null "> and source_rack_id = #{sourceRackId}</if>
+            <if test="targetRackId != null "> and target_rack_id = #{targetRackId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="checkStatus != null "> and check_status = #{checkStatus}</if>
+            <if test="checkUserId != null "> and check_user_id = #{checkUserId}</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_inventory_movement set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

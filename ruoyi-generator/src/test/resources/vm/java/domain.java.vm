@@ -1,0 +1,34 @@
+package ${fullPackage};
+
+#foreach ($import in $importList)
+import ${import};
+#end
+#if(($table.crud || $table.sub) && $table.audit == 1)
+import ${env.baseAudit};
+#elseif($table.tree)
+import ${env.baseAudit};
+#end
+import lombok.Data;
+/**
+ * ${functionName}对象 ${tableName}
+ * 
+ * @author ${author}
+ */
+#if(($table.crud || $table.sub) && $table.audit == 1)
+#set($Entity="BaseAudit")
+#elseif($table.tree)
+#set($Entity="TreeEntity")
+#end
+@Data
+public class ${ClassName}#if($Entity) extends ${Entity}#end {
+    private static final long serialVersionUID = -1L;
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+
+#if($column.columnComment)
+    /** $column.columnComment */
+#end
+    private $column.javaType $column.javaField;
+#end
+#end
+}

@@ -1,0 +1,216 @@
+# 项目相关配置
+ruoyi:
+  # 名称
+  name: RuoYi
+  # 版本
+  version: 3.7.0
+  # 版权年份
+  copyrightYear: 2022
+  # 实例演示开关
+  demoEnabled: true
+  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
+  profile: C:/ruoyi/uploadPath
+  # 获取ip地址开关
+  addressEnabled: false
+  # 验证码类型 math 数组计算 char 字符验证
+  captchaType: char
+  # 前端请求的 跟踪 header name
+  traceIdName: x-web-trace-id
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+
+# 日志配置
+logging:
+  level:
+    com.ruoyi: debug
+    org.springframework: warn
+
+# Spring配置
+spring:
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+  profiles: 
+    active: druid
+  # 文件上传
+  servlet:
+     multipart:
+       # 单个文件大小
+       max-file-size:  10MB
+       # 设置总上传的文件大小
+       max-request-size:  20MB
+  # 服务模块
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: true
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      webStatFilter:
+        enabled: true
+      statViewServlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow:
+        url-pattern: /druid/*
+      filter:
+        stat:
+          enabled: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
+  # redis 配置
+  redis:
+    # 连接超时时间
+    timeout: 50s
+    lettuce:
+      pool:
+        # 连接池中的最小空闲连接
+        min-idle: 0
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池的最大数据库连接数
+        max-active: 8
+        # #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+
+# token配置
+token:
+    # 令牌自定义标识
+    header: Authorization
+    # 令牌密钥
+    secret: abcdefghijkomnopqrstuvwxyx
+    # 令牌有效期（默认30分钟）
+    expireTime: 30
+# mybatis-plus 配置
+mybatis-plus:
+  # 搜索指定包别名
+  typeAliasesPackage: com.cyl.**.domain, com.ruoyi.common.core.domain.entity,  com.ruoyi.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis/mybatis-config.xml
+  global-config:
+    db-config:
+      id-type: auto
+      update-strategy: ignored
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: true
+  params: count=countSql 
+
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: true
+  # 请求前缀
+  pathMapping: /dev-api
+
+# 防止XSS攻击
+xss: 
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludes: /system/notice
+  # 匹配链接
+  urlPatterns: /system/*,/monitor/*,/tool/*
+extra:
+  wx:
+    appid: wxappid
+    secret: wxsecret
+    redirect: ""
+scheduling:
+  enabled: true
+gen:
+  # 作者
+  author:
+  # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
+  packageName: com.cyl.demo
+  # 自动去除表前缀，默认是false
+  autoRemovePre: true
+  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
+  tablePrefix: cscdc_
+  # 一级权限名
+  rootPermission: cscdc
+  # 模板根路径
+  templateRootPath: vm
+  # 路径
+  path:
+    # 后端根目录
+    backPath: C:\Users\zccbbg\ichengle\ruoyi-vue-fork\
+    # 后端 service 模块名
+    serviceModule: mybatis-plus-demo
+    # 后端 api 模块名, 默认与 service 一致
+    apiModule: mybatis-plus-api
+    # 前端根目录
+    frontPath: C:\Users\zccbbg\code\cdc_front_cs\
+    # 前端 api 目录
+    frontApiPath: src/api/emergencyhandle
+    # 前端 view 目录
+    frontViewPath: src/views/emergencyhandle
+    # sql 目录
+    sql: sql
+  # 环境变量
+  env:
+    # 审计 的 基类（创建者，创建时间，更新者，更新时间）
+    baseAudit: com.ruoyi.common.core.domain.BaseAudit
+    # 树 的 基类
+    baseTree: com.ruoyi.common.core.domain.TreeEntity
+  # 对于新增的模板，如果没有默认值，在这里进行配置
+  fileMap:
+    "api.js.vm": "${frontPath}/${frontApiPath}/${className}.js"
+    "controller.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/controller/${ClassName}Controller.java"
+    "service.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/service/I${ClassName}Service.java"
+    "mapper.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/mapper/${ClassName}Mapper.java"
+    "convert.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/convert/${ClassName}Convert.java"
+    "example.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/example/${ClassName}Example.java"
+    "query.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/query/${ClassName}Query.java"
+    "dto.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/dto/${ClassName}DTO.java"
+    "vo.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/vo/${ClassName}VO.java"
+    "domain.java.vm": "${backPath}/${apiModule}/${MAIN_JAVA}/${packageName}/domain/${ClassName}.java"
+    "mapper.xml.vm": "${backPath}/${serviceModule}/${MAIN_RESOURCES}/mapper/${ClassName}Mapper.xml"
+    "sql.vm": "${backPath}/sql/${className}.sql"
+    "h2.sql.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/db/${tableName}-h2.sql"
+    "add.vue.vm": "${frontPath}/${frontViewPath}/Add${ClassName}.vue"
+    "index.vue.vm": "${frontPath}/${frontViewPath}/index.vue"
+    "index-tree.vue.vm": "${frontPath}/${frontViewPath}/index.vue"
+    "sub-domain.java.vm": "${frontPath}/${frontViewPath}/Sub${ClassName}.vue"

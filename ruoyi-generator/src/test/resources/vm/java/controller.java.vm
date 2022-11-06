@@ -1,0 +1,133 @@
+package ${fullPackage};
+
+import cn.hutool.core.date.DatePattern;
+import com.bryx.core.common.base.entity.PageReq;
+import com.bryx.core.common.base.entity.ResultEntity;
+import com.bryx.core.operlog.enums.BusinessType;
+import com.bryx.core.common.util.ExcelUtil2;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.bryx.core.operlog.annotation.Log;
+import com.bryx.core.security.annotation.PreAuth;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import ${packageName}.model.entity.${ClassName};
+import ${packageName}.pojo.query.${ClassName}Query;
+import ${packageName}.service.I${ClassName}Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.List;
+import java.util.LinkedHashMap;
+/**
+ * ${functionName}Controller
+ * 
+ * @author ${author}
+ */
+@RestController
+@RequestMapping("/${className}")
+@Tag(name = "${functionName}")
+@Log(title = "${ClassName}Controller")
+public class ${ClassName}Controller {
+    @Autowired
+    private I${ClassName}Service ${className}Service;
+
+    /**
+     * 查询${functionName}列表
+     */
+    @GetMapping("/list")
+    @PreAuth(hasPerm = "${rootPermission}:${className}:list")
+    @Log(title = "Demo-Test", businessType = BusinessType.SELECT)
+    public ResultEntity<PageInfo<${ClassName}>> list(${ClassName}Query ${className}Query, PageReq pageable) {
+        List<${ClassName}> list = ${className}Service.selectByCondition(${className}Query, pageable);
+        return ResultEntity.of(new PageInfo<>(list));
+    }
+
+    /**
+     * 导出${functionName}列表
+     */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:export')")
+    @Log(title = "${functionName}", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public void export(${ClassName}Query ${className}Query, HttpServletResponse response) throws IOException {
+        List<${ClassName}> list = ${className}Service.selectByCondition(${className}Query);
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+        map.put("${column.javaField}", "${column.genLabel()}");
+#end
+#end
+        String name = "${functionName}_" + DatePattern.PURE_DATETIME_FORMAT.format(new Date());
+
+        response.setHeader("Access-Control-Expose-Headers", "Content-disposition,Content-Type");
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition",
+                "attachment;filename*=utf-8''" + URLEncoder.encode(name, "UTF-8") + ".xlsx");
+        response.setCharacterEncoding("utf-8");
+
+        ExcelUtil2.export2(list, response.getOutputStream(), map);
+    }
+
+    /**
+        * 导入${functionName}列表
+        */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:import')")
+    @Log(title = "${functionName}", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public ResultEntity<Integer> importData(MultipartFile file) throws Exception {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField) && $column.javaField != $pkColumn.javaField)
+        map.put("${column.genLabel()}", "${column.javaField}");
+#end
+#end
+        List<${ClassName}> list = ExcelUtil2.importExcel(file.getInputStream(), ${ClassName}.class, map);
+        int message = ${className}Service.batchInsert(list);
+        return ResultEntity.of(message);
+    }
+
+    /**
+     * 获取${functionName}详细信息
+     */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:query')")
+    @GetMapping(value = "/{${pkColumn.javaField}}")
+    public ResultEntity<${ClassName}> getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return ResultEntity.of(${className}Service.selectByPrimaryKey(${pkColumn.javaField}));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:add')")
+    @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+    @PostMapping
+    public ResultEntity<${ClassName}> add(@RequestBody ${ClassName} ${className}) {
+        ${className}Service.insert(${className});
+        return ResultEntity.of(${className});
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:edit')")
+    @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public ResultEntity<${ClassName}> edit(@RequestBody ${ClassName} ${className}) {
+        ${className}Service.updateByPrimaryKey(${className});
+        return ResultEntity.of(${className});
+    }
+
+    /**
+     * 删除${functionName}
+     */
+    @PreAuth(hasPerm = "${rootPermission}:${className}:remove')")
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+	@DeleteMapping("/{${pkColumn.javaField}s}")
+    public ResultEntity<Integer> remove(@PathVariable List<${pkColumn.javaType}> ${pkColumn.javaField}s) {
+        int re = ${className}Service.deleteByPrimaryKeys(${pkColumn.javaField}s);
+        return ResultEntity.of(re);
+    }
+}

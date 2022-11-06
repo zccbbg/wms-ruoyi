@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.ReceiptOrderMapper">
+    
+    <resultMap type="ReceiptOrder" id="ReceiptOrderResult">
+        <result property="id" column="id"/>
+        <result property="receiptOrderNo" column="receipt_order_no"/>
+        <result property="receiptOrderType" column="receipt_order_type"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="receiptOrderStatus" column="receipt_order_status"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectReceiptOrderVo">
+        select id, receipt_order_no, receipt_order_type, supplier_id, order_no, receipt_order_status, remark, del_flag, create_by, create_time, update_by, update_time   from wms_receipt_order
+    </sql>
+
+    <select id="selectByEntity" parameterType="ReceiptOrder" resultMap="ReceiptOrderResult">
+        <include refid="selectReceiptOrderVo"/>
+        <where>  
+            <if test="receiptOrderNo != null  and receiptOrderNo != ''"> and receipt_order_no = #{receiptOrderNo}</if>
+            <if test="receiptOrderType != null "> and receipt_order_type = #{receiptOrderType}</if>
+            <if test="supplierId != null "> and supplier_id = #{supplierId}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="receiptOrderStatus != null "> and receipt_order_status = #{receiptOrderStatus}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_receipt_order set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

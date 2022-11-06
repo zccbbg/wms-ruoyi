@@ -1,0 +1,28 @@
+package ${packageName}.pojo.vo;
+
+#foreach ($import in $importList)
+import ${import};
+#end
+#if(${table.audit} == 1)
+import com.bryx.core.common.base.entity.BaseAudit;
+#end
+#if($table.sub)
+import ${packageName}.pojo.dto.${subClassName}DTO;
+#end
+import lombok.Data;
+/**
+ * ${functionName} 数据视图对象
+ * 
+ * @author ${author}
+ */
+@Data
+public class ${ClassName}VO #if(${table.audit} == 1)extends BaseAudit#end {
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+    private $column.javaType $column.javaField;
+#end
+#end
+#if($table.sub)
+    private List<${subClassName}DTO> ${subclassName}List;
+#end
+}

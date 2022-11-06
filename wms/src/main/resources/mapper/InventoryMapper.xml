@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.InventoryMapper">
+
+    <resultMap type="Inventory" id="InventoryResult">
+        <result property="id" column="id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="rackId" column="rack_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectInventoryVo">
+        select id,
+               item_id,
+               rack_id,
+               quantity,
+               remark,
+               del_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from wms_inventory
+    </sql>
+
+    <select id="selectByEntity" parameterType="Inventory" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        <where>
+            <if test="itemId != null ">and item_id = #{itemId}</if>
+            <if test="rackId != null ">and rack_id = #{rackId}</if>
+            <if test="quantity != null ">and quantity = #{quantity}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_inventory set del_flag=1
+        <where>
+            id in
+            <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+    <update id="batchUpdateQuantityById">
+        update wms_inventory
+        set quantity = quantity + (
+        case
+        <foreach collection="list" item="it">
+            when id = #{it.id} then #{it.quantity}
+        </foreach>
+        end
+        ),
+            update_time = #{updateTime},
+            update_by = #{userId}
+        where id in
+        <foreach collection="list" open="(" separator="," close=")" item="it">
+            #{it.id}
+        </foreach>
+    </update>
+    <select id="selectAllByAreaAndItemId" resultType="com.cyl.wms.domain.Inventory">
+        select * from wms_inventory
+        where (area_id, item_id) in
+        <foreach collection="list" open="(" separator="," close=")" item="it">
+            (#{it.areaId}, #{it.itemId})
+        </foreach>
+        and rack_id is null
+    </select>
+    <select id="selectAllByRackAndItemId" resultType="com.cyl.wms.domain.Inventory">
+        select * from wms_inventory
+        where (rack_id, item_id) in
+        <foreach collection="list" open="(" separator="," close=")" item="it">
+            (#{it.rackId}, #{it.itemId})
+        </foreach>
+    </select>
+    <select id="selectAllByWarehouseAndItemId" resultType="com.cyl.wms.domain.Inventory">
+        select * from wms_inventory
+        where (warehouse_id, item_id) in
+        <foreach collection="list" open="(" separator="," close=")" item="it">
+            (#{it.warehouseId}, #{it.itemId})
+        </foreach>
+        and area_id is null and rack_id is null
+    </select>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into wms_inventory
+        (item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by, update_time, warehouse_id,
+        area_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.itemId, jdbcType=BIGINT}, #{item.rackId, jdbcType=BIGINT}, #{item.quantity, jdbcType=DECIMAL},
+                #{item.remark, jdbcType=VARCHAR}, #{item.delFlag, jdbcType=TINYINT}, #{item.createBy, jdbcType=BIGINT},
+                #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE},
+                #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT},
+            </trim>
+        </foreach>
+    </insert>
+</mapper>

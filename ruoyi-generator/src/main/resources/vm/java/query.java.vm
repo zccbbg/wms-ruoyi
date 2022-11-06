@@ -1,0 +1,38 @@
+package ${packageName}.pojo.query;
+import com.ruoyi.common.core.domain.IQuery;
+import ${packageName}.domain.${ClassName};
+import lombok.Setter;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * ${functionName} 查询 对象
+ *
+ * @author ${author}
+ */
+@Setter
+public class ${ClassName}Query extends ${ClassName} implements IQuery {
+    /**
+     * 搜索值
+     */
+    private String searchValue;
+
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params;
+
+    @Override
+    public String getSearchValue() {
+        return this.searchValue;
+    }
+
+    @Override
+    public Map<String, Object> getParams() {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        return params;
+    }
+}

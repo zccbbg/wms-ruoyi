@@ -1,0 +1,28 @@
+package ${packageName}.convert;
+
+import org.mapstruct.Mapper;
+import ${packageName}.model.entity.${ClassName};
+import ${packageName}.pojo.dto.${ClassName}DTO;
+#if($table.sub)
+import ${packageName}.convert.${subClassName}Convert;
+#end
+/**
+ * ${functionName}  DO <=> DTO <=> VO / BO / Query
+ *
+ * @author ${author}
+ */
+@Mapper(componentModel = "spring"#if($table.sub), uses = ${subClassName}Convert.class#end)
+public interface ${ClassName}Convert  {
+
+    /**
+     * @param source DO
+     * @return DTO
+     */
+    ${ClassName}DTO do2dto(${ClassName} source);
+
+    /**
+     * @param source DTO
+     * @return DO
+     */
+    ${ClassName} dto2do(${ClassName}DTO source);
+}

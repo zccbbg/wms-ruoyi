@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.RackMapper">
+    
+    <resultMap type="Rack" id="RackResult">
+        <result property="id" column="id"/>
+        <result property="rackNo" column="rack_no"/>
+        <result property="rackName" column="rack_name"/>
+        <result property="areaId" column="area_id"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectRackVo">
+        select id, rack_no, rack_name, area_id, warehouse_id, remark, del_flag, create_by, create_time, update_by, update_time   from wms_rack
+    </sql>
+
+    <select id="selectByEntity" parameterType="Rack" resultMap="RackResult">
+        <include refid="selectRackVo"/>
+        <where>  
+            <if test="rackNo != null  and rackNo != ''"> and rack_no = #{rackNo}</if>
+            <if test="rackName != null  and rackName != ''"> and rack_name like concat('%', #{rackName}, '%')</if>
+            <if test="areaId != null "> and area_id = #{areaId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_rack set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

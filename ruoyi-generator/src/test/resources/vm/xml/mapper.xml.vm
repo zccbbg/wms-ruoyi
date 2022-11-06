@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${packageName}.mapper.${ClassName}Mapper">
+    <resultMap id="${ClassName}Result" type="${packageName}.model.entity.${ClassName}">
+#foreach ($column in $columns)
+        <result property="${column.javaField}" column="${column.columnName}"/>
+#end
+    </resultMap>
+    <sql id="Base_Column_List">
+        #foreach($column in $columns) $column.columnName#if($velocityCount != $columns.size()), #end#end
+
+    </sql>
+    <sql id="Base_Column_List_No_Pk">
+        #foreach($column in $columns)#if($column.javaField != $pkColumn.javaField)${column.columnName}#if($velocityCount != $columns.size()), #end#end#end
+
+    </sql>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <select id="countByExample" parameterType="${packageName}.pojo.dao.${ClassName}Example" resultType="java.lang.Long">
+        select count(*) from ${tableName}
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    <delete id="deleteByExample" parameterType="${packageName}.pojo.dao.${ClassName}Example">
+        delete from ${tableName}
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <select id="selectByExample" parameterType="${packageName}.pojo.dao.${ClassName}Example" resultMap="${ClassName}Result">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from ${tableName}
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="${pkColumn.javaType}" resultMap="${ClassName}Result">
+        select
+        <include refid="Base_Column_List" />
+        from ${tableName}
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}, jdbcType=$pkColumn.CapColumnType}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="${pkColumn.javaType}">
+        delete from ${tableName}
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}, jdbcType=$pkColumn.CapColumnType}
+    </delete>
+    <insert id="insert" parameterType="${ClassName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$pkColumn.javaField"#end>
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #foreach($column in $columns)$column.columnName, #end
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #foreach($column in $columns)#{$column.javaField}, #end
+        </trim>
+    </insert>
+    <insert id="insertSelective" keyColumn="$pkColumn.columnName" keyProperty="$pkColumn.javaField" parameterType="${ClassName}" useGeneratedKeys="true">
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">$column.columnName,</if>
+#end
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+                <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">#{$column.javaField},</if>
+#end
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="${ClassName}">
+        update ${tableName}
+        <set>
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">
+                $column.columnName = #{$column.javaField, jdbcType=$pkColumn.CapColumnType},
+            </if>
+#end
+#end
+        </set>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}, jdbcType=$pkColumn.CapColumnType}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="${ClassName}">
+        update ${tableName}
+        <trim prefix="set " suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            $column.columnName = #{$column.javaField, jdbcType=$column.CapColumnType},
+#end
+#end
+        </trim>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}, jdbcType=$pkColumn.CapColumnType}
+    </update>
+    <update id="updateBatch" parameterType="java.util.List">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            <trim prefix="$pkColumn.columnName = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when ${pkColumn.columnName} = #{item.${pkColumn.javaField},jdbcType=$pkColumn.CapColumnType} then #{item.${column.javaField}, jdbcType=$column.CapColumnType}
+                </foreach>
+            </trim>
+#end
+#end
+        </trim>
+        where ${pkColumn.columnName} in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.$pkColumn.javaField,jdbcType=$pkColumn.CapColumnType}
+        </foreach>
+    </update>
+    <update id="updateBatchSelective" parameterType="java.util.List">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            <trim prefix="$pkColumn.columnName = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">
+                        when ${pkColumn.columnName} = #{item.${pkColumn.javaField},jdbcType=$pkColumn.CapColumnType} then #{item.${column.javaField}, jdbcType=$column.CapColumnType}
+                    </if>
+                </foreach>
+            </trim>
+#end
+#end
+        </trim>
+        where ${pkColumn.columnName} in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.$pkColumn.javaField,jdbcType=$pkColumn.CapColumnType}
+        </foreach>
+    </update>
+    <update id="updateByExampleSelective" parameterType="map">
+        update ${tableName}
+        <set>
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            <if test="record.$column.javaField != null">
+                $column.columnName = #{record.$column.javaField, jdbcType=$pkColumn.CapColumnType},
+            </if>
+#end
+#end
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update ${tableName}
+        set
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+        $column.columnName = #{record.$column.javaField, jdbcType=$pkColumn.CapColumnType},
+#end
+#end
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <insert id="batchInsert" keyColumn="$pkColumn.columnName" keyProperty="$pkColumn.javaField" parameterType="map" useGeneratedKeys="true">
+        insert into ${tableName}
+        (<include refid="Base_Column_List_No_Pk" />)
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #foreach($column in $columns)#if($column.javaField != $pkColumn.javaField)#{item.$column.javaField, jdbcType=$column.CapColumnType}, #end#end
+            </trim>
+        </foreach>
+    </insert>
+    <insert id="insertOrUpdate" keyColumn="$pkColumn.columnName" keyProperty="$pkColumn.javaField" parameterType="${ClassName}" useGeneratedKeys="true">
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="$pkColumn.javaField != null">
+                $pkColumn.columnName,
+            </if>
+            <include refid="Base_Column_List_No_Pk" />
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="$pkColumn.javaField != null">
+                #{$pkColumn.javaField,jdbcType=$pkColumn.CapColumnType},
+            </if>
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            #{$column.javaField, jdbcType=$column.CapColumnType},
+#end
+#end
+        </trim>
+        <if test="$pkColumn.javaField != null">        
+        on duplicate key update
+        <trim suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.javaField != $pkColumn.javaField)
+            $column.columnName = #{$column.javaField, jdbcType=$column.CapColumnType},
+#end
+#end
+        </trim>
+        </if>
+    </insert>
+    <insert id="insertOrUpdateSelective" keyColumn="$pkColumn.columnName" keyProperty="$pkColumn.javaField" parameterType="${ClassName}" useGeneratedKeys="true">
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+            <if test="$column.javaField != null">
+                $column.columnName,
+            </if>
+#end
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+            <if test="$column.javaField != null">
+                #{$column.javaField,jdbcType=$column.CapColumnType},
+            </if>
+#end
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+#foreach($column in $columns)
+            <if test="$column.javaField != null">
+                $column.columnName = #{$column.javaField, jdbcType=$column.CapColumnType},
+            </if>
+#end
+        </trim>
+    </insert>
+</mapper>

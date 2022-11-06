@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.WarehouseMapper">
+    
+    <resultMap type="Warehouse" id="WarehouseResult">
+        <result property="id" column="id"/>
+        <result property="warehouseNo" column="warehouse_no"/>
+        <result property="warehouseName" column="warehouse_name"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectWarehouseVo">
+        select id, warehouse_no, warehouse_name, del_flag, remark, create_by, create_time, update_by, update_time   from wms_warehouse
+    </sql>
+
+    <select id="selectByEntity" parameterType="Warehouse" resultMap="WarehouseResult">
+        <include refid="selectWarehouseVo"/>
+        <where>  
+            <if test="warehouseNo != null  and warehouseNo != ''"> and warehouse_no = #{warehouseNo}</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_warehouse set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.InventoryMovementDetailMapper">
+    <resultMap type="InventoryMovementDetail" id="InventoryMovementDetailResult">
+        <result property="id" column="id"/>
+        <result property="inventoryMovementId" column="inventory_movement_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="realQuantity" column="real_quantity"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="sourceRackId" column="source_rack_id"/>
+        <result property="sourceWarehouseId" column="source_warehouse_id"/>
+        <result property="sourceAreaId" column="source_area_id"/>
+        <result property="moveStatus" column="move_status"/>
+        <result property="targetRackId" column="target_rack_id"/>
+        <result property="targetWarehouseId" column="target_warehouse_id"/>
+        <result property="targetAreaId" column="target_area_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectInventoryMovementDetailVo">
+        select id,
+               inventory_movement_id,
+               item_id,
+               plan_quantity,
+               real_quantity,
+               del_flag,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               source_rack_id,
+               source_warehouse_id,
+               source_area_id,
+               move_status,
+               target_rack_id,
+               target_warehouse_id,
+               target_area_id
+        from wms_inventory_movement_detail
+    </sql>
+
+    <select id="selectByEntity" parameterType="InventoryMovementDetail" resultMap="InventoryMovementDetailResult">
+        <include refid="selectInventoryMovementDetailVo"/>
+        <where>
+            <if test="inventoryMovementId != null">
+                and inventory_movement_id = #{inventoryMovementId}
+            </if>
+            <if test="itemId != null">
+                and item_id = #{itemId}
+            </if>
+            <if test="planQuantity != null">
+                and plan_quantity = #{planQuantity}
+            </if>
+            <if test="realQuantity != null">
+                and real_quantity = #{realQuantity}
+            </if>
+            <if test="sourceRackId != null">
+                and source_rack_id = #{sourceRackId}
+            </if>
+            <if test="sourceWarehouseId != null">
+                and source_warehouse_id = #{sourceWarehouseId}
+            </if>
+            <if test="sourceAreaId != null">
+                and source_area_id = #{sourceAreaId}
+            </if>
+            <if test="moveStatus != null">
+                and move_status = #{moveStatus}
+            </if>
+            <if test="targetRackId != null">
+                and target_rack_id = #{targetRackId}
+            </if>
+            <if test="targetWarehouseId != null">
+                and target_warehouse_id = #{targetWarehouseId}
+            </if>
+            <if test="targetAreaId != null">
+                and target_area_id = #{targetAreaId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_inventory_movement_detail
+        set del_flag=1
+        <where>
+            id in
+            <foreach collection="ids" open="(" item="it" close=")" separator=",">
+                #{it}
+            </foreach>
+        </where>
+    </update>
+    <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.InventoryMovementVO">
+        select inventory_movement_id id,
+               count(*)              detail_count,
+               sum(plan_quantity)    itemCount
+        from wms_inventory_movement_detail
+                where inventory_movement_id in
+        <foreach collection="collection" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and del_flag = 0
+                group by inventory_movement_id
+    </select>
+     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into wms_inventory_movement_detail
+                (
+               inventory_movement_id,
+               item_id,
+               plan_quantity,
+               real_quantity,
+               del_flag,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               source_rack_id,
+               source_warehouse_id,
+               source_area_id,
+               move_status,
+               target_rack_id,
+               target_warehouse_id,
+               target_area_id)
+                values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.inventoryMovementId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT},
+                #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL},
+                #{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR},
+                #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT},
+                #{item.updateTime, jdbcType=DATE}, #{item.sourceRackId, jdbcType=BIGINT},
+                #{item.sourceWarehouseId, jdbcType=BIGINT}, #{item.sourceAreaId,jdbcType=BIGINT},#{item.moveStatus, jdbcType=TINYINT},
+                #{item.targetRackId, jdbcType=BIGINT},#{item.targetWarehouseId, jdbcType=BIGINT}, #{item.targetAreaId,jdbcType=BIGINT}
+            </trim>
+        </foreach>
+    </insert>
+</mapper>

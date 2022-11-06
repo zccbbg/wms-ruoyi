@@ -1,0 +1,47 @@
+package ${fullPackage};
+
+#foreach ($import in $importList)
+import ${import};
+#end
+import com.ruoyi.common.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonFormat;
+#if(${table.audit} == 1)
+import ${env.baseAudit};
+#end
+#if($table.sub)
+import ${packageName}.pojo.dto.${subClassName}DTO;
+#end
+import lombok.Data;
+/**
+ * ${functionName} 数据视图对象
+ * 
+ * @author ${author}
+ */
+@Data
+public class ${ClassName}VO #if(${table.audit} == 1)extends BaseAudit#end {
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField) and $column.javaField != "delFlag")
+   /** $column.columnComment */
+#if($column.list)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+    #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+    #set($comment=$column.columnComment)
+#end
+#if($parentheseIndex != -1)
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+#elseif($column.isDate())
+    @JsonFormat(pattern = "${column.dateFormat}")
+    @Excel(name = "${comment}", width = 30, dateFormat = "${column.dateFormat}")
+#else
+    @Excel(name = "${comment}")
+#end
+#end
+    private $column.javaType $column.javaField;
+#end
+#end
+#if($table.sub)
+    private List<${subClassName}DTO> ${subclassName}List;
+#end
+}

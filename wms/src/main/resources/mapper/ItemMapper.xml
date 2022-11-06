@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.ItemMapper">
+    
+    <resultMap type="Item" id="ItemResult">
+        <result property="id" column="id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemType" column="item_type"/>
+        <result property="unit" column="unit"/>
+        <result property="rackId" column="rack_id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectItemVo">
+        select id, item_no, item_name, item_type, unit, rack_id, area_id, warehouse_id, quantity, expiry_date, del_flag, remark, create_by, create_time, update_by, update_time   from wms_item
+    </sql>
+
+    <select id="selectByEntity" parameterType="Item" resultMap="ItemResult">
+        <include refid="selectItemVo"/>
+        <where>  
+            <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemType != null  and itemType != ''"> and item_type = #{itemType}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="rackId != null "> and rack_id = #{rackId}</if>
+            <if test="areaId != null "> and area_id = #{areaId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="expiryDate != null "> and expiry_date = #{expiryDate}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_item set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

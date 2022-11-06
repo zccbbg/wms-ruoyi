@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.DeliveryMapper">
+    
+    <resultMap type="Delivery" id="DeliveryResult">
+        <result property="id" column="id"/>
+        <result property="shipmentOrderId" column="shipment_order_id"/>
+        <result property="carrierId" column="carrier_id"/>
+        <result property="deliveryDate" column="delivery_date"/>
+        <result property="trackingNo" column="tracking_no"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectDeliveryVo">
+        select id, shipment_order_id, carrier_id, delivery_date, tracking_no, remark, del_flag, create_by, create_time, update_by, update_time   from wms_delivery
+    </sql>
+
+    <select id="selectByEntity" parameterType="Delivery" resultMap="DeliveryResult">
+        <include refid="selectDeliveryVo"/>
+        <where>  
+            <if test="shipmentOrderId != null "> and shipment_order_id = #{shipmentOrderId}</if>
+            <if test="carrierId != null "> and carrier_id = #{carrierId}</if>
+            <if test="deliveryDate != null "> and delivery_date = #{deliveryDate}</if>
+            <if test="trackingNo != null  and trackingNo != ''"> and tracking_no = #{trackingNo}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_delivery set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

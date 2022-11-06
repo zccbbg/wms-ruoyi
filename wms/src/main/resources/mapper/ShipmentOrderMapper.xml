@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.ShipmentOrderMapper">
+    
+    <resultMap type="ShipmentOrder" id="ShipmentOrderResult">
+        <result property="id" column="id"/>
+        <result property="shipmentOrderNo" column="shipment_order_no"/>
+        <result property="shipmentOrderType" column="shipment_order_type"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="shipmentOrderStatus" column="shipment_order_status"/>
+        <result property="checkStatus" column="check_status"/>
+        <result property="checkUserId" column="check_user_id"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectShipmentOrderVo">
+        select id, shipment_order_no, shipment_order_type, order_no, customer_id, shipment_order_status, check_status, check_user_id, check_time, remark, del_flag, create_by, create_time, update_by, update_time   from wms_shipment_order
+    </sql>
+
+    <select id="selectByEntity" parameterType="ShipmentOrder" resultMap="ShipmentOrderResult">
+        <include refid="selectShipmentOrderVo"/>
+        <where>  
+            <if test="shipmentOrderNo != null  and shipmentOrderNo != ''"> and shipment_order_no = #{shipmentOrderNo}</if>
+            <if test="shipmentOrderType != null "> and shipment_order_type = #{shipmentOrderType}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="shipmentOrderStatus != null "> and shipment_order_status = #{shipmentOrderStatus}</if>
+            <if test="checkStatus != null "> and check_status = #{checkStatus}</if>
+            <if test="checkUserId != null "> and check_user_id = #{checkUserId}</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_shipment_order set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

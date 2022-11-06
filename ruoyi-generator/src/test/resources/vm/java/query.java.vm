@@ -1,0 +1,9 @@
+package ${fullPackage};
+
+/**
+ * ${functionName} 查询 对象
+ *
+ * @author ${author}
+ */
+public class ${ClassName}Query {
+}

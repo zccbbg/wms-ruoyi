@@ -1,0 +1,32 @@
+package ${fullPackage};
+
+#foreach ($import in $importList)
+import ${import};
+#end
+import lombok.Data;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * ${functionName} 查询 对象
+ *
+ * @author ${author}
+ */
+@ApiModel(description="${functionName} 查询 对象")
+@Data
+public class ${_className.query} {
+#foreach($column in $columns)
+#if($column.query)
+## 根据查询类型生成 EQ等于、NE不等于、GT大于、LT小于、LIKE模糊、BETWEEN范围
+## 范围查询, 使用数组实现
+#if($column.queryType == 'BETWEEN')
+    @ApiModelProperty("${column.genLabel()} 范围")
+    private ${column.javaType}[] ${column.javaField}${column.queryField};
+#else
+    @ApiModelProperty("${column.genLabel()} 精确匹配")
+    private ${column.javaType} ${column.javaField}${column.queryField};
+#end
+
+#end
+#end
+}

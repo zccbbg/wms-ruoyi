@@ -1,0 +1,40 @@
+package ${fullPackage};
+
+#foreach ($import in $importList)
+import ${import};
+#end
+#if(($table.crud || $table.sub) && $table.audit == 1)
+import ${env.baseAudit};
+#elseif($table.tree)
+import ${env.baseAudit};
+#end
+#if($table.sub)
+import ${packageName}.${javaPath.pojo}.dto.${subClassName}DTO;
+#end
+import lombok.Data;
+/**
+ * ${functionName} DTO 对象
+ *
+ * @author ${author}
+ */
+#if(($table.crud || $table.sub) && $table.audit == 1)
+    #set($Entity="BaseAudit")
+#elseif($table.tree)
+    #set($Entity="TreeEntity")
+#end
+@Data
+public class ${ClassName}DTO#if($Entity) extends ${Entity}#end {
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+
+#if($column.columnComment)
+    /** $column.columnComment */
+#end
+    private $column.javaType $column.javaField;
+#end
+#end
+
+#if($table.sub)
+private List<${subClassName}DTO> ${subclassName}List;
+#end
+}

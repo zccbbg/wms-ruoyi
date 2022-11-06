@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.CustomerMapper">
+    
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="id" column="id"/>
+        <result property="customerNo" column="customer_no"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="address" column="address"/>
+        <result property="mobile" column="mobile"/>
+        <result property="tel" column="tel"/>
+        <result property="customerPerson" column="customer_person"/>
+        <result property="customerLevel" column="customer_level"/>
+        <result property="email" column="email"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectCustomerVo">
+        select id, customer_no, customer_name, address, mobile, tel, customer_person, customer_level, email, remark, del_flag, create_by, create_time, update_by, update_time   from wms_customer
+    </sql>
+
+    <select id="selectByEntity" parameterType="Customer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        <where>  
+            <if test="customerNo != null  and customerNo != ''"> and customer_no = #{customerNo}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+            <if test="customerPerson != null  and customerPerson != ''"> and customer_person = #{customerPerson}</if>
+            <if test="customerLevel != null  and customerLevel != ''"> and customer_level = #{customerLevel}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_customer set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

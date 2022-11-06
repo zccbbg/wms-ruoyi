@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.CarrierMapper">
+    
+    <resultMap type="Carrier" id="CarrierResult">
+        <result property="id" column="id"/>
+        <result property="carrierNo" column="carrier_no"/>
+        <result property="carrierName" column="carrier_name"/>
+        <result property="address" column="address"/>
+        <result property="mobile" column="mobile"/>
+        <result property="tel" column="tel"/>
+        <result property="contact" column="contact"/>
+        <result property="level" column="level"/>
+        <result property="email" column="email"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectCarrierVo">
+        select id, carrier_no, carrier_name, address, mobile, tel, contact, level, email, remark, del_flag, create_by, create_time, update_by, update_time   from wms_carrier
+    </sql>
+
+    <select id="selectByEntity" parameterType="Carrier" resultMap="CarrierResult">
+        <include refid="selectCarrierVo"/>
+        <where>  
+            <if test="carrierNo != null  and carrierNo != ''"> and carrier_no = #{carrierNo}</if>
+            <if test="carrierName != null  and carrierName != ''"> and carrier_name like concat('%', #{carrierName}, '%')</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if>
+            <if test="level != null  and level != ''"> and level = #{level}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_carrier set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

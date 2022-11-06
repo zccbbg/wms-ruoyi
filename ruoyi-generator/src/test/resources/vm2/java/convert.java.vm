@@ -1,0 +1,29 @@
+package ${fullPackage};
+
+import org.mapstruct.Mapper;
+import ${_fullClass.domain};
+import ${_fullClass.dto};
+import ${_fullClass.vo};
+import java.util.List;
+/**
+ * ${functionName}  DO <=> DTO <=> VO / BO / Query
+ *
+ * @author ${author}
+ */
+@Mapper(componentModel = "spring"#if($table.sub), uses = ${subClassName}Convert.class#end)
+public interface ${ClassName}Convert  {
+
+    /**
+     * @param source DO
+     * @return DTO
+     */
+    ${ClassName}DTO do2dto(${ClassName} source);
+
+    /**
+     * @param source DTO
+     * @return DO
+     */
+    ${ClassName} dto2do(${ClassName}DTO source);
+
+    List<${_className.vo}> dos2vos(List<${_className.domain}> list);
+}

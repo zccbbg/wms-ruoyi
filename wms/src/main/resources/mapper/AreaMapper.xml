@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.AreaMapper">
+    
+    <resultMap type="Area" id="AreaResult">
+        <result property="id" column="id"/>
+        <result property="areaNo" column="area_no"/>
+        <result property="areaName" column="area_name"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectAreaVo">
+        select id, area_no, area_name, warehouse_id, remark, del_flag, create_by, create_time, update_by, update_time   from wms_area
+    </sql>
+
+    <select id="selectByEntity" parameterType="Area" resultMap="AreaResult">
+        <include refid="selectAreaVo"/>
+        <where>  
+            <if test="areaNo != null  and areaNo != ''"> and area_no = #{areaNo}</if>
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_area set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>

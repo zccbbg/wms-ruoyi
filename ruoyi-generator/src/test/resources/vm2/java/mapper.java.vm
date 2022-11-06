@@ -1,0 +1,28 @@
+package ${fullPackage};
+
+import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import ${_fullClass.domain};
+
+/**
+ * ${functionName}Mapper接口
+ * 
+ * @author ${author}
+ */
+public interface ${ClassName}Mapper extends BaseMapper<${ClassName}> {
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    List<${ClassName}> selectByEntity(${ClassName} ${className});
+
+    /**
+     * 批量软删除
+     * @param ids
+     * @return
+    */
+    int updateDelFlagByIds(@Param("ids") Long[] ids);
+}

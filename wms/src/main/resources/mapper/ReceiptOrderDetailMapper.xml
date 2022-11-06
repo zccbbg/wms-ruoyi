@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.ReceiptOrderDetailMapper">
+    
+    <resultMap type="ReceiptOrderDetail" id="ReceiptOrderDetailResult">
+        <result property="id" column="id"/>
+        <result property="receiptOrderId" column="receipt_order_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="realQuantity" column="real_quantity"/>
+        <result property="rackId" column="rack_id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="receiptOrderStatus" column="receipt_order_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectReceiptOrderDetailVo">
+        select id, receipt_order_id, item_id, plan_quantity, real_quantity, rack_id, del_flag, remark, create_by, create_time, update_by, update_time, warehouse_id, area_id, receipt_order_status   from wms_receipt_order_detail
+    </sql>
+
+    <select id="selectByEntity" parameterType="ReceiptOrderDetail" resultMap="ReceiptOrderDetailResult">
+        <include refid="selectReceiptOrderDetailVo"/>
+        <where>  
+            <if test="receiptOrderId != null "> and receipt_order_id = #{receiptOrderId}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="planQuantity != null "> and plan_quantity = #{planQuantity}</if>
+            <if test="realQuantity != null "> and real_quantity = #{realQuantity}</if>
+            <if test="rackId != null "> and rack_id = #{rackId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="areaId != null "> and area_id = #{areaId}</if>
+            <if test="receiptOrderStatus != null "> and receipt_order_status = #{receiptOrderStatus}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_receipt_order_detail set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+    <sql id="Base_Column_List_No_Pk">
+        receipt_order_id, item_id, plan_quantity, real_quantity, rack_id, del_flag, remark, create_by, create_time, update_by, update_time, warehouse_id, area_id, receipt_order_status
+    </sql>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into wms_receipt_order_detail
+        (<include refid="Base_Column_List_No_Pk" />)
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.receiptOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT}, #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL}, #{item.rackId, jdbcType=BIGINT}, #{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR}, #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT}, #{item.receiptOrderStatus, jdbcType=TINYINT},             </trim>
+        </foreach>
+    </insert>
+    <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.ReceiptOrderVO">
+        select
+            receipt_order_id id,
+            count(*) detail_count
+        from wms_receipt_order_detail
+        where receipt_order_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and del_flag = 0
+        group by receipt_order_id
+    </select>
+</mapper>

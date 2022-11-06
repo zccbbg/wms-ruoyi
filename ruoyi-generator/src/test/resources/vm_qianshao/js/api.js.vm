@@ -1,0 +1,54 @@
+import request from '@/utils/request'
+
+// 查询${functionName}列表
+export function list${ClassName}(data, query) {
+  return request({
+    url: '/${moduleName}/${className}/list',
+    method: 'post',
+    data,
+    params: query
+  })
+}
+
+// 查询${functionName}详细
+export function get${ClassName}(${pkColumn.javaField}) {
+  return request({
+    url: '/${moduleName}/${className}/' + ${pkColumn.javaField},
+    method: 'get'
+  })
+}
+
+// 新增${functionName}
+export function add${ClassName}(data) {
+  return request({
+    url: '/${moduleName}/${className}',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改${functionName}
+export function update${ClassName}(data) {
+  return request({
+    url: '/${moduleName}/${className}',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除${functionName}
+export function del${ClassName}(${pkColumn.javaField}) {
+  return request({
+    url: '/${moduleName}/${className}/' + ${pkColumn.javaField},
+    method: 'delete'
+  })
+}
+
+// 导出${functionName}
+export function export${ClassName}(query) {
+  return request({
+    url: '/${moduleName}/${className}/export',
+    method: 'get',
+    params: query
+  })
+}

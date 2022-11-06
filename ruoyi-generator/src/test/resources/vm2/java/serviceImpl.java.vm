@@ -1,0 +1,155 @@
+package ${fullPackage};
+
+import java.util.Arrays;
+import java.util.List;
+#if($table.hasDate())
+#foreach($date in $table.dateImports())
+import $date;
+#end
+#end
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.StringUtils;
+import ${_fullClass.mapper};
+import ${_fullClass.domain};
+import ${_fullClass.query};
+import ${_fullClass.service};
+
+/**
+ * ${functionName}Service业务层处理
+ * 
+ * @author ${author}
+ */
+@Service
+public class ${_className.serviceImpl} implements ${_className.service} {
+    @Autowired
+    private ${_className.mapper} ${className}Mapper;
+
+    /**
+     * 查询${functionName}
+     * 
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return ${functionName}
+     */
+    @Override
+    public ${ClassName} selectBy${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+        return ${className}Mapper.selectBy${pkColumn.capJavaField}(${pkColumn.javaField});
+    }
+
+    /**
+     * 查询${functionName}列表
+     * 
+     * @param query 查询条件
+     * @param page 分页条件
+     * @return ${functionName}
+     */
+    @Override
+    public List<${_className.domain}> selectList(${_className.query} query, Pageable page) {
+        if (page != null) {
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+        }
+        QueryWrapper<${_className.domain}> qw = new QueryWrapper<>();
+#foreach($column in $columns)
+#if($column.query)
+## 根据查询类型生成 EQ等于、NE不等于、GT大于、LT小于、LIKE模糊、BETWEEN范围
+## 范围查询, 使用数组实现
+#if($column.queryType == 'BETWEEN')
+        ${column.javaType}[] ${column.javaField}${column.queryField} = query.get${column.capJavaField}${column.queryField}();
+        if (${column.javaField}${column.queryField} != null && ${column.javaField}${column.queryField}.length == 2) {
+            ${column.javaType} start = ${column.javaField}${column.queryField}[0];
+            if (#if($column.javaType == 'String')!StringUtils.isEmpty(start)#{else}start != null#end) {
+                qw.ge("${column.columnName}", start);
+            }
+            ${column.javaType} end = ${column.javaField}Range[0];
+            if (#if($column.javaType == 'String')!StringUtils.isEmpty(end) #{else}end != null#end) {
+                qw.le("${column.columnName}", end);
+            }
+        }
+#else
+        ${column.javaType} ${column.javaField}${column.queryField} = query.get${column.capJavaField}${column.queryField}();
+        if (#if($column.javaType == 'String')!StringUtils.isEmpty(${column.javaField}${column.queryField})#{else}${column.javaField}${column.queryField} != null#end) {
+            qw.${column.queryMethod}("${column.columnName}", ${column.javaField}${column.queryField});
+        }
+#end
+#end
+#end
+        return ${className}Mapper.selectList(qw);
+    }
+
+    /**
+     * 新增${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+#if($table.sub)
+    @Transactional
+#end
+    @Override
+    public int insert(${ClassName} ${className}) {
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime')
+        ${className}.setCreateTime(#if($column.javaType == "Date")new Date()#else${column.javaType}.now()#end);
+#end
+#end
+#if($table.sub)
+        int rows = ${className}Mapper.insert(${className});
+        insert${subClassName}(${className});
+        return rows;
+#else
+        return ${className}Mapper.insert(${className});
+#end
+    }
+
+    /**
+     * 修改${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+#if($table.sub)
+    @Transactional
+#end
+    @Override
+    public int update(${ClassName} ${className}) {
+#if($table.sub)
+        ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${className}.get${pkColumn.capJavaField}());
+        insert${subClassName}(${className});
+#end
+        return ${className}Mapper.updateById(${className});
+    }
+
+    /**
+     * 批量删除${functionName}
+     * 
+     * @param ${pkColumn.javaField}s 需要删除的${functionName}主键
+     * @return 结果
+     */
+#if($table.sub)
+    @Transactional
+#end
+    @Override
+    public int deleteBy${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+#if($table.sub)
+        ${className}Mapper.delete${subClassName}By${subTableFkClassName}s(${pkColumn.javaField}s);
+#end
+        return ${className}Mapper.deleteBatchIds(Arrays.asList(${pkColumn.javaField}s));
+    }
+
+    /**
+     * 删除${functionName}信息
+     * 
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return 结果
+     */
+    @Override
+    public int deleteBy${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+#if($table.sub)
+        ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${pkColumn.javaField});
+#end
+        return ${className}Mapper.deleteById(${pkColumn.javaField});
+    }
+}
