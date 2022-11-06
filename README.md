@@ -6,6 +6,9 @@
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
+# 前端项目地址
+https://gitee.com/zccbbg/ruo-yi-wms-vue
+
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
 2. 仓库/库区/货架：管理维护仓库基础数据
@@ -22,7 +25,9 @@
 #### 出库状态流转
 ![出库状态流转](https://oscimg.oschina.net/oscnet/up-55cad3f077f914e357efeaae0b3feecf942.jpg)
 
-
+## 沟通交流
+![qq群：571255860](https://oscimg.oschina.net/oscnet/up-24096fde7984c52b042b3ad6f9213eaee1c.jpg)
+![微信：18556959326](https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg)
 ## 若依内置功能
 
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
