@@ -98,6 +98,7 @@ https://gitee.com/zccbbg/ruo-yi-wms-vue
 
 ## 若依wms交流群
 
-QQ群： [![加入QQ群](https://img.shields.io/badge/571255860-blue.svg)](https://jq.qq.com/?_wv=1027&k=6h7MnEs9) 点击按钮入群。
-![qq群：571255860](https://oscimg.oschina.net/oscnet/up-24096fde7984c52b042b3ad6f9213eaee1c.jpg)
-![微信：18556959326](https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg)
+
+|  QQ群： [![加入QQ群](https://img.shields.io/badge/571255860-blue.svg)](https://jq.qq.com/?_wv=1027&k=6h7MnEs9) 点击按钮入群                            |                                                   微信                                                   | 公众号  |
+|:------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|:----:|
+| <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | 正在创建 | 
