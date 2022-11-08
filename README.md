@@ -9,6 +9,11 @@
 # 前端项目地址
 https://gitee.com/zccbbg/ruo-yi-wms-vue
 
+## 在线体验
+- 演示地址：http://wmstest.ichengle.top
+- 用户名/密码：cyl/cyl666
+- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
 2. 仓库/库区/货架：管理维护仓库基础数据
@@ -45,13 +50,6 @@ https://gitee.com/zccbbg/ruo-yi-wms-vue
 16. 缓存监控：对系统的缓存信息查询，命令统计等。
 17. 在线构建器：拖动表单元素生成相应的HTML代码。
 18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
-
-## 在线体验
-
-- cyl/cyl666
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
-
-演示地址：http://wmstest.ichengle.top
 
 ## 演示图
 ![首页](https://oscimg.oschina.net/oscnet/up-89f751967b4145f7da92e23536bf231fbe8.jpg)
@@ -101,4 +99,4 @@ https://gitee.com/zccbbg/ruo-yi-wms-vue
 
 |  QQ群： [![加入QQ群](https://img.shields.io/badge/571255860-blue.svg)](https://jq.qq.com/?_wv=1027&k=6h7MnEs9) 点击按钮入群                            |                                                   微信                                                   | 公众号  |
 |:------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|:----:|
-| <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | 正在创建 | 
+| <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-ef77e16b37950341791b1d84564328efadb.jpg" width="200px"> | 
