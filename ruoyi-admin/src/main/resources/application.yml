@@ -13,7 +13,7 @@ ruoyi:
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
-  captchaType: char
+  captchaType: math
   # 前端请求的 跟踪 header name
   traceIdName: x-web-trace-id
 
