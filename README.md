@@ -7,10 +7,13 @@
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
 ## 前端项目地址
+### gitee
 https://gitee.com/zccbbg/ruo-yi-wms-vue
+### github
+https://github.com/zccbbg/RuoYi-WMS-VUE
 
 ## 在线体验
-- 演示地址：http://wmstest.ichengle.top
+- 演示地址：http://wms.ichengle.top
 - 用户名/密码：cyl/cyl666
 - 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
 
