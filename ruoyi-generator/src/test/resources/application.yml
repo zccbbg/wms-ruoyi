@@ -5,9 +5,9 @@ spring:
     #    schema: classpath*:sql/init.sql
     #    data: classpath:sql/data.sql
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-wz987gwxg397qojlao.mysql.rds.aliyuncs.com:3638/wms_test?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
-    username: wms_testr
-    password: asdfpoj_sodpfjo_piuPOi
+    url: jdbc:mysql://localhost:3306/wms?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username:
+    password:
   jpa:
     properties:
       hibernate:
