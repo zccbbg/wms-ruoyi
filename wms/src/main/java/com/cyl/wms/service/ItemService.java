@@ -89,6 +89,7 @@ public class ItemService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Item> qw = new QueryWrapper<>();
+        qw.orderByDesc("id");
         if (!StrUtil.isEmpty(query.getSearch())) {
             String search = query.getSearch();
             qw.eq("create_by", SecurityUtils.getUserId());

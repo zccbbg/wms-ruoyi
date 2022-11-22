@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
@@ -50,7 +51,7 @@ public class SysLogininfor extends BaseEntity
     /** 访问时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "访问时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date loginTime;
+    private LocalDateTime loginTime;
 
     public Long getInfoId()
     {
@@ -122,6 +123,14 @@ public class SysLogininfor extends BaseEntity
         this.os = os;
     }
 
+    public LocalDateTime getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(LocalDateTime loginTime) {
+        this.loginTime = loginTime;
+    }
+
     public String getMsg()
     {
         return msg;
@@ -132,13 +141,5 @@ public class SysLogininfor extends BaseEntity
         this.msg = msg;
     }
 
-    public Date getLoginTime()
-    {
-        return loginTime;
-    }
 
-    public void setLoginTime(Date loginTime)
-    {
-        this.loginTime = loginTime;
-    }
 }

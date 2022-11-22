@@ -100,6 +100,7 @@ public class ShipmentOrderService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<ShipmentOrder> qw = new QueryWrapper<>();
+        qw.orderByDesc("id");
         qw.eq("del_flag",0);
         String shipmentOrderNo = query.getShipmentOrderNo();
         if (!StringUtils.isEmpty(shipmentOrderNo)) {
