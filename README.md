@@ -107,4 +107,4 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 | <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-ef77e16b37950341791b1d84564328efadb.jpg" width="200px"> | 
 
 ## 大厂、外企内推
-重点推荐一下公众号：每月记录一篇编程、创业、生活中踩坑的文章，陆续会开放一些微软、阿里、京东、拼多多等大厂或外企的内推岗位！
+关注“字节叔叔”公众号：每月记录一篇编程、创业、生活中踩坑的文章，陆续会开放一些微软、阿里、京东、拼多多等大厂或外企的内推岗位！
