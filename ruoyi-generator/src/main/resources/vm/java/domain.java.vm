@@ -1,33 +1,33 @@
-package ${packageName}.model.entity;
+package ${fullPackage};
 
 #foreach ($import in $importList)
 import ${import};
 #end
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 #if(($table.crud || $table.sub) && $table.audit == 1)
-import com.bryx.core.common.base.entity.BaseAudit;
-#elseif($table.tree)
-import com.ruoyi.common.core.domain.TreeEntity;
+import ${env.baseAudit};
 #end
 import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * ${functionName}对象 ${tableName}
  * 
  * @author ${author}
  */
+@ApiModel(description="${functionName}对象")
 #if(($table.crud || $table.sub) && $table.audit == 1)
 #set($Entity="BaseAudit")
-#elseif($table.tree)
-#set($Entity="TreeEntity")
 #end
 @Data
+@TableName("${tableName}")
 public class ${ClassName}#if($Entity) extends ${Entity}#end {
     private static final long serialVersionUID = 1L;
 
 #foreach ($column in $columns)
 #if(!$table.isSuperColumn($column.javaField))
-    /** $column.columnComment */
+    @ApiModelProperty("$column.columnComment")
 #if($column.list)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -38,7 +38,6 @@ public class ${ClassName}#if($Entity) extends ${Entity}#end {
 #if($parentheseIndex != -1)
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
 #elseif($column.isDate())
-    @JsonFormat(pattern = "${column.dateFormat}")
     @Excel(name = "${comment}", width = 30, dateFormat = "${column.dateFormat}")
 #else
     @Excel(name = "${comment}")

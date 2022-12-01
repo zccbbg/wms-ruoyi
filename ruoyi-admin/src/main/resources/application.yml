@@ -162,31 +162,31 @@ scheduling:
   enabled: true
 gen:
   # 作者
-  author:
+  author: zcc
   # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
-  packageName: com.cyl.demo
+  packageName: com.cyl.wms
   # 自动去除表前缀，默认是false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: cscdc_
+  tablePrefix: wms_
   # 一级权限名
-  rootPermission: cscdc
+  rootPermission: wms
   # 模板根路径
   templateRootPath: vm
   # 路径
   path:
     # 后端根目录
-    backPath: C:\Users\zccbbg\ichengle\ruoyi-vue-fork\
+    backPath: D:\java_project\wms\wms-ruoyi
     # 后端 service 模块名
-    serviceModule: mybatis-plus-demo
+    serviceModule: wms
     # 后端 api 模块名, 默认与 service 一致
-    apiModule: mybatis-plus-api
+    apiModule: wms
     # 前端根目录
-    frontPath: C:\Users\zccbbg\code\cdc_front_cs\
+    frontPath: D:\java_project\wms\ruoyi-wms-vue2
     # 前端 api 目录
-    frontApiPath: src/api/emergencyhandle
+    frontApiPath: src/api/wms
     # 前端 view 目录
-    frontViewPath: src/views/emergencyhandle
+    frontViewPath: src/views/wms
     # sql 目录
     sql: sql
   # 环境变量
@@ -199,7 +199,7 @@ gen:
   fileMap:
     "api.js.vm": "${frontPath}/${frontApiPath}/${className}.js"
     "controller.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/controller/${ClassName}Controller.java"
-    "service.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/service/I${ClassName}Service.java"
+    "service.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/service/${ClassName}Service.java"
     "mapper.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/mapper/${ClassName}Mapper.java"
     "convert.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/convert/${ClassName}Convert.java"
     "example.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/example/${ClassName}Example.java"
@@ -211,6 +211,32 @@ gen:
     "sql.vm": "${backPath}/sql/${className}.sql"
     "h2.sql.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/db/${tableName}-h2.sql"
     "add.vue.vm": "${frontPath}/${frontViewPath}/Add${ClassName}.vue"
-    "index.vue.vm": "${frontPath}/${frontViewPath}/index.vue"
+    "index.vue.vm": "${frontPath}/${frontViewPath}/${className}/index.vue"
     "index-tree.vue.vm": "${frontPath}/${frontViewPath}/index.vue"
     "sub-domain.java.vm": "${frontPath}/${frontViewPath}/Sub${ClassName}.vue"
+  templates:
+    - vm/js/api.js.vm
+    - vm/java/controller.java.vm
+    - vm/java/service.java.vm
+    - vm/java/mapper.java.vm
+    - vm/java/convert.java.vm
+    - vm/java/query.java.vm
+    - vm/java/dto.java.vm
+    - vm/java/vo.java.vm
+    - vm/java/domain.java.vm
+    - vm/xml/mapper.xml.vm
+  #    - vm/sql/sql.vm
+  testTemplates:
+  #    - vm/sql/h2.sql.vm
+  crudTemplates:
+    #    - vm/vue/add.vue.vm
+    - vm/vue/index.vue.vm
+  treeTemplates:
+  #    - vm/vue/index-tree.vue.vm
+  subTemplates:
+  #    - vm/vue/index.vue.vm
+  #    - vm/java/sub-domain.java.vm
+  type2component:
+    "String": "a-input("
+    "LocalDate": "a-date-picker("
+    "LocalDateTime": "a-date-picker(format=\"YYYY-MM-DD HH:mm\""

@@ -1,11 +1,10 @@
-package ${packageName}.convert;
+package ${fullPackage};
 
 import org.mapstruct.Mapper;
-import ${packageName}.model.entity.${ClassName};
-import ${packageName}.pojo.dto.${ClassName}DTO;
-#if($table.sub)
-import ${packageName}.convert.${subClassName}Convert;
-#end
+import ${_fullClass.domain};
+import ${_fullClass.dto};
+import ${_fullClass.vo};
+import java.util.List;
 /**
  * ${functionName}  DO <=> DTO <=> VO / BO / Query
  *
@@ -25,4 +24,6 @@ public interface ${ClassName}Convert  {
      * @return DO
      */
     ${ClassName} dto2do(${ClassName}DTO source);
+
+    List<${_className.vo}> dos2vos(List<${_className.domain}> list);
 }

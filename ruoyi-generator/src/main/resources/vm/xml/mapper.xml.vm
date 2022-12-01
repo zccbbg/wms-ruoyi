@@ -15,30 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime" column="update_time" />
 #end
     </resultMap>
-#if($table.sub)
-
-    <resultMap id="${ClassName}${subClassName}Result" type="${ClassName}" extends="${ClassName}Result">
-        <collection property="${subclassName}List" notNullColumn="sub_${subTable.pkColumn.columnName}" javaType="java.util.List" resultMap="${subClassName}Result" />
-    </resultMap>
-
-    <resultMap type="${subClassName}" id="${subClassName}Result">
-#foreach ($column in $subTable.columns)
-        <result property="${column.javaField}"    column="sub_${column.columnName}"    />
-#end
-#if(${subTable.audit} == 1)
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time" />
-#end
-    </resultMap>
-#end
 
     <sql id="select${ClassName}Vo">
-        select#foreach($column in $columns) $column.columnName#if($velocityCount != $columns.size()),#end#end #if(${table.audit} == 1), create_by, create_time, update_by, update_time#end from ${tableName}
+        select#foreach($column in $columns) $column.columnName#if($velocityCount != $columns.size()),#end#end #if(${table.audit} == 1) #end from ${tableName}
     </sql>
 
-    <select id="selectList" parameterType="${ClassName}" resultMap="${ClassName}Result">
+    <select id="selectByEntity" parameterType="${ClassName}" resultMap="${ClassName}Result">
         <include refid="select${ClassName}Vo"/>
         <where>  
 #foreach($column in $columns)
@@ -69,132 +51,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 #end
         </where>
     </select>
-    
-    <select id="selectBy${pkColumn.capJavaField}" parameterType="${pkColumn.javaType}" resultMap="#if($table.sub)${subClassName}Result#else${ClassName}Result#end">
-#if($table.crud || $table.tree)
-        <include refid="select${ClassName}Vo"/>
-        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
-#elseif($table.sub)
-        select#foreach($column in $columns) a.$column.columnName#if($velocityCount != $columns.size()),#end#end,
-           #foreach($column in $subTable.columns) b.$column.columnName as sub_$column.columnName#if($velocityCount != $subTable.columns.size()),#end#end
 
-        from ${tableName} a
-        left join ${subTableName} b on b.${subTableFkName} = a.${pkColumn.columnName}
-        where a.${pkColumn.columnName} = #{${pkColumn.javaField}}
-#end
-    </select>
-        
-    <insert id="insert" parameterType="${ClassName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$pkColumn.javaField"#end>
-        insert into ${tableName}
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-#foreach($column in $columns)
-            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">$column.columnName,</if>
-#end
-#if(${table.audit} == 1)
-            <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="updateTime != null">update_time,</if>
-#end
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-#foreach($column in $columns)
-            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">#{$column.javaField},</if>
-#end
-#if(${table.audit} == 1)
-            <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-#end
-         </trim>
-    </insert>
-
-    <update id="update" parameterType="${ClassName}">
-        update ${tableName}
-        <trim prefix="SET" suffixOverrides=",">
-#foreach($column in $columns)
-#if($column.columnName != $pkColumn.columnName)
-            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">$column.columnName = #{$column.javaField},</if>
-#end
-#end
-#if(${table.audit} == 1)
-            <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-#end
-        </trim>
-        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    <update id="updateDelFlagByIds">
+        update ${tableName} set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
     </update>
-
-    <delete id="deleteBy${pkColumn.capJavaField}" parameterType="${pkColumn.javaType}">
-        delete from ${tableName} where ${pkColumn.columnName} = #{${pkColumn.javaField}}
-    </delete>
-
-    <delete id="deleteBy${pkColumn.capJavaField}s" parameterType="String">
-        delete from ${tableName} where ${pkColumn.columnName} in 
-        <foreach item="${pkColumn.javaField}" collection="array" open="(" separator="," close=")">
-            #{${pkColumn.javaField}}
-        </foreach>
-    </delete>
-    <insert id="insertOrUpdate" parameterType="${ClassName}" useGeneratedKeys="true" keyProperty="id">
-        insert into ${tableName}
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="$pkColumn.javaField != null">
-                $pkColumn.columnName,
-            </if>
-            #foreach($column in $columns)#if($column.javaField != $pkColumn.javaField) ${column.columnName},#end#end
-
-            #if(${table.audit} == 1)create_by, create_time, update_by, update_time#end
-
-        </trim>
-        values
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-        <if test="$pkColumn.javaField != null">
-            #{$pkColumn.javaField, jdbcType=$pkColumn.CapColumnType},
-        </if>
-        #foreach($column in $columns)#if($column.javaField != $pkColumn.javaField)#{${column.javaField}, jdbcType=$column.CapColumnType},#end#end
-
-        #if(${table.audit} == 1)#{createBy}, #{createTime}, #{updateBy}, #{updateTime}#end
-
-        </trim>
-        on duplicate key update
-        <trim suffixOverrides=",">
-            <if test="$pkColumn.javaField != null">
-                ${pkColumn.javaField} = #{${pkColumn.javaField},jdbcType=${pkColumn.CapColumnType}},
-            </if>
-#foreach($column in $columns)
-#if($column.javaField != $pkColumn.javaField)
-            ${column.columnName} = #{${column.javaField}, jdbcType=$column.CapColumnType},
-#end
-#end
-#if(${table.audit} == 1)
-            create_by = #{createBy},
-            create_time = #{createTime},
-            update_by = #{updateBy},
-            update_time = #{updateTime},
-#end
-        </trim>
-    </insert>
-#if($table.sub)
-    
-    <delete id="delete${subClassName}By${subTableFkClassName}s" parameterType="String">
-        delete from ${subTableName} where ${subTableFkName} in 
-        <foreach item="${subTableFkclassName}" collection="array" open="(" separator="," close=")">
-            #{${subTableFkclassName}}
-        </foreach>
-    </delete>
-
-    <delete id="delete${subClassName}By${subTableFkClassName}" parameterType="${pkColumn.javaType}">
-        delete from ${subTableName} where ${subTableFkName} = #{${subTableFkclassName}}
-    </delete>
-
-    <insert id="batch${subClassName}">
-        insert into ${subTableName}(#foreach($column in $subTable.columns) $column.columnName#if($velocityCount != $subTable.columns.size()),#end#end #if(${table.audit} == 1), create_by, create_time, update_by, update_time#end) values
-		<foreach item="item" index="index" collection="list" separator=",">
-            (#foreach($column in $subTable.columns)#{item.$column.javaField}#if($velocityCount != $subTable.columns.size()), #end#end #if(${table.audit} == 1), #{createBy}, #{createTime}, #{updateBy}, #{updateTime}#end)
-        </foreach>
-    </insert>
-#end
 </mapper>

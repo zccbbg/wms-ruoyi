@@ -123,8 +123,10 @@ public class InventoryMovementService {
         .stream().collect(Collectors.toMap(InventoryMovementVO::getId, it -> it));
       res.forEach(it -> {
         InventoryMovementVO vo = id2count.get(it.getId());
-        it.setDetailCount(vo.getDetailCount());
-        it.setItemCount(vo.getItemCount());
+        if (vo != null) {
+          it.setDetailCount(vo.getDetailCount());
+          it.setItemCount(vo.getItemCount());
+        }
       });
     }
     return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());

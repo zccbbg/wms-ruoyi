@@ -41,7 +41,7 @@
         </el-select>
       </el-form-item>
 #elseif($column.htmlType == "datetime" || $column.htmlType == "date")
-#set($valueFormat = 'yyyy-MM-dd HH:mm:ss')
+#set($valueFormat = 'yyyy-MM-ddTHH:mm:ss')
 #if($column.htmlType == "date")
 #set($valueFormat = 'yyyy-MM-dd')
 #end
@@ -143,7 +143,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
 #set($count0 = 0)
 #foreach($column in $columns)
@@ -155,7 +155,7 @@
 #set($comment=$column.columnComment)
 #end
 #if($column.pk)
-      <el-table-column label="${comment}" align="center" prop="${javaField}" />
+## id字段不展示
 #elseif($column.list)
 #if($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time")
 #set($valueFormat = '')
@@ -199,7 +199,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"
@@ -214,7 +214,7 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
 #foreach($column in $columns)
 #set($field=$column.javaField)
-#if($column.insert && !$column.pk)
+#if($column.insert && !$column.pk && $field!="delFlag")
 #if(($column.usableColumn) || (!$column.superColumn))
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -290,7 +290,7 @@
           </el-radio-group>
         </el-form-item>
 #elseif($column.htmlType == "datetime" || $column.htmlType == "date" || $column.htmlType == "time")
-#set($valueFormat = 'yyyy-MM-dd HH:mm:ss')
+#set($valueFormat = 'yyyy-MM-ddTHH:mm:ss')
 #if($column.htmlType == "date")
 #set($valueFormat = 'yyyy-MM-dd')
 #elseif($column.htmlType == "time")
@@ -322,7 +322,7 @@
             <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete${subClassName}">删除</el-button>
           </el-col>
         </el-row>
-        <el-table :data="${subclassName}List" :row-class-name="row${subClassName}Index" @selection-change="handle${subClassName}SelectionChange" ref="${subclassName}">
+        <WmsTable :data="${subclassName}List" :row-class-name="row${subClassName}Index" @selection-change="handle${subClassName}SelectionChange" ref="${subclassName}">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
 #foreach($column in $subTable.columns)
@@ -342,7 +342,7 @@
           </el-table-column>
 #end
 #end
-        </el-table>
+        </WmsTable>
 #end
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -354,7 +354,7 @@
 </template>
 
 <script>
-import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName}, export${BusinessName} } from "@/api/${moduleName}/${businessName}";
+import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName}, export${BusinessName} } from "@/api/${moduleName}/${className}";
 
 export default {
   name: "${BusinessName}",
@@ -414,7 +414,7 @@ export default {
       // 表单校验
       rules: {
 #foreach ($column in $columns)
-#if($column.required)
+#if($column.required && $column.javaField!="delFlag")
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
 #set($comment=$column.columnComment.substring(0, $parentheseIndex))
@@ -464,9 +464,13 @@ export default {
       }
 #end
 #end
-      list${BusinessName}(this.queryParams).then(response => {
-        this.${businessName}List = response.rows;
-        this.total = response.total;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      list${BusinessName}(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.${businessName}List = content;
+        this.total = totalElements;
         this.loading = false;
       });
     },
@@ -479,6 +483,7 @@ export default {
     reset() {
       this.form = {
 #foreach ($column in $columns)
+#if($column.javaField != "delFlag")
 #if($column.htmlType == "radio")
         $column.javaField: #if($column.javaType == "Integer" || $column.javaType == "Long")0#else"0"#end#if($velocityCount != $columns.size()),#end
 
@@ -488,6 +493,7 @@ export default {
 #else
         $column.javaField: null#if($velocityCount != $columns.size()),#end
 
+#end
 #end
 #end
       };
@@ -529,7 +535,7 @@ export default {
       this.reset();
       const ${pkColumn.javaField} = row.${pkColumn.javaField} || this.ids
       get${BusinessName}(${pkColumn.javaField}).then(response => {
-        this.form = response.data;
+        this.form = response;
 #foreach ($column in $columns)
 #if($column.htmlType == "checkbox")
         this.form.$column.javaField = this.form.${column.javaField}.split(",");
@@ -620,7 +626,7 @@ export default {
         this.exportLoading = true;
         return export${BusinessName}(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }
