@@ -47,6 +47,24 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 ![仓库列表](https://oscimg.oschina.net/oscnet/up-a00eb79bee48e481249a12cb5e6c476aaa3.jpg)
 ![库存看板](https://oscimg.oschina.net/oscnet/up-78990915dfba902384ed4b09e3dc0f0fe05.jpg)
 
+## 本地安装
+### 基本环境
+1、JDK：8+
+2、Redis 3.0+
+3、Maven 3.0+
+4、MYSQL 5.7+
+5、Node v8+
+
+### 后台系统工程（JAVA端）
+1. 导入数据库，配置开发环境数据库信息及其redis信息，我设置了git ignore，请自行创建application-dev.yml文件，文件路径如下：
+![img.png](doc/img.png)
+![img.png](doc/img2.png)
+![img.png](doc/img3.png)
+2. 在父级pom.xml输入命令 mvn clean install 或者用idea工具操作
+![img.png](doc/img4.png)
+3. 启动程序，启动程序路径如下
+
+![img.png](doc/img5.png)
 ## 若依内置功能
 
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
