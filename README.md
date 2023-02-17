@@ -53,14 +53,13 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 5、Node v8+
 
 ### 后台系统工程（JAVA端）
-1. 导入数据库，配置开发环境数据库信息及其redis信息，我设置了git ignore，请自行创建application-dev.yml文件，文件路径如下：
+1. 导入数据库，配置开发环境数据库信息及其redis信息，我设置了git ignore，请自行创建application-dev.yml文件，文件路径如下：  
 ![img.png](doc/img.png)
 ![img.png](doc/img2.png)
 ![img.png](doc/img3.png)
-2. 在父级pom.xml输入命令 mvn clean install 或者用idea工具操作
+2. 在父级pom.xml输入命令 mvn clean install 或者用idea工具操作  
 ![img.png](doc/img4.png)
-3. 启动程序，启动程序路径如下
-
+3. 启动程序，启动程序路径如下  
 ![img.png](doc/img5.png)
 
 ## 关于我们
