@@ -1040,7 +1040,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user admin 密码和cyl一样
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$nxtQicXwj1oP/LdWdMzKMunO3idl32bp9BwHUZnn4FzSK4kLfuKwi', '0', '0', '153.37.195.162', '2022-11-07 02:39:09', 1, '2022-06-17 17:20:19.000', NULL, '2022-11-07 10:39:08.000', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$f/LxZ5IyZTuArQyKDhSzbOB17dDiGzV.BSmbPcVVU62I2ryPhP82m', '0', '0', '153.37.195.162', '2022-11-07 02:39:09', 1, '2022-06-17 17:20:19.000', NULL, '2022-11-07 10:39:08.000', '管理员');
 INSERT INTO `sys_user` VALUES (115, 100, 'cyl', 'cyl', '00', '', '', '0', '', '$2a$10$f/LxZ5IyZTuArQyKDhSzbOB17dDiGzV.BSmbPcVVU62I2ryPhP82m', '0', '0', '223.74.181.186', '2022-11-07 03:31:27', 1, '2022-11-04 17:06:20.000', NULL, '2022-11-07 11:31:27.000', NULL);
 
 -- ----------------------------
