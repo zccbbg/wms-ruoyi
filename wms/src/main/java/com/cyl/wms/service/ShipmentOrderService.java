@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
+import com.cyl.wms.convert.DeliveryConvert;
 import com.cyl.wms.convert.ShipmentOrderConvert;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
 import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
+import com.cyl.wms.pojo.query.DeliveryQuery;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
 import com.cyl.wms.pojo.vo.*;
@@ -56,6 +58,10 @@ public class ShipmentOrderService {
     @Autowired
     private ItemService itemService;
     @Autowired
+    private DeliveryConvert deliveryConvert;
+    @Autowired
+    private DeliveryService deliveryService;
+    @Autowired
     private InventoryHistoryService inventoryHistoryService;
     @Autowired
     private InventoryService inventoryService;
@@ -84,6 +90,11 @@ public class ShipmentOrderService {
             List<Item> list = itemService.selectList(query1, null);
             List<ItemVO> items = itemService.toVos(list);
             form.setItems(items);
+
+            DeliveryQuery deliveryQuery = new DeliveryQuery();
+            deliveryQuery.setShipmentOrderId(id);
+            List<Delivery> deliveries = deliveryService.selectList(deliveryQuery, null);
+            form.setDelivery(deliveryConvert.dos2vos(deliveries));
         }
         return form;
     }

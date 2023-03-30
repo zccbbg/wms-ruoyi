@@ -1,10 +1,7 @@
 package com.cyl.wms.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.domain.Warehouse;
@@ -114,8 +111,10 @@ public class RackService {
     }
 
     public List<Rack> selectByIdIn(Collection<Long> ids) {
+        if (ids.isEmpty())
+            return new ArrayList<>();
         QueryWrapper<Rack> qw = new QueryWrapper<>();
-        qw.in("id",ids);
+        qw.in("id", ids);
         return rackMapper.selectList(qw);
     }
 }
