@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.InventoryCheckMapper">
+    
+    <resultMap type="InventoryCheck" id="InventoryCheckResult">
+        <result property="id" column="id"/>
+        <result property="inventoryCheckNo" column="inventory_check_no"/>
+        <result property="inventoryCheckType" column="inventory_check_type"/>
+        <result property="inventoryCheckStatus" column="inventory_check_status"/>
+        <result property="inventoryCheckTotal" column="inventory_check_total"/>
+        <result property="checkStatus" column="check_status"/>
+        <result property="checkUserId" column="check_user_id"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="rackId" column="rack_id"/>
+        <result property="attachment" column="attachment"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectInventoryCheckVo">
+        select id, inventory_check_no, inventory_check_type, inventory_check_status, inventory_check_total, check_status, check_user_id, check_time, warehouse_id, area_id, rack_id, attachment, remark, del_flag, create_by, create_time, update_by, update_time   from wms_inventory_check
+    </sql>
+
+    <select id="selectByEntity" parameterType="InventoryCheck" resultMap="InventoryCheckResult">
+        <include refid="selectInventoryCheckVo"/>
+        <where>  
+            <if test="inventoryCheckNo != null  and inventoryCheckNo != ''"> and inventory_check_no = #{inventoryCheckNo}</if>
+            <if test="inventoryCheckType != null "> and inventory_check_type = #{inventoryCheckType}</if>
+            <if test="inventoryCheckStatus != null "> and inventory_check_status = #{inventoryCheckStatus}</if>
+            <if test="inventoryCheckTotal != null "> and inventory_check_total = #{inventoryCheckTotal}</if>
+            <if test="checkStatus != null "> and check_status = #{checkStatus}</if>
+            <if test="checkUserId != null "> and check_user_id = #{checkUserId}</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="areaId != null "> and area_id = #{areaId}</if>
+            <if test="rackId != null "> and rack_id = #{rackId}</if>
+            <if test="attachment != null  and attachment != ''"> and attachment = #{attachment}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_inventory_check set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>
