@@ -41,6 +41,10 @@ public class ReceiptOrderDetail extends BaseAudit {
     @Excel(name = "所属货架")
     private Long rackId;
 
+    @ApiModelProperty("金额")
+    @Excel(name = "金额")
+    private BigDecimal money;
+
     @ApiModelProperty("删除标识")
     private Integer delFlag;
 

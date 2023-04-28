@@ -31,6 +31,8 @@ public class ReceiptOrderDetailVO extends BaseAudit {
    /** 所属货架 */
     @Excel(name = "所属货架")
     private Long rackId;
+    @Excel(name = "金额")
+    private BigDecimal money;
    /** 备注 */
     @Excel(name = "备注")
     private String remark;
