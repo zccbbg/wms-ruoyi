@@ -36,4 +36,6 @@ public interface InventoryMapper extends BaseMapper<Inventory> {
     List<Inventory> selectAllByRackAndItemId(@Param("list") Collection<InventoryHistory> list);
 
     int batchInsert(@Param("list") Collection<Inventory> list);
+
+    List<Inventory> selectWarning();
 }

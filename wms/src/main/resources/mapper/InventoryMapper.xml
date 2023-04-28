@@ -90,6 +90,14 @@
         </foreach>
         and area_id is null and rack_id is null
     </select>
+    <select id="selectWarning" resultType="com.cyl.wms.domain.Inventory">
+        select a.*,b.* from wms_inventory a
+        left join wms_item b on a.item_id=b.id
+        where a.del_flag=0 and b.del_flag=0 and
+        <![CDATA[
+          a.quantity<b.quantity
+        ]]>
+    </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory
         (item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by, update_time, warehouse_id,

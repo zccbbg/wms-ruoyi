@@ -45,6 +45,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="expiryDate != null "> and expiry_date = #{expiryDate}</if>
         </where>
     </select>
+    <select id="selectExpiry" resultType="com.cyl.wms.domain.Item">
+        <include refid="selectItemVo"/>
+        <where>
+            del_flag=0 and
+            <![CDATA[
+              expiry_date<now()
+            ]]>
+        </where>
+    </select>
 
     <update id="updateDelFlagByIds">
         update wms_item set del_flag=1

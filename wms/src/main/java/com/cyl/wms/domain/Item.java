@@ -3,6 +3,7 @@ package com.cyl.wms.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
@@ -71,4 +72,10 @@ public class Item extends BaseAudit {
     @Excel(name = "备注")
     private String remark;
 
+    public long getItemTypeLong() {
+        return Long.parseLong(itemType);
+    }
+
+    @TableField(exist = false)
+    private String itemTypeName;
 }

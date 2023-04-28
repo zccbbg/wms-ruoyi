@@ -102,4 +102,13 @@ public class ItemController extends BaseController {
     public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {
         return ResponseEntity.ok(service.deleteByIds(ids));
     }
+
+    @ApiOperation("查询过期物料")
+    @PreAuthorize("@ss.hasPermi('wms:item:list')")
+    @PostMapping("/expiryList")
+    public ResponseEntity<Page<ItemVO>> list(Pageable page){
+        List<Item> items = service.queryExpiry(page);
+        List<ItemVO> list = service.toVos(items);
+        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)items).getTotal()));
+    }
 }

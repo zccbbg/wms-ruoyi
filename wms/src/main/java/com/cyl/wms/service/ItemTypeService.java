@@ -1,9 +1,6 @@
 package com.cyl.wms.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -28,6 +25,21 @@ import com.cyl.wms.pojo.query.ItemTypeQuery;
 public class ItemTypeService {
     @Autowired
     private ItemTypeMapper itemTypeMapper;
+
+    /**
+     * 查询物料类型表
+     *
+     * @param ids 物料类型表主键
+     * @return 物料类型表
+     */
+    public List<ItemType> selectByIdIn(Collection<Long> ids) {
+        if (ids.isEmpty()){
+            return Collections.emptyList();
+        }
+        QueryWrapper<ItemType> qw = new QueryWrapper<>();
+        qw.in("item_type_id",ids);
+        return itemTypeMapper.selectList(qw);
+    }
 
     /**
      * 查询物料类型表

@@ -4,6 +4,9 @@ import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
+
+import java.math.BigDecimal;
+
 /**
  * 入库单 数据视图对象
  * 
@@ -25,6 +28,8 @@ public class ReceiptOrderVO extends BaseAudit {
    /** 订单号 */
     @Excel(name = "订单号")
     private String orderNo;
+    @Excel(name = "应付款合计")
+    private BigDecimal payableAmount;
    /** 入库状态 */
     @Excel(name = "入库状态")
     private Integer receiptOrderStatus;

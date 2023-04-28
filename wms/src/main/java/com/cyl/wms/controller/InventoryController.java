@@ -49,6 +49,13 @@ public class InventoryController extends BaseController {
         return ResponseEntity.ok(service.queryPage(query, page));
     }
 
+    @ApiOperation("查询预警列表")
+    @PreAuthorize("@ss.hasPermi('wms:inventory:list')")
+    @PostMapping("/warnList")
+    public ResponseEntity<Page<InventoryVO>> list(Pageable page) {
+        return ResponseEntity.ok(service.queryWarning(page));
+    }
+
     @ApiOperation("导出库存列表")
     @PreAuthorize("@ss.hasPermi('wms:inventory:export')")
     @Log(title = "库存", businessType = BusinessType.EXPORT)

@@ -41,4 +41,5 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
    /** 备注 */
     @Excel(name = "备注")
     private String remark;
+    private BigDecimal saftyQuantity;
 }

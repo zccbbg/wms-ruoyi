@@ -27,6 +27,11 @@ public class ItemVO extends BaseAudit {
    /** 分类 */
     @Excel(name = "分类")
     private String itemType;
+    /**
+     * 所属类别
+     */
+    @Excel(name = "所属类别")
+    private String itemTypeName;
    /** 单位类别 */
     @Excel(name = "单位类别")
     private String unit;

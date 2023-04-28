@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+
 /**
  * 入库单对象 wms_receipt_order
  * 
@@ -35,6 +38,10 @@ public class ReceiptOrder extends BaseAudit {
     @ApiModelProperty("订单号")
     @Excel(name = "订单号")
     private String orderNo;
+
+    @ApiModelProperty("应付款合计")
+    @Excel(name = "应付款合计")
+    private BigDecimal payableAmount;
 
     @ApiModelProperty("入库状态")
     @Excel(name = "入库状态")

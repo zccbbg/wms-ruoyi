@@ -310,4 +310,28 @@ public class InventoryService {
             }
         });
     }
+
+    public Page<InventoryVO> queryWarning(Pageable page) {
+        if (page != null){
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort()));
+        }
+        List<Inventory> inventories = inventoryMapper.selectWarning();
+        List<InventoryVO> res = inventoryConvert.dos2vos(inventories);
+        injectAreaAndItemInfo(res);
+        List<Item> allItems = itemService.getAllSaftyItems();
+        Map<Long, BigDecimal> saftyItems = allItems.stream().collect(Collectors.toMap(Item::getId, item -> item.getQuantity()));
+        res.forEach(item -> {
+            BigDecimal saftyQuantify = saftyItems.get(item.getItemId());
+            item.setSaftyQuantity(saftyQuantify);
+        });
+        return new PageImpl<>(res, page, ((com.github.pagehelper.Page) inventories).getTotal());
+    }
+
+    public List<InventoryVO> queryAll() {
+        InventoryQuery query = new InventoryQuery();
+        List<Inventory> list = selectList(query,null);
+        List<InventoryVO> res = inventoryConvert.dos2vos(list);
+        injectAreaAndItemInfo(res);
+        return res;
+    }
 }

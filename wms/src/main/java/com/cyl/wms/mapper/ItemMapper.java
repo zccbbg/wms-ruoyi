@@ -25,4 +25,6 @@ public interface ItemMapper extends BaseMapper<Item> {
      * @return
     */
     int updateDelFlagByIds(@Param("ids") Long[] ids);
+
+    List<Item> selectExpiry();
 }

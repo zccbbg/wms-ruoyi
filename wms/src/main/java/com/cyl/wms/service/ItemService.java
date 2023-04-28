@@ -5,12 +5,14 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.ItemConvert;
 import com.cyl.wms.domain.Item;
+import com.cyl.wms.domain.ItemType;
 import com.cyl.wms.domain.Rack;
 import com.cyl.wms.mapper.ItemMapper;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.SortUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 物料Service业务层处理
@@ -31,6 +34,9 @@ public class ItemService {
     private ItemMapper itemMapper;
     @Autowired
     private ItemConvert convert;
+
+    @Autowired
+    private ItemTypeService itemTypeService;
 
     public List<ItemVO> toVos(List<Item> items) {
         List<ItemVO> list = convert.dos2vos(items);
@@ -143,7 +149,7 @@ public class ItemService {
         if (expiryDate != null) {
             qw.eq("expiry_date", expiryDate);
         }
-        return itemMapper.selectList(qw);
+        return getItemList(qw);
     }
 
     /**
@@ -193,5 +199,49 @@ public class ItemService {
         QueryWrapper<Item> qw = new QueryWrapper<>();
         qw.in("id", ids);
         return itemMapper.selectList(qw);
+    }
+
+    public List<Item> getAllSaftyItems(){
+        QueryWrapper<Item> qw = new QueryWrapper<>();
+        qw.eq("del_flag", 0);
+        qw.isNotNull("quantity");
+        return this.getItemList(qw);
+    }
+    private List<Item> getItemList(QueryWrapper<Item> qw) {
+        List<Item> items = itemMapper.selectList(qw);
+        injectTypeName(items);
+        return items;
+    }
+
+    /**
+     * 注入物料类别名称
+     *
+     * @param res 物料
+     */
+    public void injectTypeName(List<Item> res) {
+        if (CollUtil.isEmpty(res)) {
+            return;
+        }
+        Set<Long> types = res.stream().map(Item::getItemTypeLong).collect(Collectors.toSet());
+        Map<Long, ItemType> itemTypes = itemTypeService.selectByIdIn(types).stream().collect(Collectors.toMap(ItemType::getItemTypeId, it -> it));
+        res.forEach(it -> {
+            if (it.getItemName() != null && itemTypes.containsKey(it.getItemTypeLong())) {
+                it.setItemTypeName(itemTypes.get(it.getItemTypeLong()).getTypeName());
+            }
+        });
+    }
+
+    /**
+     * 查询过期物料
+     * @param page 分页条件
+     * @return 结果
+     */
+    public List<Item> queryExpiry(Pageable page) {
+        if (page != null){
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort()));
+        }
+        List<Item> items = itemMapper.selectExpiry();
+        injectTypeName(items);
+        return items;
     }
 }
