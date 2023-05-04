@@ -23,6 +23,7 @@ import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,8 @@ public class ShipmentOrderService {
     private InventoryHistoryService inventoryHistoryService;
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private CustomerTransactionService customerTransactionService;
 
     /**
      * 查询出库单
@@ -198,6 +201,8 @@ public class ShipmentOrderService {
             order.setCreateTime(LocalDateTime.now());
             res = shipmentOrderMapper.insert(order);
             saveDetails(order.getId(), order.getDetails());
+            //保存订单金额到客户流水表
+            saveOrUpdatePayAmount(order);
             return res;
         }
         // 2. 编辑
@@ -259,6 +264,9 @@ public class ShipmentOrderService {
         shipmentOrderDetailMapper.delete(qw);
         saveDetails(order.getId(), order.getDetails());
 
+        //保存订单金额到客户流水表
+        saveOrUpdatePayAmount(order);
+
         // 2.2 更新出库单
         //判断出库单的整体状态
         Set<Integer> statusList = order.getDetails().stream().map(it -> it.getShipmentOrderStatus()).collect(Collectors.toSet());
@@ -270,6 +278,23 @@ public class ShipmentOrderService {
         res = shipmentOrderMapper.updateById(order);
         return res;
 
+    }
+
+    /**
+     * 保存订单金额到用户流水表
+     *
+     * @param shipmentOrder 出库单
+     */
+    private void saveOrUpdatePayAmount(ShipmentOrder shipmentOrder) {
+        //todo 更换用户
+        //todo 删除出库单
+        CustomerTransaction customerTransaction = new CustomerTransaction();
+        customerTransaction.setCustomerId(String.valueOf(shipmentOrder.getCustomerId()));
+        customerTransaction.setTransactionType(CustomerTransaction.SHIPMENT);
+        customerTransaction.setTransactionAmount(shipmentOrder.getReceivableAmount());
+        customerTransaction.setShipmentOrderId(shipmentOrder.getId().intValue());
+        customerTransaction.setTransactionCode("TS-" + DateUtils.randomId());
+        customerTransactionService.insert(customerTransaction);
     }
 
     private void saveDetails(Long orderId, List<ShipmentOrderDetailVO> details) {
