@@ -1,5 +1,6 @@
 package com.cyl.wms.domain;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
@@ -36,6 +37,10 @@ public class ShipmentOrder extends BaseAudit {
     @ApiModelProperty("客户")
     @Excel(name = "客户")
     private Long customerId;
+
+    @ApiModelProperty("应收款合计")
+    @Excel(name = "应收款合计")
+    private BigDecimal receivableAmount;
 
     @ApiModelProperty("出库单状态")
     @Excel(name = "出库单状态")

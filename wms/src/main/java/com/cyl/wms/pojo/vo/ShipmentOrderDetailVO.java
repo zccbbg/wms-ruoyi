@@ -57,6 +57,9 @@ public class ShipmentOrderDetailVO extends BaseAudit {
   @Excel(name = "所属仓库")
   private Long warehouseId;
 
+  @Excel(name = "金额")
+  private BigDecimal money;
+
   @ApiModelProperty("删除标识")
   private Integer delFlag;
   /**

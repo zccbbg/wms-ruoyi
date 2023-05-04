@@ -93,6 +93,7 @@
                  plan_quantity,
                  real_quantity,
                  rack_id,
+                 money,
                  del_flag,
                  remark,
                  create_by,
@@ -107,7 +108,7 @@
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 #{item.shipmentOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT},
                 #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL},
-                #{item.rackId, jdbcType=BIGINT}, #{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR},
+                #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL}, #{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR},
                 #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT},
                 #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT},
                 #{item.areaId, jdbcType=BIGINT}, #{item.shipmentOrderStatus, jdbcType=TINYINT},
