@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.wms.mapper.SupplierTransactionMapper">
+    
+    <resultMap type="SupplierTransaction" id="SupplierTransactionResult">
+        <result property="id" column="id"/>
+        <result property="transactionCode" column="transaction_code"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="transactionType" column="transaction_type"/>
+        <result property="transactionAmount" column="transaction_amount"/>
+        <result property="previousBalance" column="previous_balance"/>
+        <result property="currentBalance" column="current_balance"/>
+        <result property="receiptOrderId" column="receipt_order_id"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectSupplierTransactionVo">
+        select id, transaction_code, supplier_id, transaction_type, transaction_amount, previous_balance, current_balance, receipt_order_id, remark, del_flag, create_time, update_time  from wms_supplier_transaction
+    </sql>
+
+    <select id="selectByEntity" parameterType="SupplierTransaction" resultMap="SupplierTransactionResult">
+        <include refid="selectSupplierTransactionVo"/>
+        <where>  
+            <if test="transactionCode != null  and transactionCode != ''"> and transaction_code = #{transactionCode}</if>
+            <if test="supplierId != null  and supplierId != ''"> and supplier_id = #{supplierId}</if>
+            <if test="transactionType != null  and transactionType != ''"> and transaction_type = #{transactionType}</if>
+            <if test="transactionAmount != null "> and transaction_amount = #{transactionAmount}</if>
+            <if test="previousBalance != null "> and previous_balance = #{previousBalance}</if>
+            <if test="currentBalance != null "> and current_balance = #{currentBalance}</if>
+            <if test="receiptOrderId != null "> and receipt_order_id = #{receiptOrderId}</if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="SupplierTransactionResult">
+        <include refid="selectSupplierTransactionVo"/>
+        <where>
+            <if test="supplierId != null and supplierId != ''">
+                supplier_id=#{supplierId}
+            </if>
+            <if test="transactionCode != null and transactionCode != ''">
+                and transaction_code=#{transactionCode}
+            </if>
+            <if test="transactionType != null and transactionType != ''">
+                and transaction_type=#{transactionType}
+            </if>
+            <if test="startTime != null and endTime != null  ">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update wms_supplier_transaction set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+
+
+</mapper>
