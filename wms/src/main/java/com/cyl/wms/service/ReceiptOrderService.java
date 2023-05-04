@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.constant.ReceiptOrderConstant;
 import com.cyl.wms.convert.ReceiptOrderConvert;
 import com.cyl.wms.convert.ReceiptOrderDetailConvert;
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.domain.Item;
-import com.cyl.wms.domain.ReceiptOrder;
-import com.cyl.wms.domain.ReceiptOrderDetail;
+import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.ReceiptOrderDetailMapper;
 import com.cyl.wms.mapper.ReceiptOrderMapper;
 import com.cyl.wms.pojo.query.ItemQuery;
@@ -19,6 +16,7 @@ import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderVO;
 import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +59,9 @@ public class ReceiptOrderService {
 
     @Autowired
     private InventoryService inventoryService;
+
+    @Autowired
+    private SupplierTransactionService supplierTransactionService;
 
     /**
      * 查询入库单
@@ -157,6 +158,8 @@ public class ReceiptOrderService {
             receiptOrder.setCreateTime(LocalDateTime.now());
             res = receiptOrderMapper.insert(receiptOrder);
             saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
+            //保存订单金额到供应商流水表
+            saveOrUpdatePayAmount(receiptOrder);
             return res;
         }
         // 2. 编辑
@@ -212,9 +215,30 @@ public class ReceiptOrderService {
         receiptOrderDetailMapper.delete(qw);
         saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
 
+        //保存订单金额到供应商流水表
+        saveOrUpdatePayAmount(receiptOrder);
+
         // 2.2 更新入库单
         res = receiptOrderMapper.updateById(receiptOrder);
         return res;
+    }
+
+    /**
+     * 保存订单金额到供应商流水表
+     *
+     * @param receiptOrder 入库单
+     */
+    private void saveOrUpdatePayAmount(ReceiptOrder receiptOrder) {
+        //todo 更换供应商
+        //todo 删除入库单
+        SupplierTransaction supplierTransaction = new SupplierTransaction();
+        supplierTransaction.setSupplierId(String.valueOf(receiptOrder.getSupplierId()));
+        supplierTransaction.setTransactionType(SupplierTransaction.RECEIPT);
+        supplierTransaction.setTransactionAmount(receiptOrder.getPayableAmount());
+        supplierTransaction.setTransactionAmount(receiptOrder.getPayableAmount());
+        supplierTransaction.setReceiptOrderId(receiptOrder.getId().intValue());
+        supplierTransaction.setTransactionCode("TS-"+ DateUtils.randomId());
+        supplierTransactionService.insert(supplierTransaction);
     }
 
     private void saveDetails(Long orderId, List<ReceiptOrderDetailVO> details) {

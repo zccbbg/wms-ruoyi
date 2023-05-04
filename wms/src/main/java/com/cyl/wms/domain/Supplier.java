@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+
 /**
  * 供应商对象 wms_supplier
  * 
@@ -27,6 +30,18 @@ public class Supplier extends BaseAudit {
     @ApiModelProperty("供应商名称")
     @Excel(name = "供应商名称")
     private String supplierName;
+
+    @ApiModelProperty("开户行")
+    @Excel(name = "开户行")
+    private String bankName;
+
+    @ApiModelProperty("银行卡号")
+    @Excel(name = "银行卡号")
+    private String bankAccount;
+
+    @ApiModelProperty("应付款")
+    @Excel(name = "应付款")
+    private BigDecimal payableAmount;
 
     @ApiModelProperty("供应商地址")
     @Excel(name = "供应商地址")
