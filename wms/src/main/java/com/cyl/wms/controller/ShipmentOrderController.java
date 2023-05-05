@@ -97,6 +97,10 @@ public class ShipmentOrderController extends BaseController {
     @Log(title = "出库单", businessType = BusinessType.INSERT)
     @PostMapping("add-or-update")
     public ResponseEntity<Integer> addOrUpdate(@RequestBody ShipmentOrderFrom order) {
-        return ResponseEntity.ok(service.addOrUpdate(order));
+        if(order.getId()==null){
+            return ResponseEntity.ok(service.add(order));
+        }else {
+            return ResponseEntity.ok(service.update(order));
+        }
     }
 }

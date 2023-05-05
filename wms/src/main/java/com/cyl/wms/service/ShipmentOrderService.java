@@ -40,7 +40,6 @@ import org.springframework.util.CollectionUtils;
 /**
  * 出库单Service业务层处理
  *
- *
  * @author zcc
  */
 @Service
@@ -106,7 +105,7 @@ public class ShipmentOrderService {
      * 查询出库单列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 出库单
      */
     public Page<ShipmentOrderVO> selectList(ShipmentOrderQuery query, Pageable page) {
@@ -115,7 +114,7 @@ public class ShipmentOrderService {
         }
         QueryWrapper<ShipmentOrder> qw = new QueryWrapper<>();
         qw.orderByDesc("id");
-        qw.eq("del_flag",0);
+        qw.eq("del_flag", 0);
         String shipmentOrderNo = query.getShipmentOrderNo();
         if (!StringUtils.isEmpty(shipmentOrderNo)) {
             qw.eq("shipment_order_no", shipmentOrderNo);
@@ -144,7 +143,7 @@ public class ShipmentOrderService {
         if (!CollUtil.isEmpty(res)) {
             List<Long> ids = res.stream().map(ShipmentOrderVO::getId).collect(Collectors.toList());
             Map<Long, Integer> id2count = shipmentOrderDetailMapper.countByOrderId(ids)
-              .stream().collect(Collectors.toMap(ShipmentOrderVO::getId, ShipmentOrderVO::getDetailCount));
+                    .stream().collect(Collectors.toMap(ShipmentOrderVO::getId, ShipmentOrderVO::getDetailCount));
             res.forEach(it -> it.setDetailCount(id2count.get(it.getId())));
         }
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
@@ -192,20 +191,25 @@ public class ShipmentOrderService {
         Long[] ids = {id};
         return shipmentOrderMapper.updateDelFlagByIds(ids);
     }
+
     @Transactional
-    public int addOrUpdate(ShipmentOrderFrom order) {
+    public int add(ShipmentOrderFrom order) {
         int res;
-        // 1. 新增
-        if (order.getId() == null) {
-            order.setDelFlag(0);
-            order.setCreateTime(LocalDateTime.now());
-            res = shipmentOrderMapper.insert(order);
-            saveDetails(order.getId(), order.getDetails());
+        order.setDelFlag(0);
+        order.setCreateTime(LocalDateTime.now());
+        res = shipmentOrderMapper.insert(order);
+        saveDetails(order.getId(), order.getDetails());
+        if (order.getReceivableAmount() != null && order.getCustomerId() != null) {
             //保存订单金额到客户流水表
             saveOrUpdatePayAmount(order);
-            return res;
         }
-        // 2. 编辑
+        return res;
+
+
+    }
+
+    public int update(ShipmentOrderFrom order) {
+        int res;
         QueryWrapper<ShipmentOrderDetail> qw = new QueryWrapper<>();
         qw.eq("shipment_order_id", order.getId());
 
@@ -256,28 +260,28 @@ public class ShipmentOrderService {
         });
         if (adds.size() > 0) {
             int add1 = inventoryHistoryService.batchInsert(adds);
-            adds.forEach(it->it.setQuantity(it.getQuantity().negate()));
+            adds.forEach(it -> it.setQuantity(it.getQuantity().negate()));
             int update1 = inventoryService.batchUpdate1(adds);
             log.info("inventoryHistory: {}, inventory: {}", add1, update1);
         }
         // 2.1 先删除details 再重新保存
         shipmentOrderDetailMapper.delete(qw);
         saveDetails(order.getId(), order.getDetails());
-
-        //保存订单金额到客户流水表
-        saveOrUpdatePayAmount(order);
+        if (order.getReceivableAmount() != null && order.getCustomerId() != null) {{
+            //保存订单金额到客户流水表
+            saveOrUpdatePayAmount(order);
+        }}
 
         // 2.2 更新出库单
         //判断出库单的整体状态
         Set<Integer> statusList = order.getDetails().stream().map(it -> it.getShipmentOrderStatus()).collect(Collectors.toSet());
         if (statusList.size() == 1) {
             order.setShipmentOrderStatus(statusList.iterator().next());
-        }else if (statusList.contains(ShipmentOrderConstant.PART_IN)) {
+        } else if (statusList.contains(ShipmentOrderConstant.PART_IN)) {
             order.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
         }
         res = shipmentOrderMapper.updateById(order);
         return res;
-
     }
 
     /**
