@@ -15,25 +15,24 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
    /** ID */
     private Long id;
    /** 物料ID */
-    @Excel(name = "物料ID")
     private Long itemId;
-    // 物料名称
-    private String itemName;
     // 物料编号
+    @Excel(name = "物料编码")
     private String itemNo;
-
+    // 物料名称
+    @Excel(name = "物料名称")
+    private String itemName;
    /** 货架id */
-    @Excel(name = "货架id")
     private Long rackId;
     // 货架 名称
     private String rackName;
-    @Excel(name = "仓库id")
     private Long warehouseId;
     // 仓库 名称
+    @Excel(name = "仓库")
     private String warehouseName;
-    @Excel(name = "库区id")
     private Long areaId;
     // 库区 名称
+    @Excel(name = "库区")
     private String areaName;
    /** 库存 */
     @Excel(name = "库存")

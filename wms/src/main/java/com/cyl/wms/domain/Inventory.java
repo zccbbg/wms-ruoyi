@@ -2,6 +2,7 @@ package com.cyl.wms.domain;
 
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.cyl.wms.pojo.vo.PlaceAndItem;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
@@ -49,5 +50,17 @@ public class Inventory extends BaseAudit implements PlaceAndItem {
 
     @ApiModelProperty("删除标识")
     private Integer delFlag;
+
+    @TableField(exist = false)
+    private String itemNo;
+
+    @TableField(exist = false)
+    private String itemName;
+
+    @TableField(exist = false)
+    private String warehouseName;
+
+    @TableField(exist = false)
+    private String areaName;
 
 }

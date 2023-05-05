@@ -22,17 +22,19 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
     /**
      * 操作id（出库、入库、库存移动表单id）
      */
-    @Excel(name = "操作id" , readConverterExp = "出库、入库、库存移动表单id" )
     private Long formId;
     /**
      * 操作类型
      */
-    @Excel(name = "操作类型", handler = DictDealHandler.class, args = {"wms_receipt_type", "wms_shipment_type", "wms_movement_type"})
     private Integer formType;
+    /**
+     * 操作类型名称
+     */
+    @Excel(name = "操作类型")
+    private String formTypeName;
     /**
      * 物料ID
      */
-    @Excel(name = "物料ID" )
     private Long itemId;
     @Excel(name = "物料名称" )
     private String itemName;
@@ -41,15 +43,11 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
     /**
      * 货架id
      */
-    @Excel(name = "货架id" )
     private Long rackId;
-    @Excel(name = "货架名称" )
     private String rackName;
-    @Excel(name = "仓库id" )
     private Long warehouseId;
     @Excel(name = "仓库名称" )
     private String warehouseName;
-    @Excel(name = "库区id" )
     private Long areaId;
 
     @Excel(name = "库区名称" )

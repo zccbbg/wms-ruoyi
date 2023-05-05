@@ -7,12 +7,15 @@ import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.InventoryMapper;
 import com.cyl.wms.pojo.query.InventoryQuery;
 import com.cyl.wms.pojo.vo.AreaAndItemInfo;
+import com.cyl.wms.pojo.vo.InventoryHistoryVO;
 import com.cyl.wms.pojo.vo.InventoryVO;
 import com.cyl.wms.pojo.vo.PlaceAndItem;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.CommonConstant;
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
+import com.ruoyi.system.service.ISysDictDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -45,6 +48,8 @@ public class InventoryService {
     private RackService rackService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ISysDictDataService sysDictDataService;
 
     /**
      * 查询库存
@@ -89,7 +94,7 @@ public class InventoryService {
         if (query.getQuantityEnd() != null) {
             qw.le("quantity" , query.getQuantityEnd());
         }
-        return inventoryMapper.selectList(qw);
+        return getInventoryList(qw);
     }
 
     /**
@@ -142,6 +147,14 @@ public class InventoryService {
     public int deleteById(Long id) {
         Long[] ids = {id};
         return inventoryMapper.updateDelFlagByIds(ids);
+    }
+
+    public List<Inventory> getInventoryList(QueryWrapper<Inventory> qw){
+        List<Inventory> items = inventoryMapper.selectList(qw);
+        injectItemNoAndItemName(items);
+        injectWarehouseName(items);
+        injectAreaName(items);
+        return items;
     }
 
     public boolean canOutStock(Long itemId, Long warehouseId, Long areaId, Long rackId, BigDecimal quantity) {
@@ -333,5 +346,72 @@ public class InventoryService {
         List<InventoryVO> res = inventoryConvert.dos2vos(list);
         injectAreaAndItemInfo(res);
         return res;
+    }
+
+    /**
+     * 注入物料编码和名称
+     *
+     * @param res 物料
+     */
+    public void injectItemNoAndItemName(List<Inventory> res) {
+        if (CollUtil.isEmpty(res)) {
+            return;
+        }
+        Set<Long> items = res.stream().map(Inventory::getItemId).collect(Collectors.toSet());
+        Map<Long, Item> itemMap = itemService.selectByIdIn(items).stream().collect(Collectors.toMap(Item::getId, it -> it));
+        res.forEach(it -> {
+            if (it.getItemId() != null && itemMap.containsKey(it.getItemId())) {
+                it.setItemNo(itemMap.get(it.getItemId()).getItemNo());
+                it.setItemName(itemMap.get(it.getItemId()).getItemName());
+            }
+        });
+    }
+
+    /**
+     * 注入仓库名称
+     * @param res 物料
+     */
+    public void injectWarehouseName(List<Inventory> res){
+        if (CollUtil.isEmpty(res)){
+            return;
+        }
+        Set<Long> warehouses = res.stream().map(Inventory::getWarehouseId).collect(Collectors.toSet());
+        Map<Long, Warehouse> warehouseMap = warehouseService.selectByIdIn(warehouses).stream().collect(Collectors.toMap(Warehouse::getId, it -> it));
+        res.forEach(it -> {
+            if (it.getWarehouseId() != null && warehouseMap.containsKey(it.getWarehouseId())){
+                it.setWarehouseName(warehouseMap.get(it.getWarehouseId()).getWarehouseName());
+            }
+        });
+    }
+
+    /**
+     * 注入库区名称
+     * @param res 物料
+     */
+    public void injectAreaName(List<Inventory> res){
+        if (CollUtil.isEmpty(res)){
+            return;
+        }
+        Set<Long> areas = res.stream().map(Inventory::getAreaId).collect(Collectors.toSet());
+        Map<Long, Area> areaMap = areaService.selectByIdIn(areas).stream().collect(Collectors.toMap(Area::getId, it -> it));
+        res.forEach(it -> {
+            if (it.getAreaId() != null && areaMap.containsKey(it.getAreaId())){
+                it.setAreaName(areaMap.get(it.getAreaId()).getAreaName());
+            }
+        });
+    }
+
+    public void injectDictDataLabel(List<InventoryHistoryVO> res){
+        if (CollUtil.isEmpty(res)){
+            return;
+        }
+        Set<String> dictTypes = new HashSet<>();
+        dictTypes.add("wms_inventory_oper_type");
+        Map<String, SysDictData> sysDictDataMap = sysDictDataService.selectDictDataByTypes(dictTypes).stream().collect(Collectors.toMap(SysDictData::getDictValue, it -> it));
+        res.forEach(it -> {
+            if (it.getFormType() != null && sysDictDataMap.containsKey(String.valueOf(it.getFormType()))){
+                it.setFormTypeName(sysDictDataMap.get(String.valueOf(it.getFormType())).getDictLabel());
+            }
+        });
     }
 }

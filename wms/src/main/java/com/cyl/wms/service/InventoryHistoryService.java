@@ -53,6 +53,7 @@ public class InventoryHistoryService {
         List<InventoryHistory> list = queryInventoryHistories(query);
         List<InventoryHistoryVO> res = inventoryHistoryConvert.dos2vos(list);
         inventoryService.injectAreaAndItemInfo(res);
+        inventoryService.injectDictDataLabel(res);
         return res;
     }
 
