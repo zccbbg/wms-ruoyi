@@ -158,8 +158,10 @@ public class ReceiptOrderService {
             receiptOrder.setCreateTime(LocalDateTime.now());
             res = receiptOrderMapper.insert(receiptOrder);
             saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
-            //保存订单金额到供应商流水表
-            saveOrUpdatePayAmount(receiptOrder);
+            if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount()!=null){
+                //保存订单金额到供应商流水表
+                saveOrUpdatePayAmount(receiptOrder);
+            }
             return res;
         }
         // 2. 编辑
@@ -215,8 +217,10 @@ public class ReceiptOrderService {
         receiptOrderDetailMapper.delete(qw);
         saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
 
-        //保存订单金额到供应商流水表
-        saveOrUpdatePayAmount(receiptOrder);
+        if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount() !=null){
+            //保存订单金额到供应商流水表
+            saveOrUpdatePayAmount(receiptOrder);
+        }
 
         // 2.2 更新入库单
         res = receiptOrderMapper.updateById(receiptOrder);
@@ -234,7 +238,6 @@ public class ReceiptOrderService {
         SupplierTransaction supplierTransaction = new SupplierTransaction();
         supplierTransaction.setSupplierId(String.valueOf(receiptOrder.getSupplierId()));
         supplierTransaction.setTransactionType(SupplierTransaction.RECEIPT);
-        supplierTransaction.setTransactionAmount(receiptOrder.getPayableAmount());
         supplierTransaction.setTransactionAmount(receiptOrder.getPayableAmount());
         supplierTransaction.setReceiptOrderId(receiptOrder.getId().intValue());
         supplierTransaction.setTransactionCode("TS-"+ DateUtils.randomId());
