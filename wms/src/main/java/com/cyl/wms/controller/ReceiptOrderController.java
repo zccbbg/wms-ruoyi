@@ -72,7 +72,11 @@ public class ReceiptOrderController extends BaseController {
     @Log(title = "入库单", businessType = BusinessType.INSERT)
     @PostMapping("add-or-update")
     public ResponseEntity<Integer> addOrUpdate(@RequestBody ReceiptOrderForm receiptOrder) {
-        return ResponseEntity.ok(service.addOrUpdate(receiptOrder));
+        if(receiptOrder.getId() == null ){
+            return ResponseEntity.ok(service.add(receiptOrder));
+        }else {
+            return ResponseEntity.ok(service.update(receiptOrder));
+        }
     }
 
     @ApiOperation("修改入库单")

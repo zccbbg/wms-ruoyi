@@ -144,26 +144,36 @@ public class ReceiptOrderService {
     }
 
     /**
-     * 新增或更新入库单以及入库明细
+     * 新增入库单
      *
      * @param receiptOrder 入库单
      * @return 结果
      */
     @Transactional
-    public int addOrUpdate(ReceiptOrderForm receiptOrder) {
+    public int add(ReceiptOrderForm receiptOrder) {
         int res;
         // 1. 新增
-        if (receiptOrder.getId() == null) {
-            receiptOrder.setDelFlag(0);
-            receiptOrder.setCreateTime(LocalDateTime.now());
-            res = receiptOrderMapper.insert(receiptOrder);
-            saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
-            if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount()!=null){
-                //保存订单金额到供应商流水表
-                saveOrUpdatePayAmount(receiptOrder);
-            }
-            return res;
+        receiptOrder.setDelFlag(0);
+        receiptOrder.setCreateTime(LocalDateTime.now());
+        res = receiptOrderMapper.insert(receiptOrder);
+        saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
+        if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount()!=null){
+            //保存订单金额到供应商流水表
+            saveOrUpdatePayAmount(receiptOrder);
         }
+        return res;
+
+    }
+
+    /**
+     * 更新入库单
+     *
+     * @param receiptOrder 入库单
+     * @return 结果
+     */
+    @Transactional
+    public int update(ReceiptOrderForm receiptOrder){
+        int res;
         // 2. 编辑
         QueryWrapper<ReceiptOrderDetail> qw = new QueryWrapper<>();
         qw.eq("receipt_order_id", receiptOrder.getId());
