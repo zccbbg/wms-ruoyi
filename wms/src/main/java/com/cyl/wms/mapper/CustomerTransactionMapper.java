@@ -26,6 +26,4 @@ public interface CustomerTransactionMapper extends BaseMapper<CustomerTransactio
      * @return
     */
     int updateDelFlagByIds(@Param("ids") Long[] ids);
-
-    List<CustomerTransaction> selectList(CustomerTransactionQuery customerTransactionQuery);
 }

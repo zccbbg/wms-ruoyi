@@ -26,6 +26,4 @@ public interface SupplierTransactionMapper extends BaseMapper<SupplierTransactio
      * @return
     */
     int updateDelFlagByIds(@Param("ids") Long[] ids);
-
-    List<SupplierTransaction> selectList(SupplierTransactionQuery supplierTransactionQuery);
 }

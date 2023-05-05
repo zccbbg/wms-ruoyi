@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.domain.Customer;
+import com.cyl.wms.domain.SupplierTransaction;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +55,23 @@ public class CustomerTransactionService {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        return customerTransactionMapper.selectList(query);
+        LambdaQueryWrapper<CustomerTransaction> qw = new LambdaQueryWrapper<>();
+        if (!StringUtils.isEmpty(query.getCustomerId())){
+            qw.eq(CustomerTransaction::getCustomerId, query.getCustomerId());
+        }
+        if (!StringUtils.isEmpty(query.getTransactionCode())){
+            qw.eq(CustomerTransaction::getTransactionCode, query.getTransactionCode());
+        }
+        if (!StringUtils.isEmpty(query.getTransactionType())){
+            qw.eq(CustomerTransaction::getTransactionType, query.getTransactionType());
+        }
+        Optional.ofNullable(query.getStartTime()).ifPresent(
+                startTime -> qw.ge(CustomerTransaction::getCreateTime, query.getStartTime())
+        );
+        Optional.ofNullable(query.getEndTime()).ifPresent(
+                startTime -> qw.le(CustomerTransaction::getCreateTime, query.getEndTime())
+        );
+        return customerTransactionMapper.selectList(qw);
     }
 
     /**

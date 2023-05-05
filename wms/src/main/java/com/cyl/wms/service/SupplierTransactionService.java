@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -53,7 +54,23 @@ public class SupplierTransactionService {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        return supplierTransactionMapper.selectList(query);
+        LambdaQueryWrapper<SupplierTransaction> qw = new LambdaQueryWrapper<>();
+        if (!StringUtils.isEmpty(query.getSupplierId())){
+            qw.eq(SupplierTransaction::getSupplierId, query.getSupplierId());
+        }
+        if (!StringUtils.isEmpty(query.getTransactionCode())){
+            qw.eq(SupplierTransaction::getTransactionCode, query.getTransactionCode());
+        }
+        if (!StringUtils.isEmpty(query.getTransactionType())){
+            qw.eq(SupplierTransaction::getTransactionType, query.getTransactionType());
+        }
+        Optional.ofNullable(query.getStartTime()).ifPresent(
+                startTime -> qw.ge(SupplierTransaction::getCreateTime, query.getStartTime())
+        );
+        Optional.ofNullable(query.getEndTime()).ifPresent(
+                startTime -> qw.le(SupplierTransaction::getCreateTime, query.getEndTime())
+        );
+        return supplierTransactionMapper.selectList(qw);
     }
 
     /**

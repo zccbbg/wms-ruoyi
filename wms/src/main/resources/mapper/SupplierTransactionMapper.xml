@@ -36,23 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectList" resultMap="SupplierTransactionResult">
-        <include refid="selectSupplierTransactionVo"/>
-        <where>
-            <if test="supplierId != null and supplierId != ''">
-                supplier_id=#{supplierId}
-            </if>
-            <if test="transactionCode != null and transactionCode != ''">
-                and transaction_code=#{transactionCode}
-            </if>
-            <if test="transactionType != null and transactionType != ''">
-                and transaction_type=#{transactionType}
-            </if>
-            <if test="startTime != null and endTime != null  ">
-                and create_time between #{startTime} and #{endTime}
-            </if>
-        </where>
-    </select>
+
 
     <update id="updateDelFlagByIds">
         update wms_supplier_transaction set del_flag=1
