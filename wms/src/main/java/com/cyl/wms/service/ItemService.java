@@ -4,9 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.ItemConvert;
-import com.cyl.wms.domain.Item;
-import com.cyl.wms.domain.ItemType;
-import com.cyl.wms.domain.Rack;
+import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.ItemMapper;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
@@ -37,6 +35,10 @@ public class ItemService {
 
     @Autowired
     private ItemTypeService itemTypeService;
+    @Autowired
+    private WarehouseService warehouseService;
+    @Autowired
+    private AreaService areaService;
 
     public List<ItemVO> toVos(List<Item> items) {
         List<ItemVO> list = convert.dos2vos(items);
@@ -210,6 +212,8 @@ public class ItemService {
     private List<Item> getItemList(QueryWrapper<Item> qw) {
         List<Item> items = itemMapper.selectList(qw);
         injectTypeName(items);
+        injectWarehouseName(items);
+        injectAreaName(items);
         return items;
     }
 
@@ -227,6 +231,40 @@ public class ItemService {
         res.forEach(it -> {
             if (it.getItemName() != null && itemTypes.containsKey(it.getItemTypeLong())) {
                 it.setItemTypeName(itemTypes.get(it.getItemTypeLong()).getTypeName());
+            }
+        });
+    }
+
+    /**
+     * 注入仓库名称
+     * @param res 物料
+     */
+    public void injectWarehouseName(List<Item> res){
+        if (CollUtil.isEmpty(res)){
+            return;
+        }
+        Set<Long> warehouses = res.stream().map(Item::getWarehouseId).collect(Collectors.toSet());
+        Map<Long, Warehouse> warehouseMap = warehouseService.selectByIdIn(warehouses).stream().collect(Collectors.toMap(Warehouse::getId, it -> it));
+        res.forEach(it -> {
+            if (it.getWarehouseId() != null && warehouseMap.containsKey(it.getWarehouseId())){
+                it.setWarehouseName(warehouseMap.get(it.getWarehouseId()).getWarehouseName());
+            }
+        });
+    }
+
+    /**
+     * 注入库区名称
+     * @param res 物料
+     */
+    public void injectAreaName(List<Item> res){
+        if (CollUtil.isEmpty(res)){
+            return;
+        }
+        Set<Long> areas = res.stream().map(Item::getAreaId).collect(Collectors.toSet());
+        Map<Long, Area> areaMap = areaService.selectByIdIn(areas).stream().collect(Collectors.toMap(Area::getId, it -> it));
+        res.forEach(it -> {
+            if (it.getAreaId() != null && areaMap.containsKey(it.getAreaId())){
+                it.setAreaName(areaMap.get(it.getAreaId()).getAreaName());
             }
         });
     }

@@ -78,4 +78,10 @@ public class Item extends BaseAudit {
 
     @TableField(exist = false)
     private String itemTypeName;
+
+    @TableField(exist = false)
+    private String warehouseName;
+
+    @TableField(exist = false)
+    private String areaName;
 }

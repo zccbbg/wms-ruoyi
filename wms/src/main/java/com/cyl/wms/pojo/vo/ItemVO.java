@@ -25,7 +25,6 @@ public class ItemVO extends BaseAudit {
     @Excel(name = "名称")
     private String itemName;
    /** 分类 */
-    @Excel(name = "分类")
     private String itemType;
     /**
      * 所属类别
@@ -36,13 +35,16 @@ public class ItemVO extends BaseAudit {
     @Excel(name = "单位类别")
     private String unit;
    /** 所属货架 */
-    @Excel(name = "所属货架")
     private Long rackId;
    /** 所属库区 */
-    @Excel(name = "所属库区")
     private Long areaId;
-   /** 所属仓库 */
+    /** 所属仓库名称 */
     @Excel(name = "所属仓库")
+    private String warehouseName;
+    /** 所属库区名称 */
+    @Excel(name = "所属库区")
+    private String areaName;
+   /** 所属仓库 */
     private Long warehouseId;
    /** 安全库存 */
     @Excel(name = "安全库存")
