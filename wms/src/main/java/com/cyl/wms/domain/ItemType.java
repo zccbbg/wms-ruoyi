@@ -23,11 +23,9 @@ import java.util.List;
 @ApiModel(description = "物料类型表对象")
 @TableName("wms_item_type")
 public class ItemType extends BaseAudit {
-    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("物料类型id")
-    @TableField(value = "item_type_id")
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "item_type_id", type = IdType.AUTO)
     private Long itemTypeId;
 
     public Long getItemTypeId() {
