@@ -236,8 +236,6 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
-        <module>mybatis-plus-demo</module>
-        <module>mybatis-plus-api</module>
     </modules>
     <packaging>pom</packaging>
 
