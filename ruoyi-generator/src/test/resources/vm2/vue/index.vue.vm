@@ -18,7 +18,7 @@
 #if($column.htmlType == "input")
       <el-form-item label="${comment}" prop="${column.javaField}">
         <el-input
-          v-model="queryParams.${column.javaField}"
+          v-model.trim="queryParams.${column.javaField}"
           placeholder="请输入${comment}"
           clearable
           size="small"
@@ -225,7 +225,7 @@
 #set($dictType=$column.dictType)
 #if($column.htmlType == "input")
         <el-form-item label="${comment}" prop="${field}">
-          <el-input v-model="form.${field}" placeholder="请输入${comment}" />
+          <el-input v-model.trim="form.${field}" placeholder="请输入${comment}" />
         </el-form-item>
 #elseif($column.htmlType == "imageUpload")
         <el-form-item label="${comment}">
@@ -337,7 +337,7 @@
 #elseif($column.list && "" != $javaField)
           <el-table-column label="$comment" prop="${javaField}">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.$javaField" placeholder="请输入$comment" />
+              <el-input v-model.trim="scope.row.$javaField" placeholder="请输入$comment" />
             </template>
           </el-table-column>
 #end
