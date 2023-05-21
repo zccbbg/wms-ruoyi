@@ -51,6 +51,14 @@ public class DataScopeAspect
      */
     public static final String DATA_SCOPE = "dataScope";
 
+    /**
+     * 拦截带有@DataScope注解的方法
+     * 它接收JoinPoint和DataScope对象作为参数。拦截带有@DataScope注解的方法
+     * DataScope是一个注解类
+     * @param point
+     * @param controllerDataScope
+     * @throws Throwable
+     */
     @Before("@annotation(controllerDataScope)")
     public void doBefore(JoinPoint point, DataScope controllerDataScope) throws Throwable
     {
