@@ -184,24 +184,55 @@ public class GenTableServiceImpl implements IGenTableService {
         Map<String, String> dataMap = new LinkedHashMap<>();
         // 查询表信息
         GenTable table = genTableMapper.selectGenTableById(tableId);
-        // 设置主子表信息
-        setSubTable(table);
-        // 设置主键列信息
-        setPkColumn(table);
-        VelocityInitializer.initVelocity();
-
-        VelocityContext context = VelocityUtils.prepareContext(table);
-
-        // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
-        for (String template : templates) {
+        Result result = getResult(table);
+        for (String template : result.templates) {
+            if (template.endsWith(".java.vm")) {
+                result.context.put("fullPackage", getFullPackage(template));
+            }
             // 渲染模板
             StringWriter sw = new StringWriter();
             Template tpl = Velocity.getTemplate(template, Constants.UTF8);
-            tpl.merge(context, sw);
+            tpl.merge(result.context, sw);
             dataMap.put(template, sw.toString());
         }
         return dataMap;
+    }
+
+    private Result getResult(GenTable table) {
+        initNullValue(table);
+        // 设置主子表信息
+        setSubTable(table);
+        setTableFromOptions(table);
+        // 设置主键列信息
+        setPkColumn(table);
+
+        // 初始化 Class 信息
+        genContext.prop2path.put("ClassName", table.getClassName());
+        genContext.prop2path.put("className", StrUtil.lowerFirst(table.getClassName()));
+        genContext.prop2path.put("tableName", table.getTableName());
+
+        // 初始化模板
+        VelocityInitializer.initVelocity();
+
+        // 初始化模板变量
+        VelocityContext context = VelocityUtils.prepareContext(table);
+        context.put("env", genContext.genConfig.getEnv());
+        context.put("_fullClass", fillHolder(table, genContext.fullQualifiedClassHolder));
+        context.put("_className", fillHolder(table, genContext.className));
+        // 获取模板列表
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        Result result = new Result(context, templates);
+        return result;
+    }
+
+    private static class Result {
+        public final VelocityContext context;
+        public final List<String> templates;
+
+        public Result(VelocityContext context, List<String> templates) {
+            this.context = context;
+            this.templates = templates;
+        }
     }
 
     /**
@@ -228,37 +259,15 @@ public class GenTableServiceImpl implements IGenTableService {
     public void generatorCode(String tableName) {
         // 查询表信息
         GenTable table = genTableMapper.selectGenTableByName(tableName);
-        initNullValue(table);
-        // 设置主子表信息
-        setSubTable(table);
-        setTableFromOptions(table);
-        // 设置主键列信息
-        setPkColumn(table);
-
-        // 初始化 Class 信息
-        genContext.prop2path.put("ClassName", table.getClassName());
-        genContext.prop2path.put("className", StrUtil.lowerFirst(table.getClassName()));
-        genContext.prop2path.put("tableName", table.getTableName());
-
-        // 初始化模板
-        VelocityInitializer.initVelocity();
-
-        // 初始化模板变量
-        VelocityContext context = VelocityUtils.prepareContext(table);
-        context.put("env", genContext.genConfig.getEnv());
-        context.put("_fullClass", fillHolder(table, genContext.fullQualifiedClassHolder));
-        context.put("_className", fillHolder(table, genContext.className));
-
-        // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
-        for (String template : templates) {
+        Result result = getResult(table);
+        for (String template : result.templates) {
             if (template.endsWith(".java.vm")) {
-                context.put("fullPackage", getFullPackage(template));
+                result.context.put("fullPackage", getFullPackage(template));
             }
             // 渲染模板
             StringWriter sw = new StringWriter();
             Template tpl = Velocity.getTemplate(template, Constants.UTF8);
-            tpl.merge(context, sw);
+            tpl.merge(result.context, sw);
             String path = null;
             try {
                 path = generatePath(template, table);
@@ -389,22 +398,15 @@ public class GenTableServiceImpl implements IGenTableService {
     private void generatorCode(String tableName, ZipOutputStream zip) {
         // 查询表信息
         GenTable table = genTableMapper.selectGenTableByName(tableName);
-        // 设置主子表信息
-        setSubTable(table);
-        // 设置主键列信息
-        setPkColumn(table);
-
-        VelocityInitializer.initVelocity();
-
-        VelocityContext context = VelocityUtils.prepareContext(table);
-
-        // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
-        for (String template : templates) {
+        Result result = getResult(table);
+        for (String template : result.templates) {
+            if (template.endsWith(".java.vm")) {
+                result.context.put("fullPackage", getFullPackage(template));
+            }
             // 渲染模板
             StringWriter sw = new StringWriter();
             Template tpl = Velocity.getTemplate(template, Constants.UTF8);
-            tpl.merge(context, sw);
+            tpl.merge(result.context, sw);
             try {
                 // 添加到zip
                 zip.putNextEntry(new ZipEntry(VelocityUtils.getFileName(template, table)));

@@ -38,7 +38,7 @@ public class ${ClassName}Service {
      * @return ${functionName}
      */
     public ${ClassName} selectBy${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
-        return ${className}Mapper.selectBy${pkColumn.capJavaField}(${pkColumn.javaField});
+        return ${className}Mapper.selectById(${pkColumn.javaField});
     }
 
     /**
