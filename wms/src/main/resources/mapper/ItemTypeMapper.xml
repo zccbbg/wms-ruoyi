@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyl.wms.mapper.ItemTypeMapper">
-    
+
     <resultMap type="ItemType" id="ItemTypeResult">
         <result property="itemTypeId" column="item_type_id"/>
         <result property="parentId" column="parent_id"/>
@@ -19,28 +19,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time" />
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectItemTypeVo">
-        select item_type_id, parent_id, ancestors, type_name, order_num, status, del_flag, create_by, create_time, update_by, update_time   from wms_item_type
+        select item_type_id,
+               parent_id,
+               ancestors,
+               type_name,
+               order_num,
+               status,
+               del_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from wms_item_type
     </sql>
 
     <select id="selectByEntity" parameterType="ItemType" resultMap="ItemTypeResult">
         <include refid="selectItemTypeVo"/>
-        <where>  
-            <if test="parentId != null "> and parent_id = #{parentId}</if>
-            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
-            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
-            <if test="orderNum != null "> and order_num = #{orderNum}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+        <where>
+            <if test="parentId != null ">and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''">and ancestors = #{ancestors}</if>
+            <if test="typeName != null  and typeName != ''">and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="orderNum != null ">and order_num = #{orderNum}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
         </where>
     </select>
 
     <update id="updateDelFlagByIds">
         update wms_item_type set del_flag=1
         <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+            item_type_id in
+            <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
         </where>
     </update>
 </mapper>
