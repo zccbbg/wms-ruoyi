@@ -21,7 +21,9 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 - 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
 
 ## 若依技术专栏
-https://blog.csdn.net/qq_27575627/category_12005108.html
+后端技术：https://blog.csdn.net/qq_27575627/category_12331868.html
+前端技术：https://blog.csdn.net/qq_27575627/category_12331867.html
+运维：https://blog.csdn.net/qq_27575627/category_12332546.html
 
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
