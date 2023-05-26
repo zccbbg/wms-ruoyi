@@ -1,5 +1,6 @@
 package com.ruoyi.generator.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.GenConstants;
 import com.ruoyi.common.utils.DateUtils;
@@ -163,7 +164,7 @@ public class VelocityUtils {
         // 大写类名
         String className = genTable.getClassName();
         // 业务名称
-        String businessName = genTable.getBusinessName();
+        String businessName = StrUtil.lowerFirst(genTable.getBusinessName());
 
         String javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
         String mybatisPath = MYBATIS_PATH + "/" + moduleName;

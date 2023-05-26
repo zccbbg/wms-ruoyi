@@ -200,7 +200,7 @@
         </template>
       </el-table-column>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -337,7 +337,7 @@
 #elseif($column.list && "" != $javaField)
           <el-table-column label="$comment" prop="${javaField}">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.$javaField" placeholder="请输入$comment" />
+              <el-input v-model.trim="scope.row.$javaField" placeholder="请输入$comment" />
             </template>
           </el-table-column>
 #end

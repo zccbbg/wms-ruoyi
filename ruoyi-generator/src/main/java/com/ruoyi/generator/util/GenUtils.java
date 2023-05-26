@@ -191,7 +191,13 @@ public class GenUtils {
      * @return 业务名
      */
     public static String getBusinessName(String tableName) {
-        return StrUtil.toCamelCase(tableName);
+        boolean autoRemovePre = genConfig.isAutoRemovePre();
+        String tablePrefix = genConfig.getTablePrefix();
+        if (autoRemovePre && StringUtils.isNotEmpty(tablePrefix)) {
+            String[] searchList = StringUtils.split(tablePrefix, ",");
+            tableName = replaceFirst(tableName, searchList);
+        }
+        return StringUtils.convertToCamelCase(tableName);
     }
 
     /**
