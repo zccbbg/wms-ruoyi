@@ -27,6 +27,7 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 
 ## B站视频介绍
 [https://www.bilibili.com/list/2047843623](https://www.bilibili.com/list/2047843623)
+https://www.bilibili.com/video/BV1ys4y1q7uG/?share_source=copy_web&vd_source=729feb0791f97165e158594c15a0e62d
 
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
