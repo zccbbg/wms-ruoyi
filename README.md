@@ -1,5 +1,5 @@
 ## 视频介绍
-<iframe src="//player.bilibili.com/player.html?aid=996527481&bvid=BV1ys4y1q7uG&cid=1143954930&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe src="//player.bilibili.com/player.html?aid=996527481&bvid=BV1ys4y1q7uG&cid=1143954930&page=1" width="670px" height="442px" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 
 ## 若依wms简介
 若依wms是一套基于若依的wms仓库管理系统，支持lodop和网页打印入库单、出库单。毫无保留给个人及企业免费使用。
