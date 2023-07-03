@@ -267,19 +267,30 @@ public class ShipmentOrderService {
         // 2.1 先删除details 再重新保存
         shipmentOrderDetailMapper.delete(qw);
         saveDetails(order.getId(), order.getDetails());
-        if (order.getReceivableAmount() != null && order.getCustomerId() != null) {{
+        if (order.getReceivableAmount() != null && order.getCustomerId() != null) {
             //保存订单金额到客户流水表
             saveOrUpdatePayAmount(order);
-        }}
+        }
 
         // 2.2 更新出库单
         //判断出库单的整体状态
-        Set<Integer> statusList = order.getDetails().stream().map(it -> it.getShipmentOrderStatus()).collect(Collectors.toSet());
+        Set<Integer> statusList = order.getDetails().stream().map(ShipmentOrderDetailVO::getShipmentOrderStatus).collect(Collectors.toSet());
         if (statusList.size() == 1) {
             order.setShipmentOrderStatus(statusList.iterator().next());
-        } else if (statusList.contains(ShipmentOrderConstant.PART_IN)) {
+        } else if (statusList.size() == 2) {
+            if (statusList.contains(ShipmentOrderConstant.DROP) && statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+                //此时单据状态只有报废和全部入库，则出库单状态为全部入库
+                order.setShipmentOrderStatus(ShipmentOrderConstant.ALL_IN);
+            } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+                //此时单据状态有两个，包含部分入库和全部入库都是部分入库
+                order.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
+            }
+
+        } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+            //此时单据状态有两个，包含部分入库和全部入库都是部分入库
             order.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
         }
+
         res = shipmentOrderMapper.updateById(order);
         return res;
     }
