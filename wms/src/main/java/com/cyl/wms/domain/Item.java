@@ -1,24 +1,24 @@
 package com.cyl.wms.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseAudit;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ruoyi.common.annotation.Excel;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.core.domain.BaseAudit;
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import org.springframework.format.annotation.DateTimeFormat;
-
 /**
  * 物料对象 wms_item
- * 
+ *
  * @author zcc
  */
-@ApiModel(description="物料对象")
+@ApiModel(description = "物料对象")
 @Data
 @TableName("wms_item")
 public class Item extends BaseAudit {
@@ -72,9 +72,6 @@ public class Item extends BaseAudit {
     @Excel(name = "备注")
     private String remark;
 
-    public long getItemTypeLong() {
-        return Long.parseLong(itemType);
-    }
 
     @TableField(exist = false)
     private String itemTypeName;
