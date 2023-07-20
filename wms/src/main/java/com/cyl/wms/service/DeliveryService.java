@@ -46,7 +46,7 @@ public class DeliveryService {
      */
     public List<Delivery> selectList(DeliveryQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), "create_time desc");
         }
         QueryWrapper<Delivery> qw = new QueryWrapper<>();
         qw.eq("del_flag",0);

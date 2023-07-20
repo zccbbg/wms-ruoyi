@@ -124,7 +124,7 @@ public class InventoryCheckService {
      */
     public List<InventoryCheck> selectList(InventoryCheckQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), "create_time desc");
         }
         QueryWrapper<InventoryCheck> qw = new QueryWrapper<>();
         qw.eq("del_flag",0);
