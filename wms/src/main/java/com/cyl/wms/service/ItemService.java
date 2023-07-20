@@ -4,7 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.ItemConvert;
-import com.cyl.wms.domain.*;
+import com.cyl.wms.domain.Area;
+import com.cyl.wms.domain.Item;
+import com.cyl.wms.domain.ItemType;
+import com.cyl.wms.domain.Warehouse;
 import com.cyl.wms.mapper.ItemMapper;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
@@ -226,11 +229,17 @@ public class ItemService {
         if (CollUtil.isEmpty(res)) {
             return;
         }
-        Set<Long> types = res.stream().map(Item::getItemTypeLong).collect(Collectors.toSet());
+        Set<Long> types = res.stream().map(Item::getItemType).filter(Objects::nonNull).map(Long::valueOf).collect(Collectors.toSet());
         Map<Long, ItemType> itemTypes = itemTypeService.selectByIdIn(types).stream().collect(Collectors.toMap(ItemType::getItemTypeId, it -> it));
         res.forEach(it -> {
-            if (it.getItemName() != null && itemTypes.containsKey(it.getItemTypeLong())) {
-                it.setItemTypeName(itemTypes.get(it.getItemTypeLong()).getTypeName());
+            Long typeId;
+            try {
+                typeId = Long.parseLong(it.getItemType());
+            } catch (NumberFormatException e) {
+                return;
+            }
+            if (it.getItemName() != null && itemTypes.containsKey(typeId)) {
+                it.setItemTypeName(itemTypes.get(typeId).getTypeName());
             }
         });
     }
