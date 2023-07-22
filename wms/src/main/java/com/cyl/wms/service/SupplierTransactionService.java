@@ -52,7 +52,7 @@ public class SupplierTransactionService {
      */
     public List<SupplierTransaction> selectList(SupplierTransactionQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), "create_time desc");
         }
         LambdaQueryWrapper<SupplierTransaction> qw = new LambdaQueryWrapper<>();
         if (!StringUtils.isEmpty(query.getSupplierId())){

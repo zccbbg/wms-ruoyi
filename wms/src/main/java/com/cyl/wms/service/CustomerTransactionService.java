@@ -53,7 +53,7 @@ public class CustomerTransactionService {
      */
     public List<CustomerTransaction> selectList(CustomerTransactionQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), "create_time desc");
         }
         LambdaQueryWrapper<CustomerTransaction> qw = new LambdaQueryWrapper<>();
         if (!StringUtils.isEmpty(query.getCustomerId())){
