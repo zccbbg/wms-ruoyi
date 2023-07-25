@@ -1,11 +1,5 @@
 package com.cyl.wms.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
@@ -14,11 +8,14 @@ import com.cyl.wms.convert.ShipmentOrderConvert;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
 import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
+import com.cyl.wms.mapper.ShipmentOrderMapper;
 import com.cyl.wms.pojo.query.DeliveryQuery;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
-import com.cyl.wms.pojo.vo.*;
-import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
+import com.cyl.wms.pojo.query.ShipmentOrderQuery;
+import com.cyl.wms.pojo.vo.ItemVO;
+import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
+import com.cyl.wms.pojo.vo.ShipmentOrderVO;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.HttpStatus;
@@ -26,16 +23,19 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.wms.mapper.ShipmentOrderMapper;
-import com.cyl.wms.pojo.query.ShipmentOrderQuery;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 出库单Service业务层处理
@@ -251,7 +251,7 @@ public class ShipmentOrderService {
             InventoryHistory h = detailConvert.do2InventoryHistory(it);
             h.setFormId(order.getId());
             h.setFormType(order.getShipmentOrderType());
-            h.setQuantity(added);
+            h.setQuantity(added.negate());
             h.setDelFlag(0);
             h.setId(null);
             h.setCreateTime(now);
@@ -260,7 +260,7 @@ public class ShipmentOrderService {
         });
         if (adds.size() > 0) {
             int add1 = inventoryHistoryService.batchInsert(adds);
-            adds.forEach(it -> it.setQuantity(it.getQuantity().negate()));
+//            adds.forEach(it -> it.setQuantity(it.getQuantity().negate()));
             int update1 = inventoryService.batchUpdate1(adds);
             log.info("inventoryHistory: {}, inventory: {}", add1, update1);
         }
