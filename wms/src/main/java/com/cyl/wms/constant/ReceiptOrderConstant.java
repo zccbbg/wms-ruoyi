@@ -20,5 +20,5 @@ public interface ReceiptOrderConstant {
     //退货
     int RETURN = 3;
     //盘盈入库
-    int CHECK = 4;
+    int CHECK_IN = 32;
 }

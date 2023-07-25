@@ -1,14 +1,5 @@
 package com.cyl.wms.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,11 +7,14 @@ import com.cyl.wms.constant.ReceiptOrderConstant;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.InventoryCheckConvert;
 import com.cyl.wms.convert.InventoryCheckDetailConvert;
+import com.cyl.wms.domain.InventoryCheck;
 import com.cyl.wms.domain.InventoryCheckDetail;
 import com.cyl.wms.domain.InventoryHistory;
 import com.cyl.wms.domain.Item;
 import com.cyl.wms.mapper.InventoryCheckDetailMapper;
+import com.cyl.wms.mapper.InventoryCheckMapper;
 import com.cyl.wms.pojo.query.InventoryCheckDetailQuery;
+import com.cyl.wms.pojo.query.InventoryCheckQuery;
 import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.vo.InventoryCheckDetailVO;
 import com.cyl.wms.pojo.vo.ItemVO;
@@ -28,14 +22,18 @@ import com.cyl.wms.pojo.vo.form.InventoryCheckFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.wms.mapper.InventoryCheckMapper;
-import com.cyl.wms.domain.InventoryCheck;
-import com.cyl.wms.pojo.query.InventoryCheckQuery;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 库存盘点单据Service业务层处理
@@ -284,10 +282,10 @@ public class InventoryCheckService {
                 return;
             } else if (subtract.compareTo(BigDecimal.ZERO) > 0) {
                 // 盘盈入库
-                h.setFormType(ReceiptOrderConstant.CHECK);
+                h.setFormType(ReceiptOrderConstant.CHECK_IN);
             } else {
                 // 盘亏出库
-                h.setFormType(ShipmentOrderConstant.CHECK);
+                h.setFormType(ShipmentOrderConstant.CHECK_OUT);
             }
 
             h.setQuantity(subtract);

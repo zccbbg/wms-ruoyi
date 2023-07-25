@@ -268,7 +268,8 @@ INSERT INTO `sys_dict_data` VALUES (135, 0, '采购入库', '33', 'wms_supplier_
 INSERT INTO `sys_dict_data` VALUES (136, 0, '结款', '11', 'wms_customer_transaction_type', NULL, 'default', 'N', '0', 1, '2023-05-04 16:59:16.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (137, 0, '应收', '22', 'wms_customer_transaction_type', NULL, 'default', 'N', '0', 1, '2023-05-04 16:59:28.000', 1, '2023-05-04 17:49:51.000', NULL);
 INSERT INTO `sys_dict_data` VALUES (138, 0, '销售出库', '33', 'wms_customer_transaction_type', NULL, 'default', 'N', '0', 1, '2023-05-04 17:00:43.000', 1, '2023-05-04 17:40:09.000', NULL);
-
+INSERT INTO `sys_dict_data` VALUES (139, 1, '盘盈入库', '32', 'wms_check_type', NULL, 'default', 'N', '0', 1, '2023-07-25 05:30:29.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (140, 0, '盘亏出库', '31', 'wms_check_type', NULL, 'default', 'N', '0', 1, '2023-07-25 05:30:52.000', NULL, NULL, NULL);
 -- ----------------------------
 -- Table structure for sys_dict_type
 -- ----------------------------
@@ -312,6 +313,7 @@ INSERT INTO `sys_dict_type` VALUES (108, '移库状态', 'wms_movement_status', 
 INSERT INTO `sys_dict_type` VALUES (109, '盘点单据状态', 'wms_check_status', '0', 1, '2023-04-26 11:17:35.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_type` VALUES (110, '供应商账号交易类型', 'wms_supplier_transaction_type', '0', 1, '2023-05-04 12:52:59.000', NULL, NULL, '1:结款；2:应付；3:入库单');
 INSERT INTO `sys_dict_type` VALUES (111, '客户账户交易类型', 'wms_customer_transaction_type', '0', 1, '2023-05-04 16:58:45.000', NULL, NULL, '1:结款；2:应付；3:出库单');
+INSERT INTO `sys_dict_type` VALUES (112, '盘点类型', 'wms_check_type', '0', 1, '2023-07-25 05:29:44.000', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for sys_job

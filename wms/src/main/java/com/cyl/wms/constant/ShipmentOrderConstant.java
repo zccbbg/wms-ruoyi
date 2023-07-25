@@ -18,5 +18,5 @@ public interface ShipmentOrderConstant {
   //部门领料出库
   int DEPT = 14;
   //盘亏出库
-  int CHECK = 15;
+  int CHECK_OUT = 31;
 }
