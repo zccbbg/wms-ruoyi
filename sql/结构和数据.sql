@@ -249,7 +249,6 @@ INSERT INTO `sys_dict_data` VALUES (116, 4, '入库完成', '3', 'wms_receipt_st
 INSERT INTO `sys_dict_data` VALUES (117, 3, '作废', '4', 'wms_receipt_status', NULL, 'default', 'N', '0', 1, '2022-09-21 11:59:23.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (118, 0, '销售出库', '11', 'wms_shipment_type', NULL, 'default', 'N', '0', 1, '2022-10-20 13:34:06.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (119, 1, '外协出库', '12', 'wms_shipment_type', NULL, 'default', 'N', '0', 1, '2022-10-20 13:34:26.000', NULL, NULL, NULL);
-INSERT INTO `sys_dict_data` VALUES (120, 2, '调拨出库', '13', 'wms_shipment_type', NULL, 'default', 'N', '0', 1, '2022-10-20 13:34:42.000', 1, '2022-11-01 17:50:58.000', NULL);
 INSERT INTO `sys_dict_data` VALUES (121, 0, '未发货', '11', 'wms_shipment_status', NULL, 'default', 'N', '0', 1, '2022-10-20 13:40:02.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (122, 1, '部分发货', '12', 'wms_shipment_status', NULL, 'default', 'N', '0', 1, '2022-10-20 13:40:26.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (123, 2, '已发货', '13', 'wms_shipment_status', NULL, 'default', 'N', '0', 1, '2022-10-20 13:40:44.000', NULL, NULL, NULL);
