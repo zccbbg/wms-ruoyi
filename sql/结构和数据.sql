@@ -197,7 +197,7 @@ CREATE TABLE `sys_dict_data`  (
   `update_time` datetime(3) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`dict_code`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 139 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 144 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict_data
@@ -269,6 +269,10 @@ INSERT INTO `sys_dict_data` VALUES (137, 0, '应收', '22', 'wms_customer_transa
 INSERT INTO `sys_dict_data` VALUES (138, 0, '销售出库', '33', 'wms_customer_transaction_type', NULL, 'default', 'N', '0', 1, '2023-05-04 17:00:43.000', 1, '2023-05-04 17:40:09.000', NULL);
 INSERT INTO `sys_dict_data` VALUES (139, 1, '盘盈入库', '32', 'wms_check_type', NULL, 'default', 'N', '0', 1, '2023-07-25 05:30:29.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (140, 0, '盘亏出库', '31', 'wms_check_type', NULL, 'default', 'N', '0', 1, '2023-07-25 05:30:52.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (141, 0, '仓库', '5', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:15:00.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (142, 1, '库区', '10', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:15:10.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (143, 2, '物料类型', '15', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:17:54.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (144, 3, '物料', '20', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:18:05.000', NULL, NULL, NULL);
 -- ----------------------------
 -- Table structure for sys_dict_type
 -- ----------------------------
@@ -285,7 +289,7 @@ CREATE TABLE `sys_dict_type`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`dict_id`) USING BTREE,
   UNIQUE INDEX `dict_type`(`dict_type`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 112 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 113 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict_type
@@ -313,6 +317,7 @@ INSERT INTO `sys_dict_type` VALUES (109, '盘点单据状态', 'wms_check_status
 INSERT INTO `sys_dict_type` VALUES (110, '供应商账号交易类型', 'wms_supplier_transaction_type', '0', 1, '2023-05-04 12:52:59.000', NULL, NULL, '1:结款；2:应付；3:入库单');
 INSERT INTO `sys_dict_type` VALUES (111, '客户账户交易类型', 'wms_customer_transaction_type', '0', 1, '2023-05-04 16:58:45.000', NULL, NULL, '1:结款；2:应付；3:出库单');
 INSERT INTO `sys_dict_type` VALUES (112, '盘点类型', 'wms_check_type', '0', 1, '2023-07-25 05:29:44.000', NULL, NULL, NULL);
+INSERT INTO `sys_dict_type` VALUES (113, '库存看板类型', 'wms_inventory_panel_type', '0', 1, '2023-07-28 07:12:50.000', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for sys_job
