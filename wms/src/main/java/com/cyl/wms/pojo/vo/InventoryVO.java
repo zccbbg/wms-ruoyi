@@ -1,10 +1,10 @@
 package com.cyl.wms.pojo.vo;
 
-import java.math.BigDecimal;
 import com.ruoyi.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
+
+import java.math.BigDecimal;
 /**
  * 库存 数据视图对象
  *
@@ -22,6 +22,9 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
     // 物料名称
     @Excel(name = "物料名称")
     private String itemName;
+    // 物料类型
+    @Excel(name = "物料类型")
+    private String itemTypeName;
    /** 货架id */
     private Long rackId;
     // 货架 名称

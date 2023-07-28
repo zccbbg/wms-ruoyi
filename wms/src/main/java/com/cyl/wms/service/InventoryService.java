@@ -1,6 +1,7 @@
 package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryConvert;
 import com.cyl.wms.domain.*;
@@ -17,7 +18,6 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.system.service.ISysDictDataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +49,8 @@ public class InventoryService {
     @Autowired
     private ItemService itemService;
     @Autowired
+    private ItemTypeService itemTypeService;
+    @Autowired
     private ISysDictDataService sysDictDataService;
 
     /**
@@ -70,31 +72,31 @@ public class InventoryService {
      */
     public List<Inventory> selectList(InventoryQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2stringOrDefault(page.getSort()));
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Inventory> qw = new QueryWrapper<>();
-        qw.eq("del_flag" , 0);
+        qw.eq("del_flag", 0);
         Long itemId = query.getItemId();
         if (itemId != null) {
-            qw.eq("item_id" , itemId);
+            qw.eq("item_id", itemId);
         }
         Long rackId = query.getRackId();
         if (rackId != null) {
-            qw.eq("rack_id" , rackId);
+            qw.eq("rack_id", rackId);
         }
         if (query.getWarehouseId() != null) {
-            qw.eq("warehouse_id" , query.getWarehouseId());
+            qw.eq("warehouse_id", query.getWarehouseId());
         }
         if (query.getAreaId() != null) {
-            qw.eq("area_id" , query.getAreaId());
+            qw.eq("area_id", query.getAreaId());
         }
         if (query.getQuantityStart() != null) {
-            qw.ge("quantity" , query.getQuantityStart());
+            qw.ge("quantity", query.getQuantityStart());
         }
         if (query.getQuantityEnd() != null) {
-            qw.le("quantity" , query.getQuantityEnd());
+            qw.le("quantity", query.getQuantityEnd());
         }
-        return getInventoryList(qw);
+        return getInventoryList(query.getPanelType(), qw);
     }
 
     /**
@@ -149,24 +151,51 @@ public class InventoryService {
         return inventoryMapper.updateDelFlagByIds(ids);
     }
 
-    public List<Inventory> getInventoryList(QueryWrapper<Inventory> qw){
-        List<Inventory> items = inventoryMapper.selectList(qw);
+    public List<Inventory> getInventoryList(Long panelType, QueryWrapper<Inventory> qw) {
+        List<Inventory> items;
+        if (Objects.equals(panelType, InventoryQuery.WAREHOUSE)) {
+            items = inventoryMapper.selectListGroupByWarehouseId(qw);
+        } else if (Objects.equals(panelType, InventoryQuery.AREA)) {
+            items = inventoryMapper.selectListGroupByAreaId(qw);
+        } else if (Objects.equals(panelType, InventoryQuery.ITEMTYPE)) {
+            items = inventoryMapper.selectListGroupByItemTypeId(qw);
+        } else {
+            items = inventoryMapper.selectList(qw);
+        }
+        if (CollUtil.isEmpty(items)) {
+            return items;
+        }
         injectItemNoAndItemName(items);
         injectWarehouseName(items);
         injectAreaName(items);
         return items;
     }
 
+    private void injectItemType(List<InventoryVO> items) {
+        if (CollUtil.isEmpty(items)) {
+            return;
+        }
+        Set<Long> itemIds = items.stream().map(InventoryVO::getItemId).collect(Collectors.toSet());
+        Map<Long,Long> itemIdAndTypeId = itemService.selectByIdIn(itemIds).stream().filter(item -> StrUtil.isNotBlank(item.getItemType())).collect(Collectors.toMap(Item::getId, it -> Long.parseLong(it.getItemType())));
+        Map<Long, ItemType> itemTypeMap = itemTypeService.selectByIdIn(itemIdAndTypeId.values()).stream().collect(Collectors.toMap(ItemType::getItemTypeId, it -> it));
+        items.forEach(it -> {
+            Long type_key = itemIdAndTypeId.get(it.getItemId());
+            if (it.getItemId() != null && itemTypeMap.containsKey(type_key)) {
+                it.setItemTypeName(itemTypeMap.get(type_key).getTypeName());
+            }
+        });
+    }
+
     public boolean canOutStock(Long itemId, Long warehouseId, Long areaId, Long rackId, BigDecimal quantity) {
         QueryWrapper<Inventory> qw = new QueryWrapper<>();
-        qw.eq("item_id" , itemId)
-                .eq("warehouse_id" , warehouseId)
-                .ge("quantity" , quantity);
+        qw.eq("item_id", itemId)
+                .eq("warehouse_id", warehouseId)
+                .ge("quantity", quantity);
         if (rackId != null) {
-            qw.eq("rack_id" , rackId);
+            qw.eq("rack_id", rackId);
         }
         if (areaId != null) {
-            qw.eq("area_id" , areaId);
+            qw.eq("area_id", areaId);
         }
         return inventoryMapper.selectCount(qw) > 0;
     }
@@ -271,6 +300,7 @@ public class InventoryService {
         List<Inventory> list = selectList(query, page);
         List<InventoryVO> res = inventoryConvert.dos2vos(list);
         injectAreaAndItemInfo(res);
+        injectItemType(res);
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
     }
 
@@ -325,7 +355,7 @@ public class InventoryService {
     }
 
     public Page<InventoryVO> queryWarning(Pageable page) {
-        if (page != null){
+        if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort()));
         }
         List<Inventory> inventories = inventoryMapper.selectWarning();
@@ -342,7 +372,7 @@ public class InventoryService {
 
     public List<InventoryVO> queryAll() {
         InventoryQuery query = new InventoryQuery();
-        List<Inventory> list = selectList(query,null);
+        List<Inventory> list = selectList(query, null);
         List<InventoryVO> res = inventoryConvert.dos2vos(list);
         injectAreaAndItemInfo(res);
         return res;
@@ -369,16 +399,17 @@ public class InventoryService {
 
     /**
      * 注入仓库名称
+     *
      * @param res 物料
      */
-    public void injectWarehouseName(List<Inventory> res){
-        if (CollUtil.isEmpty(res)){
+    public void injectWarehouseName(List<Inventory> res) {
+        if (CollUtil.isEmpty(res)) {
             return;
         }
         Set<Long> warehouses = res.stream().map(Inventory::getWarehouseId).collect(Collectors.toSet());
         Map<Long, Warehouse> warehouseMap = warehouseService.selectByIdIn(warehouses).stream().collect(Collectors.toMap(Warehouse::getId, it -> it));
         res.forEach(it -> {
-            if (it.getWarehouseId() != null && warehouseMap.containsKey(it.getWarehouseId())){
+            if (it.getWarehouseId() != null && warehouseMap.containsKey(it.getWarehouseId())) {
                 it.setWarehouseName(warehouseMap.get(it.getWarehouseId()).getWarehouseName());
             }
         });
@@ -386,30 +417,31 @@ public class InventoryService {
 
     /**
      * 注入库区名称
+     *
      * @param res 物料
      */
-    public void injectAreaName(List<Inventory> res){
-        if (CollUtil.isEmpty(res)){
+    public void injectAreaName(List<Inventory> res) {
+        if (CollUtil.isEmpty(res)) {
             return;
         }
         Set<Long> areas = res.stream().map(Inventory::getAreaId).collect(Collectors.toSet());
         Map<Long, Area> areaMap = areaService.selectByIdIn(areas).stream().collect(Collectors.toMap(Area::getId, it -> it));
         res.forEach(it -> {
-            if (it.getAreaId() != null && areaMap.containsKey(it.getAreaId())){
+            if (it.getAreaId() != null && areaMap.containsKey(it.getAreaId())) {
                 it.setAreaName(areaMap.get(it.getAreaId()).getAreaName());
             }
         });
     }
 
-    public void injectDictDataLabel(List<InventoryHistoryVO> res){
-        if (CollUtil.isEmpty(res)){
+    public void injectDictDataLabel(List<InventoryHistoryVO> res) {
+        if (CollUtil.isEmpty(res)) {
             return;
         }
         Set<String> dictTypes = new HashSet<>();
         dictTypes.add("wms_inventory_oper_type");
         Map<String, SysDictData> sysDictDataMap = sysDictDataService.selectDictDataByTypes(dictTypes).stream().collect(Collectors.toMap(SysDictData::getDictValue, it -> it));
         res.forEach(it -> {
-            if (it.getFormType() != null && sysDictDataMap.containsKey(String.valueOf(it.getFormType()))){
+            if (it.getFormType() != null && sysDictDataMap.containsKey(String.valueOf(it.getFormType()))) {
                 it.setFormTypeName(sysDictDataMap.get(String.valueOf(it.getFormType())).getDictLabel());
             }
         });

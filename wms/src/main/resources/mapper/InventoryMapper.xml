@@ -98,6 +98,44 @@
           a.quantity<b.quantity
         ]]>
     </select>
+    <!--      -->
+    <select id="selectListGroupByWarehouseId" resultMap="InventoryResult">
+        SELECT wi.warehouse_id,
+               wi.item_id,
+               sum(wi.quantity) AS quantity
+        FROM wms_inventory wi
+        WHERE wi.del_flag = 0
+        group by wi.warehouse_id,
+                 wi.item_id
+        ORDER BY wi.warehouse_id,
+                 wi.item_id
+    </select>
+    <select id="selectListGroupByAreaId" resultMap="InventoryResult">
+        SELECT wi.warehouse_id,
+               wi.area_id,
+               wi.item_id,
+               sum(wi.quantity) AS quantity
+        FROM wms_inventory wi
+        WHERE wi.del_flag = 0
+        group by wi.warehouse_id,
+                 wi.area_id,
+                 wi.item_id
+        ORDER BY wi.warehouse_id,
+                 wi.area_id,
+                 wi.item_id
+    </select>
+    <select id="selectListGroupByItemTypeId" resultMap="InventoryResult">
+        SELECT wi.warehouse_id,
+               wi.area_id,
+               wi.item_id,
+               wi.quantity
+        FROM wms_inventory wi
+                 left join wms_item_type wit on wit.item_type_id = wi.item_id
+        WHERE wi.del_flag = 0
+
+        ORDER BY wit.item_type_id,
+                 wi.item_id desc
+    </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory
         (item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by, update_time, warehouse_id,
