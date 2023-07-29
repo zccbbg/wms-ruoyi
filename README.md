@@ -86,4 +86,4 @@ https://www.bilibili.com/video/BV1ys4y1q7uG
 |                    公众号                     |
 |:------------------------------------------:|
 | <img src="doc/datacall.jpg" width="200px"> |
-扫公众号二维码，回复：“加群”
+扫公众号二维码，回复：“加群”或“支持”
