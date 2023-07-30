@@ -160,6 +160,8 @@ public class InventoryService {
         } else if (Objects.equals(panelType, InventoryQuery.ITEMTYPE)) {
             items = inventoryMapper.selectListGroupByItemTypeId(qw);
         } else {
+            // 物料
+            qw.orderBy(true, false, "item_id");
             items = inventoryMapper.selectList(qw);
         }
         if (CollUtil.isEmpty(items)) {
