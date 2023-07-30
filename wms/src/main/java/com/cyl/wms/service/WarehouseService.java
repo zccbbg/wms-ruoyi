@@ -1,20 +1,19 @@
 package com.cyl.wms.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.Set;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.wms.domain.Warehouse;
+import com.cyl.wms.mapper.WarehouseMapper;
+import com.cyl.wms.pojo.query.WarehouseQuery;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.wms.mapper.WarehouseMapper;
-import com.cyl.wms.domain.Warehouse;
-import com.cyl.wms.pojo.query.WarehouseQuery;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 仓库Service业务层处理
@@ -104,7 +103,17 @@ public class WarehouseService {
         return warehouseMapper.updateDelFlagByIds(ids);
     }
 
+    /**
+     * 根据主键集合查询仓库列表
+     *
+     * @param ids 主键集合
+     * @return 仓库列表
+     */
     public List<Warehouse> selectByIdIn(Collection<Long> ids) {
+        // 如果主键集合为空，直接返回空集合
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
         QueryWrapper<Warehouse> qw = new QueryWrapper<>();
         qw.in("id",ids);
         return warehouseMapper.selectList(qw);
