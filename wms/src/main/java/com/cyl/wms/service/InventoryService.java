@@ -2,6 +2,7 @@ package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryConvert;
 import com.cyl.wms.domain.*;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -75,7 +77,6 @@ public class InventoryService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Inventory> qw = new QueryWrapper<>();
-        // qw.eq("del_flag", 0);
         Long itemId = query.getItemId();
         if (itemId != null) {
             qw.eq("item_id", itemId);
@@ -154,13 +155,17 @@ public class InventoryService {
     public List<Inventory> getInventoryList(Long panelType, QueryWrapper<Inventory> qw) {
         List<Inventory> items;
         if (Objects.equals(panelType, InventoryQuery.WAREHOUSE)) {
+            qw.eq("del_flag", 0);
             items = inventoryMapper.selectListGroupByWarehouseId(qw);
         } else if (Objects.equals(panelType, InventoryQuery.AREA)) {
+            qw.eq("del_flag", 0);
             items = inventoryMapper.selectListGroupByAreaId(qw);
         } else if (Objects.equals(panelType, InventoryQuery.ITEMTYPE)) {
+            qw.eq("wi.del_flag", 0);
             items = inventoryMapper.selectListGroupByItemTypeId(qw);
         } else {
             // 物料
+            qw.eq("del_flag", 0);
             qw.orderBy(true, false, "item_id");
             items = inventoryMapper.selectList(qw);
         }
@@ -447,5 +452,44 @@ public class InventoryService {
                 it.setFormTypeName(sysDictDataMap.get(String.valueOf(it.getFormType())).getDictLabel());
             }
         });
+    }
+
+    /**
+     * 逻辑删除 库存记录
+     *
+     * @param itemIds 物料ids
+     */
+    public Integer deleteByItemIds(Long[] itemIds) {
+        LambdaQueryWrapper<Inventory> inventoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        inventoryLambdaQueryWrapper.select(Inventory::getId);
+        inventoryLambdaQueryWrapper.in(Inventory::getItemId, Arrays.asList(itemIds));
+        // 物料对应的库存记录id
+        List<Long> ids = inventoryMapper.selectList(inventoryLambdaQueryWrapper)
+                .stream().map(Inventory::getId).collect(Collectors.toList());
+        if (CollUtil.isEmpty(ids)) {
+            return 0;
+        }
+        Long[] idArr = ids.toArray(new Long[0]);
+        return inventoryMapper.updateDelFlagByIds(idArr);
+    }
+
+    /**
+     * 逻辑删除 库存记录
+     *
+     * @param warehouseIds 仓库ids
+     */
+    @Transactional
+    public Integer deleteByWarehouseIds(Long[] warehouseIds) {
+        LambdaQueryWrapper<Inventory> inventoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        inventoryLambdaQueryWrapper.select(Inventory::getId);
+        inventoryLambdaQueryWrapper.in(Inventory::getWarehouseId, Arrays.asList(warehouseIds));
+        // 仓库对应的库存记录id
+        List<Long> ids = inventoryMapper.selectList(inventoryLambdaQueryWrapper)
+                .stream().map(Inventory::getId).collect(Collectors.toList());
+        if (CollUtil.isEmpty(ids)) {
+            return 0;
+        }
+        Long[] idArr = ids.toArray(new Long[0]);
+        return inventoryMapper.updateDelFlagByIds(idArr);
     }
 }
