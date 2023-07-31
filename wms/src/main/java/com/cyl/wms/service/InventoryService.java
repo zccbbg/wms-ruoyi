@@ -75,7 +75,7 @@ public class InventoryService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Inventory> qw = new QueryWrapper<>();
-        qw.eq("del_flag", 0);
+        // qw.eq("del_flag", 0);
         Long itemId = query.getItemId();
         if (itemId != null) {
             qw.eq("item_id", itemId);

@@ -101,14 +101,16 @@
     <!--      -->
     <select id="selectListGroupByWarehouseId" resultMap="InventoryResult">
         SELECT wi.warehouse_id,
-               wi.item_id,
-               sum(wi.quantity) AS quantity
+        wi.item_id,
+        sum(wi.quantity) AS quantity
         FROM wms_inventory wi
-        WHERE wi.del_flag = 0
+        <where>
+            ${ew.sqlSegment}
+        </where>
         group by wi.warehouse_id,
-                 wi.item_id
+        wi.item_id
         ORDER BY wi.warehouse_id,
-                 wi.item_id
+        wi.item_id
     </select>
     <select id="selectListGroupByAreaId" resultMap="InventoryResult">
         SELECT wi.warehouse_id,
@@ -116,7 +118,9 @@
                wi.item_id,
                sum(wi.quantity) AS quantity
         FROM wms_inventory wi
-        WHERE wi.del_flag = 0
+        <where>
+            ${ew.sqlSegment}
+        </where>
         group by wi.warehouse_id,
                  wi.area_id,
                  wi.item_id
@@ -131,8 +135,9 @@
                wi.quantity
         FROM wms_inventory wi
                  left join wms_item_type wit on wit.item_type_id = wi.item_id
-        WHERE wi.del_flag = 0
-
+        <where>
+            ${ew.sqlSegment}
+        </where>
         ORDER BY wit.item_type_id,
                  wi.item_id desc
     </select>
