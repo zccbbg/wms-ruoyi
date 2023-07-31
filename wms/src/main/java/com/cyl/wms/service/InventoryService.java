@@ -167,9 +167,6 @@ public class InventoryService {
         if (CollUtil.isEmpty(items)) {
             return items;
         }
-        injectItemNoAndItemName(items);
-        injectWarehouseName(items);
-        injectAreaName(items);
         return items;
     }
 
@@ -178,7 +175,7 @@ public class InventoryService {
             return;
         }
         Set<Long> itemIds = items.stream().map(InventoryVO::getItemId).collect(Collectors.toSet());
-        Map<Long,Long> itemIdAndTypeId = itemService.selectByIdIn(itemIds).stream().filter(item -> StrUtil.isNotBlank(item.getItemType())).collect(Collectors.toMap(Item::getId, it -> Long.parseLong(it.getItemType())));
+        Map<Long, Long> itemIdAndTypeId = itemService.selectByIdIn(itemIds).stream().filter(item -> StrUtil.isNotBlank(item.getItemType())).collect(Collectors.toMap(Item::getId, it -> Long.parseLong(it.getItemType())));
         Map<Long, ItemType> itemTypeMap = itemTypeService.selectByIdIn(itemIdAndTypeId.values()).stream().collect(Collectors.toMap(ItemType::getItemTypeId, it -> it));
         items.forEach(it -> {
             Long type_key = itemIdAndTypeId.get(it.getItemId());
@@ -340,7 +337,9 @@ public class InventoryService {
 
         res.forEach(it -> {
             if (it.getWarehouseId() != null && warehouses.containsKey(it.getWarehouseId())) {
-                it.setWarehouseName(warehouses.get(it.getWarehouseId()).getWarehouseName());
+                Warehouse warehouse = warehouses.get(it.getWarehouseId());
+                it.setWarehouseName(warehouse.getWarehouseName());
+                it.setWarehouseDelFlag(warehouse.getDelFlag());
             }
             if (it.getAreaId() != null && areas.containsKey(it.getAreaId())) {
                 it.setAreaName(areas.get(it.getAreaId()).getAreaName());
@@ -352,6 +351,7 @@ public class InventoryService {
                 Item item = items.get(it.getItemId());
                 it.setItemName(item.getItemName());
                 it.setItemNo(item.getItemNo());
+                it.setItemDelFlag(item.getDelFlag());
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.cyl.wms.pojo.vo;
 
-import com.cyl.wms.handler.DictDealHandler;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
     /**
      * ID
      */
-    @Excel(name = "编号" )
+    @Excel(name = "编号")
     private Long id;
     /**
      * 操作id（出库、入库、库存移动表单id）
@@ -36,9 +35,9 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
      * 物料ID
      */
     private Long itemId;
-    @Excel(name = "物料名称" )
+    @Excel(name = "物料名称")
     private String itemName;
-    @Excel(name = "物料编码" )
+    @Excel(name = "物料编码")
     private String itemNo;
     /**
      * 货架id
@@ -46,20 +45,20 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
     private Long rackId;
     private String rackName;
     private Long warehouseId;
-    @Excel(name = "仓库名称" )
+    @Excel(name = "仓库名称")
     private String warehouseName;
     private Long areaId;
 
-    @Excel(name = "库区名称" )
+    @Excel(name = "库区名称")
     private String areaName;
     /**
      * 库存变化
      */
-    @Excel(name = "库存变化" )
+    @Excel(name = "库存变化")
     private BigDecimal quantity;
     /**
      * 备注
      */
-    @Excel(name = "备注" )
+    @Excel(name = "备注")
     private String remark;
 }
