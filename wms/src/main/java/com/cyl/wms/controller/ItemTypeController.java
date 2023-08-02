@@ -48,7 +48,7 @@ public class ItemTypeController extends BaseController {
     /**
      * 查询物料类型表列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    @PreAuthorize("@ss.hasPermi('system:itemType:list')")
     @GetMapping("/noPageList")
     public AjaxResult list(ItemTypeQuery query) {
         List<ItemType> depts = service.selectList(query, null);
