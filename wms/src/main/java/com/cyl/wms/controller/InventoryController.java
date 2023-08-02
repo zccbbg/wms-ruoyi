@@ -88,4 +88,19 @@ public class InventoryController extends BaseController {
     public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {
         return ResponseEntity.ok(service.deleteByIds(ids));
     }
+    @ApiOperation("删除库存")
+    @PreAuthorize("@ss.hasPermi('wms:inventory:remove')")
+    @Log(title = "库存", businessType = BusinessType.DELETE)
+    @DeleteMapping("/item/{ids}")
+    public ResponseEntity<Integer> removeByItem(@PathVariable Long[] ids) {
+        return ResponseEntity.ok(service.deleteByItemIds(ids));
+    }
+
+    @ApiOperation("删除库存")
+    @PreAuthorize("@ss.hasPermi('wms:inventory:remove')")
+    @Log(title = "库存", businessType = BusinessType.DELETE)
+    @DeleteMapping("/warehouse/{ids}")
+    public ResponseEntity<Integer> removeByWarehouse(@PathVariable Long[] ids) {
+        return ResponseEntity.ok(service.deleteByWarehouseIds(ids));
+    }
 }

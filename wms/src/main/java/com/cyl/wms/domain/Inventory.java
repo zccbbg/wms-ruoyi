@@ -1,21 +1,22 @@
 package com.cyl.wms.domain;
 
-import java.math.BigDecimal;
-
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyl.wms.pojo.vo.PlaceAndItem;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+
 /**
  * 库存对象 wms_inventory
- * 
+ *
  * @author zcc
  */
-@ApiModel(description="库存对象")
+@ApiModel(description = "库存对象")
 @Data
 @TableName("wms_inventory")
 public class Inventory extends BaseAudit implements PlaceAndItem {

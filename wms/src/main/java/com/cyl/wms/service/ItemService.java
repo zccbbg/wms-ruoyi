@@ -200,7 +200,17 @@ public class ItemService {
         return itemMapper.updateDelFlagByIds(ids);
     }
 
+    /**
+     * 查询物料列表
+     *
+     * @param ids 物料主键集合
+     * @return 物料列表
+     */
     public List<Item> selectByIdIn(Collection<Long> ids) {
+        // 如果主键集合为空，直接返回空集合
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
         QueryWrapper<Item> qw = new QueryWrapper<>();
         qw.in("id", ids);
         return itemMapper.selectList(qw);

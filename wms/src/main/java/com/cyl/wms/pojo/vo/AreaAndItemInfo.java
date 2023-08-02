@@ -10,4 +10,12 @@ public interface AreaAndItemInfo extends PlaceAndItem {
     void setRackName(String name);
 
     void setItemNo(String name);
+
+    default void setItemDelFlag(Integer delFlag) {
+
+    }
+
+    default void setWarehouseDelFlag(Integer delFlag) {
+
+    }
 }
