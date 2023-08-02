@@ -271,7 +271,6 @@ INSERT INTO `sys_dict_data` VALUES (139, 1, '盘盈入库', '32', 'wms_check_typ
 INSERT INTO `sys_dict_data` VALUES (140, 0, '盘亏出库', '31', 'wms_check_type', NULL, 'default', 'N', '0', 1, '2023-07-25 05:30:52.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (141, 0, '仓库', '5', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:15:00.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (142, 1, '库区', '10', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:15:10.000', NULL, NULL, NULL);
-INSERT INTO `sys_dict_data` VALUES (143, 2, '物料类型', '15', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:17:54.000', NULL, NULL, NULL);
 INSERT INTO `sys_dict_data` VALUES (144, 3, '物料', '20', 'wms_inventory_panel_type', NULL, 'default', 'N', '0', 1, '2023-07-28 07:18:05.000', NULL, NULL, NULL);
 -- ----------------------------
 -- Table structure for sys_dict_type
