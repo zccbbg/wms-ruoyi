@@ -70,5 +70,9 @@ public interface InventoryMapper extends BaseMapper<Inventory> {
 
     List<Inventory> selectWarning();
 
-
+    /**
+     * 查询所有有效的物料(仓库，物料未被删除)
+     *
+     */
+    List<Inventory> selectValidAll();
 }

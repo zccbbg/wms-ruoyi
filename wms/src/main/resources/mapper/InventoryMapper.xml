@@ -60,8 +60,8 @@
         </foreach>
         end
         ),
-            update_time = #{updateTime},
-            update_by = #{userId}
+        update_time = #{updateTime},
+        update_by = #{userId}
         where id in
         <foreach collection="list" open="(" separator="," close=")" item="it">
             #{it.id}
@@ -91,11 +91,14 @@
         and area_id is null and rack_id is null
     </select>
     <select id="selectWarning" resultType="com.cyl.wms.domain.Inventory">
-        select a.*,b.* from wms_inventory a
-        left join wms_item b on a.item_id=b.id
-        where a.del_flag=0 and b.del_flag=0 and
+        select a.*, b.*
+        from wms_inventory a
+                 left join wms_item b on a.item_id = b.id
+        where a.del_flag = 0
+          and b.del_flag = 0
+          and
         <![CDATA[
-          a.quantity<b.quantity
+          a.quantity < b.quantity
         ]]>
     </select>
     <!--      -->
@@ -114,32 +117,43 @@
     </select>
     <select id="selectListGroupByAreaId" resultMap="InventoryResult">
         SELECT wi.warehouse_id,
-               wi.area_id,
-               wi.item_id,
-               sum(wi.quantity) AS quantity
+        wi.area_id,
+        wi.item_id,
+        sum(wi.quantity) AS quantity
         FROM wms_inventory wi
         <where>
             ${ew.sqlSegment}
         </where>
         group by wi.warehouse_id,
-                 wi.area_id,
-                 wi.item_id
+        wi.area_id,
+        wi.item_id
         ORDER BY wi.warehouse_id,
-                 wi.area_id,
-                 wi.item_id
+        wi.area_id,
+        wi.item_id
     </select>
     <select id="selectListGroupByItemTypeId" resultMap="InventoryResult">
         SELECT wi.warehouse_id,
-               wi.area_id,
-               wi.item_id,
-               wi.quantity
+        wi.area_id,
+        wi.item_id,
+        wi.quantity
         FROM wms_inventory wi
-                 left join wms_item_type wit on wit.item_type_id = wi.item_id
+        left join wms_item_type wit on wit.item_type_id = wi.item_id
         <where>
             ${ew.sqlSegment}
         </where>
         ORDER BY wit.item_type_id,
-                 wi.item_id desc
+        wi.item_id desc
+    </select>
+    <select id="selectValidAll" resultMap="InventoryResult">
+        SELECT wi.*
+        FROM wms_inventory wi
+                 left join wms_item on wms_item.id = wi.item_id
+                 left join wms_warehouse ww on wi.warehouse_id = ww.id
+                 left join wms_area wa on wi.area_id = wa.id
+        where wi.del_flag = 0
+          and wms_item.del_flag = 0
+          and ww.del_flag = 0
+          and wa.del_flag = 0
     </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory

@@ -14,7 +14,7 @@ public interface ReceiptOrderConstant {
 
     /*订单类型*/
     //采购
-    int PURCHASE = 2;
+    int PURCHASE = 1;
     //外协
     int OUTSOURCING = 2;
     //退货

@@ -170,6 +170,12 @@ public class InventorySettlementDetailService {
         return inventorySettlementDetailMapper.updateDelFlagByIds(ids);
     }
 
+    /**
+     * 生成库存结算明细
+     *
+     * @param query 查询条件
+     * @return 结果
+     */
     public List<InventorySettlementDetail> listByTime(InventorySettlementDetailQuery query) {
 
         //获取本结算周期的库存历史记录表
@@ -181,19 +187,22 @@ public class InventorySettlementDetailService {
         List<InventoryHistory> inventoryHistories = inventoryHistoryMapper.selectList(qw);
 
         //按照物料id_仓库id_库区id 分组
-        Map<String, List<InventoryHistory>> inventoryHistoryMap = inventoryHistories.stream().collect(Collectors.groupingBy(it -> it.getItemId() + "_" + it.getWarehouseId() + "_" + it.getAreaId()));
+        Map<String, List<InventoryHistory>> inventoryHistoryMap = inventoryHistories
+                .stream().collect(Collectors.groupingBy(it -> it.getItemId() + "_" + it.getWarehouseId() + "_" + it.getAreaId()));
 
         //获取上期结存表
-        LambdaQueryWrapper<InventorySettlementDetail> isdqw = new LambdaQueryWrapper<>();
-        isdqw.eq(InventorySettlementDetail::getDelFlag, 0);
-        isdqw.eq(InventorySettlementDetail::getSettlementType, query.getSettlementType());
-        isdqw.orderByDesc(InventorySettlementDetail::getCreateTime);
-        List<InventorySettlementDetail> inventorySettlementDetails = inventorySettlementDetailMapper.selectList(isdqw);
-        Map<String, List<InventorySettlementDetail>> previousInventorySettlementDetails = inventorySettlementDetails.stream().collect(Collectors.groupingBy(it -> it.getItemId() + "_" + it.getWarehouseId() + "_" + it.getAreaId()));
+        LambdaQueryWrapper<InventorySettlementDetail> settlementDetailLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        settlementDetailLambdaQueryWrapper.eq(InventorySettlementDetail::getDelFlag, 0);
+        settlementDetailLambdaQueryWrapper.eq(InventorySettlementDetail::getSettlementType, query.getSettlementType());
+        settlementDetailLambdaQueryWrapper.orderByDesc(InventorySettlementDetail::getCreateTime);
+        List<InventorySettlementDetail> inventorySettlementDetails = inventorySettlementDetailMapper.selectList(settlementDetailLambdaQueryWrapper);
+        //按照物料id_仓库id_库区id 分组
+        Map<String, List<InventorySettlementDetail>> previousInventorySettlementDetails = inventorySettlementDetails
+                .stream().collect(Collectors.groupingBy(it -> it.getItemId() + "_" + it.getWarehouseId() + "_" + it.getAreaId()));
 
 
         List<InventorySettlementDetail> list = new LinkedList<>();
-        List<InventoryVO> inventoryList = inventoryService.queryAll();
+        List<InventoryVO> inventoryList = inventoryService.queryValidAll();
         inventoryList.forEach(inventoryVO -> {
 
 
@@ -220,8 +229,8 @@ public class InventorySettlementDetailService {
                 previousBalance = previous.get(0).getCurrentBalance();
             }
 
-            if (inventoryVO.getItemId() == null){
-                System.out.println("物料id为空"+inventoryVO);
+            if (inventoryVO.getItemId() == null) {
+                System.out.println("物料id为空" + inventoryVO);
                 return;
             }
             InventorySettlementDetail inventorySettlementDetail = new InventorySettlementDetail();
@@ -233,7 +242,7 @@ public class InventorySettlementDetailService {
             inventorySettlementDetail.setItemName(inventoryVO.getItemName());
             inventorySettlementDetail.setItemNo(inventoryVO.getItemNo());
             inventorySettlementDetail.setCurrentBalance(inventoryVO.getQuantity());
-            inventorySettlementDetail.setCurrentOut(out);
+            inventorySettlementDetail.setCurrentOut(out.negate());
             inventorySettlementDetail.setCurrentEnter(enter);
             inventorySettlementDetail.setCurrentCheck(currCheck);
             inventorySettlementDetail.setPreviousBalance(previousBalance);

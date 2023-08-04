@@ -377,9 +377,19 @@ public class InventoryService {
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) inventories).getTotal());
     }
 
-    public List<InventoryVO> queryAll() {
-        InventoryQuery query = new InventoryQuery();
+    public List<InventoryVO> queryAll(InventoryQuery query) {
+
         List<Inventory> list = selectList(query, null);
+        List<InventoryVO> res = inventoryConvert.dos2vos(list);
+        injectAreaAndItemInfo(res);
+        return res;
+    }
+
+    /**
+     * 查询所有有效的物料
+     */
+    public List<InventoryVO> queryValidAll() {
+        List<Inventory> list = inventoryMapper.selectValidAll();
         List<InventoryVO> res = inventoryConvert.dos2vos(list);
         injectAreaAndItemInfo(res);
         return res;
@@ -492,4 +502,6 @@ public class InventoryService {
         Long[] idArr = ids.toArray(new Long[0]);
         return inventoryMapper.updateDelFlagByIds(idArr);
     }
+
+
 }
