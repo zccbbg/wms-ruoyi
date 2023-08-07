@@ -1,6 +1,7 @@
 package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryHistoryConvert;
 import com.cyl.wms.domain.InventoryHistory;
@@ -95,7 +96,7 @@ public class InventoryHistoryService {
         List<InventoryHistory> list = queryInventoryHistories(query);
         List<InventoryHistoryVO> res = inventoryHistoryConvert.dos2vos(list);
         inventoryService.injectAreaAndItemInfo(res);
-        return new PageImpl<>(res, page, ((com.github.pagehelper.Page)list).getTotal());
+        return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
     }
 
     /**
@@ -141,6 +142,41 @@ public class InventoryHistoryService {
         return inventoryHistoryMapper.updateDelFlagByIds(ids);
     }
 
+    /**
+     * 删除库存记录信息
+     *
+     * @param formId   单据id
+     * @param formType 单据类型
+     * @return 结果
+     */
+    public int deleteByForm(Long formId, Integer formType) {
+        LambdaQueryWrapper<InventoryHistory> qw = new LambdaQueryWrapper<InventoryHistory>()
+                .eq(InventoryHistory::getFormId, formId)
+                .eq(InventoryHistory::getFormType, formType);
+        return inventoryHistoryMapper.delete(qw);
+    }
+
+    /**
+     * 查询库存记录信息
+     *
+     * @param formId   单据id
+     * @param formType 单据类型
+     * @return 结果
+     */
+    public List<InventoryHistory> selectByForm(Long formId, Integer formType) {
+        LambdaQueryWrapper<InventoryHistory> qw = new LambdaQueryWrapper<InventoryHistory>()
+                .eq(InventoryHistory::getFormId, formId)
+                .eq(InventoryHistory::getFormType, formType);
+        List<InventoryHistory> list = inventoryHistoryMapper.selectList(qw);
+        return list;
+    }
+
+    /**
+     * 批量新增库存记录
+     *
+     * @param list 库存记录列表
+     * @return 结果
+     */
     public int batchInsert(List<InventoryHistory> list) {
         if (CollUtil.isEmpty(list)) {
             return 0;
@@ -151,4 +187,5 @@ public class InventoryHistoryService {
         }
         return re;
     }
+
 }

@@ -24,14 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.security.Security;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -95,7 +95,6 @@ public class ReceiptOrderService {
      * 查询入库单列表
      *
      * @param query 查询条件
-     * @param page  分页条件
      * @return 入库单
      */
     public List<ReceiptOrderVO> selectList(ReceiptOrderQuery query) {
@@ -157,7 +156,7 @@ public class ReceiptOrderService {
         receiptOrder.setCreateTime(LocalDateTime.now());
         res = receiptOrderMapper.insert(receiptOrder);
         saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
-        if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount()!=null){
+        if (receiptOrder.getSupplierId() != null && receiptOrder.getPayableAmount() != null) {
             //保存订单金额到供应商流水表
             saveOrUpdatePayAmount(receiptOrder);
         }
@@ -172,7 +171,7 @@ public class ReceiptOrderService {
      * @return 结果
      */
     @Transactional
-    public int update(ReceiptOrderForm receiptOrder){
+    public int update(ReceiptOrderForm receiptOrder) {
         int res;
         // 2. 编辑
         QueryWrapper<ReceiptOrderDetail> qw = new QueryWrapper<>();
@@ -227,7 +226,7 @@ public class ReceiptOrderService {
         receiptOrderDetailMapper.delete(qw);
         saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
 
-        if(receiptOrder.getSupplierId()!=null && receiptOrder.getPayableAmount() !=null){
+        if (receiptOrder.getSupplierId() != null && receiptOrder.getPayableAmount() != null) {
             //保存订单金额到供应商流水表
             saveOrUpdatePayAmount(receiptOrder);
         }
@@ -250,7 +249,7 @@ public class ReceiptOrderService {
         supplierTransaction.setTransactionType(SupplierTransaction.RECEIPT);
         supplierTransaction.setTransactionAmount(receiptOrder.getPayableAmount());
         supplierTransaction.setReceiptOrderId(receiptOrder.getId().intValue());
-        supplierTransaction.setTransactionCode("TS-"+ DateUtils.randomId());
+        supplierTransaction.setTransactionCode("TS-" + DateUtils.randomId());
         supplierTransactionService.insert(supplierTransaction);
     }
 
@@ -278,8 +277,44 @@ public class ReceiptOrderService {
      * @param ids 需要删除的入库单主键
      * @return 结果
      */
+    @Transactional
     public int deleteByIds(Long[] ids) {
-        return receiptOrderMapper.updateDelFlagByIds(ids);
+        int flag = 0;
+        for (Long id : ids) {
+            ReceiptOrder receiptOrder = receiptOrderMapper.selectById(id);
+            if (receiptOrder == null) {
+                continue;
+            }
+            Integer receiptOrderStatus = receiptOrder.getReceiptOrderStatus();
+            if (receiptOrderStatus != ReceiptOrderConstant.ALL_IN && receiptOrderStatus != ReceiptOrderConstant.PART_IN) {
+                // 未入库的可以直接删除
+                continue;
+            }
+            // 1. 逻辑删除入库单
+            flag += receiptOrderMapper.updateDelFlagByIds(ids);
+
+            // 2. 逻辑删除入库单详情
+            receiptOrderDetailService.updateDelFlag(receiptOrder);
+
+            // 3. 查询库存记录
+            List<InventoryHistory> inventoryHistories = inventoryHistoryService.selectByForm(receiptOrder.getId(), receiptOrder.getReceiptOrderType());
+
+            // 翻转库存记录的数量
+            inventoryHistories.forEach(it -> {
+                it.setQuantity(it.getQuantity().negate());
+                log.info("回滚库存:{} 数量：{}", it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getRackId() + "_" + it.getItemId(), it.getQuantity());
+            });
+
+            // 4. 回滚库存
+            inventoryService.batchUpdate1(inventoryHistories);
+
+            // 5. 删除库存记录
+            inventoryHistoryService.deleteByForm(receiptOrder.getId(), receiptOrder.getReceiptOrderType());
+
+            // todo 6. 回滚供应商流水
+//            supplierTransactionService.deleteByForm(receiptOrder.getId(), receiptOrder.getReceiptOrderType());
+        }
+        return flag;
     }
 
     /**
