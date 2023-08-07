@@ -286,15 +286,15 @@ public class ReceiptOrderService {
                 continue;
             }
             Integer receiptOrderStatus = receiptOrder.getReceiptOrderStatus();
+            // 1. 逻辑删除入库单
+            flag += receiptOrderMapper.updateDelFlagByIds(ids);
+            // 2. 逻辑删除入库单详情
+            receiptOrderDetailService.updateDelFlag(receiptOrder);
+
             if (receiptOrderStatus != ReceiptOrderConstant.ALL_IN && receiptOrderStatus != ReceiptOrderConstant.PART_IN) {
                 // 未入库的可以直接删除
                 continue;
             }
-            // 1. 逻辑删除入库单
-            flag += receiptOrderMapper.updateDelFlagByIds(ids);
-
-            // 2. 逻辑删除入库单详情
-            receiptOrderDetailService.updateDelFlag(receiptOrder);
 
             // 3. 查询库存记录
             List<InventoryHistory> inventoryHistories = inventoryHistoryService.selectByForm(receiptOrder.getId(), receiptOrder.getReceiptOrderType());
