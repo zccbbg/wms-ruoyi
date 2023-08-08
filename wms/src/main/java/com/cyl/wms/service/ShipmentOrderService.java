@@ -177,8 +177,46 @@ public class ShipmentOrderService {
      * @param ids 需要删除的出库单主键
      * @return 结果
      */
+    @Transactional
     public int deleteByIds(Long[] ids) {
-        return shipmentOrderMapper.updateDelFlagByIds(ids);
+        int flag = 0;
+        for (Long id : ids) {
+            ShipmentOrder shipmentOrder = shipmentOrderMapper.selectById(id);
+            if (shipmentOrder == null) {
+                continue;
+            }
+            Integer shipmentOrderStatus = shipmentOrder.getShipmentOrderStatus();
+
+            // 1. 逻辑删除出库单
+            flag += shipmentOrderMapper.updateDelFlagByIds(ids);
+
+            // 2. 逻辑删除出库单详情
+            shipmentOrderDetailService.updateDelFlag(shipmentOrder);
+
+            if (shipmentOrderStatus != ShipmentOrderConstant.ALL_IN && shipmentOrderStatus != ShipmentOrderConstant.PART_IN) {
+                // 未出库的可以直接删除
+                continue;
+            }
+
+            // 3. 查询库存记录
+            List<InventoryHistory> inventoryHistories = inventoryHistoryService.selectByForm(shipmentOrder.getId(), shipmentOrder.getShipmentOrderType());
+
+            // 翻转库存记录的数量
+            inventoryHistories.forEach(it -> {
+                it.setQuantity(it.getQuantity().negate());
+                log.info("回滚库存:{} 数量：{}", it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getRackId() + "_" + it.getItemId(), it.getQuantity());
+            });
+
+            // 4. 回滚库存
+            inventoryService.batchUpdate1(inventoryHistories);
+
+            // 5. 删除库存记录
+            inventoryHistoryService.deleteByForm(shipmentOrder.getId(), shipmentOrder.getShipmentOrderType());
+
+            // todo 6. 回滚供应商流水
+//            supplierTransactionService.deleteByForm(shipmentOrder.getId(), shipmentOrder.getReceiptOrderType());
+        }
+        return flag;
     }
 
     /**
@@ -213,7 +251,7 @@ public class ShipmentOrderService {
         QueryWrapper<ShipmentOrderDetail> qw = new QueryWrapper<>();
         qw.eq("shipment_order_id", order.getId());
 
-        // 新旧入库单详情对比， 生成 库存记录修改
+        // 新旧出库单详情对比， 生成 库存记录修改
         List<ShipmentOrderDetailVO> details = order.getDetails();
         Map<Long, ShipmentOrderDetail> dbDetailMap = shipmentOrderDetailMapper.selectList(qw).stream().collect(Collectors.toMap(ShipmentOrderDetail::getId, it -> it));
         List<InventoryHistory> adds = new ArrayList<>();
@@ -279,15 +317,15 @@ public class ShipmentOrderService {
             order.setShipmentOrderStatus(statusList.iterator().next());
         } else if (statusList.size() == 2) {
             if (statusList.contains(ShipmentOrderConstant.DROP) && statusList.contains(ShipmentOrderConstant.ALL_IN)) {
-                //此时单据状态只有报废和全部入库，则出库单状态为全部入库
+                //此时单据状态只有报废和全部出库，则出库单状态为全部出库
                 order.setShipmentOrderStatus(ShipmentOrderConstant.ALL_IN);
             } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
-                //此时单据状态有两个，包含部分入库和全部入库都是部分入库
+                //此时单据状态有两个，包含部分出库和全部出库都是部分出库
                 order.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
             }
 
         } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
-            //此时单据状态有两个，包含部分入库和全部入库都是部分入库
+            //此时单据状态有两个，包含部分出库和全部出库都是部分出库
             order.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
         }
 

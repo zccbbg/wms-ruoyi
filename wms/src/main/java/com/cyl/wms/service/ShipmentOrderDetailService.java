@@ -1,27 +1,25 @@
 package com.cyl.wms.service;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
-import com.cyl.wms.domain.ReceiptOrderDetail;
-import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
+import com.cyl.wms.domain.ShipmentOrder;
+import com.cyl.wms.domain.ShipmentOrderDetail;
+import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
+import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 出库单详情Service业务层处理
- *
  *
  * @author zcc
  */
@@ -46,7 +44,7 @@ public class ShipmentOrderDetailService {
      * 查询出库单详情列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 出库单详情
      */
     public List<ShipmentOrderDetail> selectList(ShipmentOrderDetailQuery query, Pageable page) {
@@ -54,7 +52,7 @@ public class ShipmentOrderDetailService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<ShipmentOrderDetail> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
+        qw.eq("del_flag", 0);
         Long shipmentOrderId = query.getShipmentOrderId();
         if (shipmentOrderId != null) {
             qw.eq("shipment_order_id", shipmentOrderId);
@@ -79,17 +77,17 @@ public class ShipmentOrderDetailService {
     }
 
 
-    public List<ShipmentOrderDetailVO> toVos(List<ShipmentOrderDetail> items){
+    public List<ShipmentOrderDetailVO> toVos(List<ShipmentOrderDetail> items) {
         List<ShipmentOrderDetailVO> list = convert.dos2vos(items);
-        list.forEach(itemVO ->{
+        list.forEach(itemVO -> {
             List<Long> place = new LinkedList<>();
-            if(itemVO.getWarehouseId()!=null){
+            if (itemVO.getWarehouseId() != null) {
                 place.add(itemVO.getWarehouseId());
             }
-            if(itemVO.getAreaId()!=null){
+            if (itemVO.getAreaId() != null) {
                 place.add(itemVO.getAreaId());
             }
-            if(itemVO.getRackId()!=null){
+            if (itemVO.getRackId() != null) {
                 place.add(itemVO.getRackId());
             }
             itemVO.setPlace(place);
@@ -138,5 +136,13 @@ public class ShipmentOrderDetailService {
     public int deleteById(Long id) {
         Long[] ids = {id};
         return shipmentOrderDetailMapper.updateDelFlagByIds(ids);
+    }
+
+    public void updateDelFlag(ShipmentOrder shipmentOrder) {
+        LambdaUpdateWrapper<ShipmentOrderDetail> updateWrapper = new LambdaUpdateWrapper<ShipmentOrderDetail>()
+                .eq(ShipmentOrderDetail::getShipmentOrderId, shipmentOrder.getId())
+                .set(ShipmentOrderDetail::getDelFlag, 1);
+        shipmentOrderDetailMapper.update(null, updateWrapper);
+
     }
 }

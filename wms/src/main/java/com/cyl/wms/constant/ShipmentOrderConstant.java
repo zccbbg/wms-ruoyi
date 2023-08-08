@@ -2,11 +2,11 @@ package com.cyl.wms.constant;
 
 public interface ShipmentOrderConstant {
 
-  // 未入库
+  // 未出库
   int NOT_IN = 11;
-  // 部分入库
+  // 部分出库
   int PART_IN = 12;
-  // 全部入库
+  // 全部出库
   int ALL_IN = 13;
   // 作废
   int DROP = 14;

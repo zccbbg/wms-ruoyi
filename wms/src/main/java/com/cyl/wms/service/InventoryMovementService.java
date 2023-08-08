@@ -103,6 +103,7 @@ public class InventoryMovementService {
       PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
     }
     QueryWrapper<InventoryMovement> qw = new QueryWrapper<>();
+    qw.orderByDesc("id");
     qw.eq("del_flag", 0);
     String inventoryMovementNo = query.getInventoryMovementNo();
     if (!StringUtils.isEmpty(inventoryMovementNo)) {
