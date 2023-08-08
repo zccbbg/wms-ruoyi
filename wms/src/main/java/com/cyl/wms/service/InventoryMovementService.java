@@ -226,7 +226,7 @@ public class InventoryMovementService {
         throw new ServiceException("库存不足", HttpStatus.BAD_REQUEST);
       }
 
-      // 1. 创建出库日志和入库日志
+      // 1. 创建入库日志
       InventoryHistory h = detailConvert.do2InventoryHistory(it);
       h.setFormId(order.getId());
       h.setFormType(InventoryMovementConstant.IN_TYPE);
@@ -239,9 +239,12 @@ public class InventoryMovementService {
       h.setCreateTime(now);
       h.setCreateBy(userId);
       inList.add(h);
+
+      // 出库日志
       InventoryHistory out = new InventoryHistory();
       BeanUtils.copyProperties(h,out);
       out.setFormType(InventoryMovementConstant.OUT_TYPE);
+      out.setQuantity(added.negate());
       out.setRackId(it.getSourceRackId());
       out.setWarehouseId(it.getSourceWarehouseId());
       out.setAreaId(it.getSourceAreaId());
