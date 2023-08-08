@@ -1,27 +1,25 @@
 package com.cyl.wms.service;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.convert.InventoryMovementDetailConvert;
-import com.cyl.wms.domain.ShipmentOrderDetail;
+import com.cyl.wms.domain.InventoryMovement;
+import com.cyl.wms.domain.InventoryMovementDetail;
+import com.cyl.wms.mapper.InventoryMovementDetailMapper;
+import com.cyl.wms.pojo.query.InventoryMovementDetailQuery;
 import com.cyl.wms.pojo.vo.InventoryMovementDetailVO;
-import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.wms.mapper.InventoryMovementDetailMapper;
-import com.cyl.wms.domain.InventoryMovementDetail;
-import com.cyl.wms.pojo.query.InventoryMovementDetailQuery;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 库存移动详情Service业务层处理
- *
  *
  * @author zcc
  */
@@ -46,7 +44,7 @@ public class InventoryMovementDetailService {
      * 查询库存移动详情列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 库存移动详情
      */
     public List<InventoryMovementDetail> selectList(InventoryMovementDetailQuery query, Pageable page) {
@@ -54,7 +52,7 @@ public class InventoryMovementDetailService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<InventoryMovementDetail> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
+        qw.eq("del_flag", 0);
         Long inventoryMovementId = query.getInventoryMovementId();
         if (inventoryMovementId != null) {
             qw.eq("inventory_movement_id", inventoryMovementId);
@@ -102,28 +100,28 @@ public class InventoryMovementDetailService {
         return inventoryMovementDetailMapper.selectList(qw);
     }
 
-    public List<InventoryMovementDetailVO> toVos(List<InventoryMovementDetail> items){
+    public List<InventoryMovementDetailVO> toVos(List<InventoryMovementDetail> items) {
         List<InventoryMovementDetailVO> list = convert.dos2vos(items);
-        list.forEach(itemVO ->{
+        list.forEach(itemVO -> {
             List<Long> sourcePlace = new LinkedList<>();
             List<Long> targetPlace = new LinkedList<>();
-            if(itemVO.getSourceWarehouseId()!=null){
+            if (itemVO.getSourceWarehouseId() != null) {
                 sourcePlace.add(itemVO.getSourceWarehouseId());
             }
-            if(itemVO.getSourceAreaId()!=null){
+            if (itemVO.getSourceAreaId() != null) {
                 sourcePlace.add(itemVO.getSourceAreaId());
             }
-            if(itemVO.getSourceRackId()!=null){
+            if (itemVO.getSourceRackId() != null) {
                 sourcePlace.add(itemVO.getSourceRackId());
             }
             itemVO.setSourcePlace(sourcePlace);
-            if(itemVO.getTargetWarehouseId()!=null){
+            if (itemVO.getTargetWarehouseId() != null) {
                 targetPlace.add(itemVO.getTargetWarehouseId());
             }
-            if(itemVO.getTargetAreaId()!=null){
+            if (itemVO.getTargetAreaId() != null) {
                 targetPlace.add(itemVO.getTargetAreaId());
             }
-            if(itemVO.getTargetRackId()!=null){
+            if (itemVO.getTargetRackId() != null) {
                 targetPlace.add(itemVO.getTargetRackId());
             }
             itemVO.setTargetPlace(targetPlace);
@@ -172,5 +170,17 @@ public class InventoryMovementDetailService {
     public int deleteById(Long id) {
         Long[] ids = {id};
         return inventoryMovementDetailMapper.updateDelFlagByIds(ids);
+    }
+
+    /**
+     * 逻辑删除 库存移动详情信息
+     *
+     * @param inventoryMovement 库存移动单
+     */
+    public void updateDelFlag(InventoryMovement inventoryMovement) {
+        LambdaUpdateWrapper<InventoryMovementDetail> updateWrapper = new LambdaUpdateWrapper<InventoryMovementDetail>()
+                .eq(InventoryMovementDetail::getInventoryMovementId, inventoryMovement.getId())
+                .set(InventoryMovementDetail::getDelFlag, 1);
+        inventoryMovementDetailMapper.update(null, updateWrapper);
     }
 }

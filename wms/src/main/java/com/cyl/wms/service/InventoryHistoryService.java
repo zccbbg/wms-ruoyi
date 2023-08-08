@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -149,10 +150,13 @@ public class InventoryHistoryService {
      * @param formType 单据类型
      * @return 结果
      */
-    public int deleteByForm(Long formId, Integer formType) {
+    public int deleteByForm(Long formId, Integer... formType) {
         LambdaQueryWrapper<InventoryHistory> qw = new LambdaQueryWrapper<InventoryHistory>()
-                .eq(InventoryHistory::getFormId, formId)
-                .eq(InventoryHistory::getFormType, formType);
+                .eq(InventoryHistory::getFormId, formId);
+        if (formType.length > 0) {
+            List<Integer> list = Arrays.asList(formType);
+            qw.in(InventoryHistory::getFormType, list);
+        }
         return inventoryHistoryMapper.delete(qw);
     }
 
@@ -163,12 +167,14 @@ public class InventoryHistoryService {
      * @param formType 单据类型
      * @return 结果
      */
-    public List<InventoryHistory> selectByForm(Long formId, Integer formType) {
+    public List<InventoryHistory> selectByForm(Long formId, Integer... formType) {
         LambdaQueryWrapper<InventoryHistory> qw = new LambdaQueryWrapper<InventoryHistory>()
-                .eq(InventoryHistory::getFormId, formId)
-                .eq(InventoryHistory::getFormType, formType);
-        List<InventoryHistory> list = inventoryHistoryMapper.selectList(qw);
-        return list;
+                .eq(InventoryHistory::getFormId, formId);
+        if (formType.length > 0) {
+            List<Integer> list = Arrays.asList(formType);
+            qw.in(InventoryHistory::getFormType, list);
+        }
+        return inventoryHistoryMapper.selectList(qw);
     }
 
     /**

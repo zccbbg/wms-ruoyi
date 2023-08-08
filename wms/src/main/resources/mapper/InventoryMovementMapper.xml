@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyl.wms.mapper.InventoryMovementMapper">
-    
+
     <resultMap type="InventoryMovement" id="InventoryMovementResult">
         <result property="id" column="id"/>
         <result property="inventoryMovementNo" column="inventory_movement_no"/>
@@ -19,10 +19,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time" />
     </resultMap>
 
     <sql id="selectInventoryMovementVo">
@@ -31,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByEntity" parameterType="InventoryMovement" resultMap="InventoryMovementResult">
         <include refid="selectInventoryMovementVo"/>
-        <where>  
+        <where>
             <if test="inventoryMovementNo != null  and inventoryMovementNo != ''"> and inventory_movement_no = #{inventoryMovementNo}</if>
             <if test="sourceRackId != null "> and source_rack_id = #{sourceRackId}</if>
             <if test="targetRackId != null "> and target_rack_id = #{targetRackId}</if>
