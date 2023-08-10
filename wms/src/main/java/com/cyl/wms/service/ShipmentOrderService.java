@@ -18,8 +18,6 @@ import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderVO;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
-import com.ruoyi.common.constant.HttpStatus;
-import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -280,10 +278,7 @@ public class ShipmentOrderService {
                 added = after.subtract(before);
             }
             //判断库存是否足够出库
-            boolean success = inventoryService.canOutStock(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
-            if (!success) {
-                throw new ServiceException("库存不足", HttpStatus.BAD_REQUEST);
-            }
+            inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
 
             // 1. 前一次的实际数量是 0
             InventoryHistory h = detailConvert.do2InventoryHistory(it);

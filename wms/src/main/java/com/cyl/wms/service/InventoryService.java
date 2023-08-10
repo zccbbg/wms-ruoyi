@@ -14,7 +14,9 @@ import com.cyl.wms.pojo.vo.InventoryVO;
 import com.cyl.wms.pojo.vo.PlaceAndItem;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.CommonConstant;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.system.service.ISysDictDataService;
@@ -202,6 +204,39 @@ public class InventoryService {
             qw.eq("area_id", areaId);
         }
         return inventoryMapper.selectCount(qw) > 0;
+    }
+
+    /*
+     * 根据物料id查询库存
+     * */
+    public Inventory queryInventoryByItemId(Long itemId, Long warehouseId, Long areaId, Long rackId) {
+        QueryWrapper<Inventory> qw = new QueryWrapper<>();
+        qw.eq("item_id", itemId).eq("warehouse_id", warehouseId);
+        if (rackId != null) {
+            qw.eq("rack_id", rackId);
+        }
+        if (areaId != null) {
+            qw.eq("area_id", areaId);
+        }
+        return inventoryMapper.selectOne(qw);
+    }
+
+    /*
+     * 判断库存是否足够出库
+     * */
+    public void checkInventory(Long itemId, Long warehouseId, Long areaId, Long rackId, BigDecimal added) {
+        Inventory inventory = this.queryInventoryByItemId(itemId, warehouseId, areaId, rackId);
+        if (inventory == null) {
+            Item item = itemService.selectById(itemId);
+            String msg = "商品：" + item.getItemName() + "(" + item.getItemNo() + ")" + ",<span style='color:red'>库存不存在</span> 无法出库</br>";
+            throw new ServiceException(msg, HttpStatus.CONFIRMATION);
+        } else if (inventory.getQuantity().compareTo(added) < 0) {
+            Item item = itemService.selectById(itemId);
+            String msg = "商品：[<span style='color:red'>" + item.getItemName() + "</span>] 库存不足，无法出库" +
+                    "</br>计划数量：<span >" + added + "</span>" +
+                    "</br>库存数量：<span style='color:red'>" + inventory.getQuantity() + "</span>";
+            throw new ServiceException(msg, HttpStatus.CONFIRMATION);
+        }
     }
 
     public int batchUpdate1(List<InventoryHistory> list) {

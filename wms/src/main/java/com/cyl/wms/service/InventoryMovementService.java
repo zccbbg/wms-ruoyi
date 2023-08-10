@@ -19,8 +19,6 @@ import com.cyl.wms.pojo.vo.InventoryMovementVO;
 import com.cyl.wms.pojo.vo.ItemVO;
 import com.cyl.wms.pojo.vo.form.InventoryMovementFrom;
 import com.github.pagehelper.PageHelper;
-import com.ruoyi.common.constant.HttpStatus;
-import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -261,10 +259,7 @@ public class InventoryMovementService {
                 added = after.subtract(before);
             }
             //判断库存是否足够出库
-            boolean success = inventoryService.canOutStock(it.getItemId(), it.getSourceWarehouseId(), it.getSourceAreaId(), it.getSourceRackId(), added);
-            if (!success) {
-                throw new ServiceException("库存不足", HttpStatus.BAD_REQUEST);
-            }
+            inventoryService.checkInventory(it.getItemId(), it.getSourceWarehouseId(), it.getSourceAreaId(), it.getSourceRackId(), added);
 
             // 1. 创建移库日志
             InventoryHistory h = detailConvert.do2InventoryHistory(it);

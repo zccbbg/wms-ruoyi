@@ -2,11 +2,10 @@ package com.ruoyi.common.constant;
 
 /**
  * 返回状态码
- * 
+ *
  * @author ruoyi
  */
-public class HttpStatus
-{
+public class HttpStatus {
     /**
      * 操作成功
      */
@@ -41,6 +40,11 @@ public class HttpStatus
      * 资源没有被修改
      */
     public static final int NOT_MODIFIED = 304;
+
+    /**
+     * 需要用户确认的错误
+     */
+    public static final int CONFIRMATION = 399;
 
     /**
      * 参数列表错误（缺少，格式不匹配）
