@@ -1,6 +1,7 @@
 package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.DeliveryConvert;
@@ -352,4 +353,47 @@ public class ShipmentOrderService {
             shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
         }
     }
+
+    /*
+     * 单个订单分配仓库(填充详情单的仓库id,库区id,货架id)
+     * @param id 出库单id
+     * 1.根据出库单id查询出库单详情
+     * 2.根据出库单详情的商品id，数量
+     * 3.根据库存分配规则分配库存
+     * 4.修改出库单详情
+     * 5.修改出库单
+     * */
+    @Transactional
+    public void allocatedInventory(long id) {
+        log.info("单个订单分配仓库,出库单id:{}", id);
+        // 1.根据出库单id查询出库单
+        ShipmentOrder shipmentOrder = shipmentOrderMapper.selectById(id);
+        // 2.根据出库单id查询出库单详情
+        LambdaQueryWrapper<ShipmentOrderDetail> qw = new LambdaQueryWrapper<>();
+        qw.eq(ShipmentOrderDetail::getShipmentOrderId, id);
+        List<ShipmentOrderDetail> allocationDetails = new ArrayList<>();
+        List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailMapper.selectList(qw);
+        log.info("出库单详情\n{}", shipmentOrderDetails);
+        // 3.获取出库单详情的商品id，数量
+        shipmentOrderDetails.forEach(shipmentOrderDetail -> {
+            // 4.根据库存分配规则分配库存
+            List<ShipmentOrderDetail> shipmentOrderDetail1 = inventoryService.allocatedInventory(shipmentOrderDetail.getItemId(),
+                    shipmentOrderDetail.getPlanQuantity());
+            allocationDetails.addAll(shipmentOrderDetail1);
+        });
+        System.out.println("分配后单据数量："+allocationDetails.size());
+        allocationDetails.forEach(it -> {
+            // 5.修改出库单详情
+            it.setShipmentOrderId(id);
+            it.setShipmentOrderStatus(ShipmentOrderConstant.NOT_IN);
+            it.setDelFlag(0);
+            System.out.println(it.getWarehouseId()+" "+it.getAreaId()+" "+it.getRackId()+" "+it.getRealQuantity());
+        });
+        // 6.修改出库单
+        shipmentOrderDetailMapper.deleteBatchIds(shipmentOrderDetails.stream().map(ShipmentOrderDetail::getId).collect(Collectors.toList()));
+        shipmentOrderDetailMapper.batchInsert(allocationDetails);
+//        log.info("分配库存详情\n{}", allocationDetails);
+
+    }
+
 }

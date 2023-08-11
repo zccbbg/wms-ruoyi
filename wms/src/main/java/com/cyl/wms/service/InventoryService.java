@@ -538,5 +538,57 @@ public class InventoryService {
         return inventoryMapper.updateDelFlagByIds(idArr);
     }
 
+    /*
+     * 根据库存分配规则分配库存
+     * @param itemId 物料id
+     * @param planQuantity 计划数量
+     * */
+    public List<ShipmentOrderDetail> allocatedInventory(Long itemId, BigDecimal planQuantity) {
+        //  默认使用仓库库存数量最小优先原则
+        List<Inventory> inventoryList = inventoryMapper.selectList(new LambdaQueryWrapper<Inventory>()
+                .eq(Inventory::getItemId, itemId)
+                .eq(Inventory::getDelFlag, 0)
+                .gt(Inventory::getQuantity, BigDecimal.ZERO)
+                .orderByAsc(Inventory::getQuantity));
+        if (CollUtil.isEmpty(inventoryList)) {
+            throw new ServiceException("库存不足",HttpStatus.CONFIRMATION);
+        }
 
+        /*//  默认使用仓库库存数量最大优先原则
+        List<Inventory> inventoryList = inventoryMapper.selectList(new LambdaQueryWrapper<Inventory>()
+                .eq(Inventory::getItemId, itemId)
+                .gt(Inventory::getQuantity, BigDecimal.ZERO)
+                .orderByDesc(Inventory::getQuantity));
+        if (CollUtil.isEmpty(inventoryList)) {
+            throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
+        }*/
+        //  默认使用仓库库存数量最大优先原则
+        // 拆分物料明细
+        List<ShipmentOrderDetail> shipmentOrderDetailList = new ArrayList<>();
+        for (Inventory inventory : inventoryList) {
+            ShipmentOrderDetail shipmentOrderDetail = new ShipmentOrderDetail();
+            BigDecimal allocatedQuantity;
+            if (inventory.getQuantity().compareTo(planQuantity) > 0) {
+                allocatedQuantity = planQuantity;
+            } else {
+                allocatedQuantity = inventory.getQuantity();
+            }
+            shipmentOrderDetail.setPlanQuantity(allocatedQuantity);
+            shipmentOrderDetail.setRealQuantity(allocatedQuantity);
+            shipmentOrderDetail.setWarehouseId(inventory.getWarehouseId());
+            shipmentOrderDetail.setAreaId(inventory.getAreaId());
+            shipmentOrderDetail.setRackId(inventory.getRackId());
+            shipmentOrderDetail.setItemId(itemId);
+            shipmentOrderDetailList.add(shipmentOrderDetail);
+            planQuantity = planQuantity.subtract(inventory.getQuantity());
+            if (planQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+                break;
+            }
+        }
+        // 库存不足
+        if (planQuantity.compareTo(BigDecimal.ZERO) > 0) {
+            throw new ServiceException("库存不足",HttpStatus.CONFIRMATION);
+        }
+        return shipmentOrderDetailList;
+    }
 }
