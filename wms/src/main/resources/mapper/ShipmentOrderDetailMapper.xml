@@ -88,31 +88,42 @@
     </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_shipment_order_detail
-                (shipment_order_id,
-                 item_id,
-                 plan_quantity,
-                 real_quantity,
-                 rack_id,
-                 money,
-                 del_flag,
-                 remark,
-                 create_by,
-                 create_time,
-                 update_by,
-                 update_time,
-                 warehouse_id,
-                 area_id,
-                 shipment_order_status)
-                values
+        (shipment_order_id,
+        item_id,
+        plan_quantity,
+        real_quantity,
+        rack_id,
+        money,
+        del_flag,
+        remark,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        warehouse_id,
+        area_id,
+        shipment_order_status)
+        values
         <foreach collection="list" item="item" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 #{item.shipmentOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT},
                 #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL},
-                #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL}, #{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR},
+                #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL}, #{item.delFlag, jdbcType=TINYINT},
+                #{item.remark, jdbcType=VARCHAR},
                 #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT},
                 #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT},
                 #{item.areaId, jdbcType=BIGINT}, #{item.shipmentOrderStatus, jdbcType=TINYINT},
             </trim>
         </foreach>
     </insert>
+
+    <select id="selectListGroupByItemId" resultMap="ShipmentOrderDetailResult">
+        select item_id,
+               sum(plan_quantity) plan_quantity,
+               sum(real_quantity) real_quantity
+        from wms_shipment_order_detail
+        where shipment_order_id = #{id}
+        and del_flag = 0
+        group by item_id
+    </select>
 </mapper>

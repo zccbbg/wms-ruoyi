@@ -145,4 +145,16 @@ public class ShipmentOrderDetailService {
         shipmentOrderDetailMapper.update(null, updateWrapper);
 
     }
+
+    /**
+     * 物理删除 出库单详情信息
+     *
+     * @param orderId 出库单详情主键
+     * @return 结果
+     */
+    public int deleteByOrderId(Long orderId) {
+        LambdaUpdateWrapper<ShipmentOrderDetail> delete = new LambdaUpdateWrapper<ShipmentOrderDetail>()
+                .eq(ShipmentOrderDetail::getShipmentOrderId, orderId);
+        return shipmentOrderDetailMapper.delete(delete);
+    }
 }
