@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyl.wms.mapper.RackMapper">
-    
+
     <resultMap type="Rack" id="RackResult">
         <result property="id" column="id"/>
         <result property="rackNo" column="rack_no"/>
@@ -16,10 +16,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time" />
     </resultMap>
 
     <sql id="selectRackVo">
@@ -28,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByEntity" parameterType="Rack" resultMap="RackResult">
         <include refid="selectRackVo"/>
-        <where>  
+        <where>
             <if test="rackNo != null  and rackNo != ''"> and rack_no = #{rackNo}</if>
             <if test="rackName != null  and rackName != ''"> and rack_name like concat('%', #{rackName}, '%')</if>
             <if test="areaId != null "> and area_id = #{areaId}</if>

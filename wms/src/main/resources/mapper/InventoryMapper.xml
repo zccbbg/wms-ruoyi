@@ -147,13 +147,13 @@
     <select id="selectValidAll" resultMap="InventoryResult">
         SELECT wi.*
         FROM wms_inventory wi
-                 left join wms_item on wms_item.id = wi.item_id
-                 left join wms_warehouse ww on wi.warehouse_id = ww.id
-                 left join wms_area wa on wi.area_id = wa.id
-        where wi.del_flag = 0
-          and wms_item.del_flag = 0
-          and ww.del_flag = 0
-          and wa.del_flag = 0
+                 LEFT JOIN wms_item ON wms_item.id = wi.item_id
+                 LEFT JOIN wms_warehouse ww ON wi.warehouse_id = ww.id
+                 LEFT JOIN wms_area wa ON wi.area_id = wa.id
+        WHERE wi.del_flag = 0
+          AND wms_item.del_flag = 0
+          AND ww.del_flag = 0
+          AND (wa.del_flag = 0 OR wa.del_flag IS NULL);
     </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory

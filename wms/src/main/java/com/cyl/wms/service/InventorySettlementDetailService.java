@@ -11,6 +11,7 @@ import com.cyl.wms.mapper.InventorySettlementDetailMapper;
 import com.cyl.wms.pojo.query.InventorySettlementDetailQuery;
 import com.cyl.wms.pojo.vo.InventoryVO;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @author zcc
  */
 @Service
+@Slf4j
 public class InventorySettlementDetailService {
     @Autowired
     private InventoryService inventoryService;
@@ -203,6 +205,7 @@ public class InventorySettlementDetailService {
 
         List<InventorySettlementDetail> list = new LinkedList<>();
         List<InventoryVO> inventoryList = inventoryService.queryValidAll();
+        log.info("有效库存：{}", inventoryList);
         inventoryList.forEach(inventoryVO -> {
 
 
@@ -246,6 +249,7 @@ public class InventorySettlementDetailService {
             inventorySettlementDetail.setCurrentEnter(enter);
             inventorySettlementDetail.setCurrentCheck(currCheck);
             inventorySettlementDetail.setPreviousBalance(previousBalance);
+            log.info("库存结算明细：{}", inventorySettlementDetail);
             list.add(inventorySettlementDetail);
         });
         return list;
