@@ -40,7 +40,10 @@ public class HttpStatus {
      * 资源没有被修改
      */
     public static final int NOT_MODIFIED = 304;
-
+    /**
+     * 库存不足
+     */
+    public static final int INVENTORY_SHORTAGE = 398;
     /**
      * 需要用户确认的错误
      */

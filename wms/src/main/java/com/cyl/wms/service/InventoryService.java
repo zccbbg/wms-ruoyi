@@ -17,6 +17,7 @@ import com.ruoyi.common.constant.CommonConstant;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.exception.WmsServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.system.service.ISysDictDataService;
@@ -225,17 +226,18 @@ public class InventoryService {
      * 判断库存是否足够出库
      * */
     public void checkInventory(Long itemId, Long warehouseId, Long areaId, Long rackId, BigDecimal added) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("itemId", itemId);
         Inventory inventory = this.queryInventoryByItemId(itemId, warehouseId, areaId, rackId);
         if (inventory == null) {
             Item item = itemService.selectById(itemId);
             String msg = "商品：" + item.getItemName() + "(" + item.getItemNo() + ")" + ",<span style='color:red'>库存不存在</span> 无法出库</br>";
-            throw new ServiceException(msg, HttpStatus.CONFIRMATION);
+            throw new WmsServiceException(msg, HttpStatus.INVENTORY_SHORTAGE, map);
         } else if (inventory.getQuantity().compareTo(added) < 0) {
             Item item = itemService.selectById(itemId);
             String msg = "商品：[<span style='color:red'>" + item.getItemName() + "</span>] 库存不足，无法出库" +
-                    "</br>计划数量：<span >" + added + "</span>" +
-                    "</br>库存数量：<span style='color:red'>" + inventory.getQuantity() + "</span>";
-            throw new ServiceException(msg, HttpStatus.CONFIRMATION);
+                    "</br>计划数量：<span >" + added + "</span>";
+            throw new WmsServiceException(msg, HttpStatus.INVENTORY_SHORTAGE, map);
         }
     }
 
@@ -551,7 +553,7 @@ public class InventoryService {
                 .gt(Inventory::getQuantity, BigDecimal.ZERO)
                 .orderByAsc(Inventory::getQuantity));
         if (CollUtil.isEmpty(inventoryList)) {
-            throw new ServiceException("库存不足",HttpStatus.CONFIRMATION);
+            throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
 
         /*//  默认使用仓库库存数量最大优先原则
@@ -587,7 +589,7 @@ public class InventoryService {
         }
         // 库存不足
         if (planQuantity.compareTo(BigDecimal.ZERO) > 0) {
-            throw new ServiceException("库存不足",HttpStatus.CONFIRMATION);
+            throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
         return shipmentOrderDetailList;
     }
