@@ -2,6 +2,7 @@ package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.DeliveryConvert;
 import com.cyl.wms.convert.ShipmentOrderConvert;
@@ -16,6 +17,7 @@ import com.cyl.wms.pojo.query.ShipmentOrderQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderVO;
+import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.exception.ServiceException;
@@ -396,4 +398,46 @@ public class ShipmentOrderService {
 
     }
 
+    public void updateWaveNo(Long orderId, String waveNo) {
+        ShipmentOrder shipmentOrder = shipmentOrderMapper.selectById(orderId);
+        if (shipmentOrder == null) {
+            throw new ServiceException("出库单不存在");
+        }
+        String orderNo = shipmentOrder.getShipmentOrderNo();
+        if (shipmentOrder.getShipmentOrderStatus() == ShipmentOrderConstant.ALL_IN || shipmentOrder.getShipmentOrderStatus() == ShipmentOrderConstant.PART_IN) {
+            throw new ServiceException("订单" + orderNo + "已经出库，不能分配波次");
+        }
+        if (!StringUtils.isEmpty(shipmentOrder.getWaveNo())) {
+            throw new ServiceException("订单" + orderNo + "已经分配波次，不能重复分配");
+        }
+        shipmentOrder.setWaveNo(waveNo);
+        shipmentOrderMapper.updateById(shipmentOrder);
+    }
+
+    /*
+    *
+    * */
+    public OrderWaveFrom selectDetailByWaveNo(String waveNo) {
+        OrderWaveFrom  form =new OrderWaveFrom();
+        List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailMapper.selectDetailByWaveNo(waveNo);
+        List<ShipmentOrderDetailVO> shipmentOrderDetailVOS =  shipmentOrderDetailService.toVos(shipmentOrderDetails);
+        form.setDetails(shipmentOrderDetailVOS);
+        if (!CollUtil.isEmpty(form.getDetails())) {
+            List<Long> itemIds = form.getDetails().stream()
+                    .map(ShipmentOrderDetailVO::getItemId).distinct().collect(Collectors.toList());
+            ItemQuery query1 = new ItemQuery();
+            query1.setIds(itemIds);
+            List<Item> list = itemService.selectList(query1, null);
+            List<ItemVO> items = itemService.toVos(list);
+            form.setItems(items);
+        }
+        return form;
+    }
+
+    public void deleteByWaveIds(Collection<String> ids) {
+        LambdaUpdateWrapper<ShipmentOrder> qw = new LambdaUpdateWrapper<>();
+        qw.in(ShipmentOrder::getWaveNo, ids);
+        qw.set(ShipmentOrder::getWaveNo, null);
+        shipmentOrderMapper.update(null, qw);
+    }
 }

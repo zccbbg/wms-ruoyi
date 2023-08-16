@@ -1,13 +1,12 @@
 package com.cyl.wms.pojo.vo;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.ruoyi.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 出库单详情 数据视图对象
@@ -20,6 +19,11 @@ public class ShipmentOrderDetailVO extends BaseAudit {
    * ID
    */
   private Long id;
+  /**
+   * 订单号
+   */
+  @Excel(name = "订单号")
+  private String orderNo;
   /**
    * 出库单
    */

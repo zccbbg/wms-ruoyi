@@ -1,19 +1,21 @@
 package com.cyl.wms.domain;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 /**
  * 出库单对象 wms_shipment_order
- * 
+ *
  * @author zcc
  */
-@ApiModel(description="出库单对象")
+@ApiModel(description = "出库单对象")
 @Data
 @TableName("wms_shipment_order")
 public class ShipmentOrder extends BaseAudit {
@@ -64,5 +66,8 @@ public class ShipmentOrder extends BaseAudit {
 
     @ApiModelProperty("删除标识")
     private Integer delFlag;
+
+    @ApiModelProperty("波次号")
+    private String waveNo;
 
 }

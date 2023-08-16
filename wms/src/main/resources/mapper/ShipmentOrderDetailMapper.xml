@@ -6,16 +6,13 @@
     <resultMap type="ShipmentOrderDetail" id="ShipmentOrderDetailResult">
         <result property="id" column="id"/>
         <result property="shipmentOrderId" column="shipment_order_id"/>
+        <result property="orderNo" column="order_no"/>
         <result property="itemId" column="item_id"/>
         <result property="planQuantity" column="plan_quantity"/>
         <result property="realQuantity" column="real_quantity"/>
         <result property="rackId" column="rack_id"/>
         <result property="delFlag" column="del_flag"/>
         <result property="remark" column="remark"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -125,5 +122,15 @@
         where shipment_order_id = #{id}
         and del_flag = 0
         group by item_id
+    </select>
+
+    <select id="selectDetailByWaveNo" resultMap="ShipmentOrderDetailResult">
+        select sod.item_id,
+               sod.plan_quantity,
+               so.shipment_order_no order_no
+        from wms_shipment_order_detail sod
+                 left join wms_shipment_order so on sod.shipment_order_id = so.id
+        where sod.del_flag = 0
+          and so.wave_no = #{waveNo};
     </select>
 </mapper>

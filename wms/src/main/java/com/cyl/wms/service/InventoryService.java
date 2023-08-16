@@ -21,6 +21,7 @@ import com.ruoyi.common.exception.WmsServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.system.service.ISysDictDataService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * @author zcc
  */
 @Service
+@Slf4j
 public class InventoryService {
     @Autowired
     private InventoryMapper inventoryMapper;
@@ -553,6 +555,7 @@ public class InventoryService {
                 .gt(Inventory::getQuantity, BigDecimal.ZERO)
                 .orderByAsc(Inventory::getQuantity));
         if (CollUtil.isEmpty(inventoryList)) {
+            log.error("库存不足,itemId:{},计划数量：{}", itemId, planQuantity);
             throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
 

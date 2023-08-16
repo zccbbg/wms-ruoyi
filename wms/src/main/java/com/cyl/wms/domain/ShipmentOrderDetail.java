@@ -1,18 +1,20 @@
 package com.cyl.wms.domain;
 
-import java.math.BigDecimal;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+
 /**
  * 出库单详情对象 wms_shipment_order_detail
- * 
+ *
  * @author zcc
  */
-@ApiModel(description="出库单详情对象")
+@ApiModel(description = "出库单详情对象")
 @Data
 @TableName("wms_shipment_order_detail")
 public class ShipmentOrderDetail extends BaseAudit {
@@ -20,6 +22,11 @@ public class ShipmentOrderDetail extends BaseAudit {
 
     @ApiModelProperty("ID")
     private Long id;
+    /**
+     * 订单号
+     */
+    @Excel(name = "订单号")
+    private String orderNo;
 
     @ApiModelProperty("出库单")
     @Excel(name = "出库单")

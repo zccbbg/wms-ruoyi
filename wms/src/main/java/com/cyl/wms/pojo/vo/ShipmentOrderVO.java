@@ -1,11 +1,11 @@
 package com.cyl.wms.pojo.vo;
 
-import java.time.LocalDateTime;
-
-import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 出库单 数据视图对象
@@ -64,6 +64,9 @@ public class ShipmentOrderVO extends BaseAudit {
    */
   @Excel(name = "备注")
   private String remark;
+
+  @Excel(name = "波次号")
+  private String waveNo;
 
   private Integer detailCount;
 

@@ -34,4 +34,6 @@ public interface ShipmentOrderDetailMapper extends BaseMapper<ShipmentOrderDetai
     int batchInsert(List<ShipmentOrderDetail> shipmentOrderDetails);
 
     List<ShipmentOrderDetail> selectListGroupByItemId(@Param("id") long ids);
+
+    List<ShipmentOrderDetail> selectDetailByWaveNo(String waveNo);
 }
