@@ -1,22 +1,24 @@
 package com.cyl.wms.convert;
 
 import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.domain.ReceiptOrderDetail;
-import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
-import org.mapstruct.Mapper;
 import com.cyl.wms.domain.ShipmentOrderDetail;
 import com.cyl.wms.pojo.dto.ShipmentOrderDetailDTO;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
+import org.apache.commons.lang3.SerializationUtils;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
 /**
  * 出库单详情  DO <=> DTO <=> VO / BO / Query
  *
  * @author zcc
  */
 @Mapper(componentModel = "spring")
-public interface ShipmentOrderDetailConvert  {
+public interface ShipmentOrderDetailConvert {
 
     /**
      * @param source DO
@@ -36,4 +38,21 @@ public interface ShipmentOrderDetailConvert  {
 
     @Mapping(target = "quantity", source = "realQuantity")
     InventoryHistory do2InventoryHistory(ShipmentOrderDetailVO it);
+
+    /*
+     * 深拷贝
+     * @param original 原始集合
+     * @return 拷贝后的集合
+     * */
+    default Collection<ShipmentOrderDetailVO> copyList(Collection<ShipmentOrderDetailVO> original) {
+        List<ShipmentOrderDetailVO> deepCopy = new ArrayList<>();
+
+        for (ShipmentOrderDetailVO element : original) {
+            byte[] serializedObject = SerializationUtils.serialize(element);
+            ShipmentOrderDetailVO clonedElement = SerializationUtils.deserialize(serializedObject);
+            deepCopy.add(clonedElement);
+        }
+
+        return deepCopy;
+    }
 }

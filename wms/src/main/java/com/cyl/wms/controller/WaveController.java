@@ -66,7 +66,7 @@ public class WaveController extends BaseController {
     @PreAuthorize("@ss.hasPermi('wms:wave:add')")
     @Log(title = "波次", businessType = BusinessType.INSERT)
     @PostMapping
-    public ResponseEntity<Integer> add(@RequestBody  Wave wave ) {
+    public ResponseEntity<Integer> add(@RequestBody Wave wave) {
         return ResponseEntity.ok(service.creatWave(wave));
     }
 
@@ -76,7 +76,15 @@ public class WaveController extends BaseController {
     @PostMapping("allocated/{id}")
     public ResponseEntity<OrderWaveFrom> allocatedInventory(@PathVariable("id") Long id) {
 
-        return ResponseEntity.ok( service.allocatedInventory(id));
+        return ResponseEntity.ok(service.allocatedInventory(id));
+    }
+
+    @ApiOperation("应用波次作业")
+    @PreAuthorize("@ss.hasPermi('wms:wave:edit')")
+    @Log(title = "波次单", businessType = BusinessType.UPDATE)
+    @PostMapping("confirmWave")
+    public ResponseEntity<Integer> confirmWave(@RequestBody OrderWaveFrom order) {
+        return ResponseEntity.ok(service.confirmWave(order));
     }
 
     @ApiOperation("修改波次")

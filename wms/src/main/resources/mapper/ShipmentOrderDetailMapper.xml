@@ -126,6 +126,7 @@
 
     <select id="selectDetailByWaveNo" resultMap="ShipmentOrderDetailResult">
         select sod.item_id,
+               sod.shipment_order_id,
                sod.plan_quantity,
                so.shipment_order_no order_no
         from wms_shipment_order_detail sod

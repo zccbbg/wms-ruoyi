@@ -630,7 +630,13 @@ INSERT INTO `sys_menu` VALUES (2231, '客户账户流水新增', 2229, 2, '', NU
 INSERT INTO `sys_menu` VALUES (2232, '客户账户流水修改', 2229, 3, '', NULL, NULL, 1, 0, 'F', '0', '0', 'wms:customerTransaction:edit', '#', 1, '2023-05-04 16:57:02.000', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (2233, '客户账户流水删除', 2229, 4, '', NULL, NULL, 1, 0, 'F', '0', '0', 'wms:customerTransaction:remove', '#', 1, '2023-05-04 16:57:27.000', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (2234, '客户账户流水导出', 2229, 5, '', NULL, NULL, 1, 0, 'F', '0', '0', 'wms:customerTransaction:export', '#', 1, '2023-05-04 16:57:56.000', NULL, NULL, '');
-
+INSERT INTO `sys_menu` VALUES (2244, '波次', 2192, 1, 'wave', 'wms/wave/index', NULL, 1, 0, 'C', '1', '0', 'wms:wave:list', '#', 1, '2023-08-16 05:24:03.000', 1, '2023-08-16 09:09:00.000', '波次菜单');
+INSERT INTO `sys_menu` VALUES (2245, '波次查询', 2244, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'wms:wave:query', '#', 1, '2023-08-16 05:24:03.000', 1, NULL, '');
+INSERT INTO `sys_menu` VALUES (2246, '波次新增', 2244, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'wms:wave:add', '#', 1, '2023-08-16 05:24:03.000', 1, NULL, '');
+INSERT INTO `sys_menu` VALUES (2247, '波次修改', 2244, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'wms:wave:edit', '#', 1, '2023-08-16 05:24:03.000', 1, NULL, '');
+INSERT INTO `sys_menu` VALUES (2248, '波次删除', 2244, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'wms:wave:remove', '#', 1, '2023-08-16 05:24:03.000', 1, NULL, '');
+INSERT INTO `sys_menu` VALUES (2249, '波次导出', 2244, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'wms:wave:export', '#', 1, '2023-08-16 05:24:03.000', 1, NULL, '');
+INSERT INTO `sys_menu` VALUES (2250, '波次作业', 2192, 2, 'wave/status', 'wms/wave/status', NULL, 1, 0, 'C', '1', '0', '', 'checkbox', 1, '2023-08-16 07:44:29.000', 1, '2023-08-16 09:09:04.000', '');
 -- ----------------------------
 -- Table structure for sys_notice
 -- ----------------------------
@@ -5126,6 +5132,7 @@ CREATE TABLE `wms_shipment_order`  (
   `check_status` tinyint(4) NULL DEFAULT NULL COMMENT '审核状态',
   `check_user_id` bigint(20) NULL DEFAULT NULL COMMENT '审核人',
   `check_time` datetime(3) NULL DEFAULT NULL COMMENT '审核时间',
+  `wave_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '波次号',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标识',
   `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人',
@@ -6201,5 +6208,24 @@ INSERT INTO `wms_warehouse` VALUES (232, '12345', '南京仓', 1, NULL, 1, '2023
 INSERT INTO `wms_warehouse` VALUES (233, 'nanjing', '南京仓', 1, '南京的仓库', 1, '2023-05-04 16:38:02.861', NULL, NULL);
 INSERT INTO `wms_warehouse` VALUES (234, '1', 'df', 0, 'dfasd', 115, '2023-05-04 16:42:43.844', NULL, NULL);
 INSERT INTO `wms_warehouse` VALUES (235, 'ghh', 'drw', 0, 'fff', 115, '2023-05-04 16:42:55.223', NULL, NULL);
+-- ----------------------------
+-- Table structure for wms_wave
+-- ----------------------------
+DROP TABLE IF EXISTS `wms_wave`;
+CREATE TABLE `wms_wave`  (
+                             `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                             `wave_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '波次号',
+                             `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '状态',
+                             `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                             `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标识',
+                             `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人',
+                             `create_time` datetime(3) NULL DEFAULT NULL COMMENT '创建时间',
+                             `update_by` bigint(20) NULL DEFAULT NULL COMMENT '修改人',
+                             `update_time` datetime(3) NULL DEFAULT NULL COMMENT '修改时间',
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '波次' ROW_FORMAT = DYNAMIC;
+-- ----------------------------
+-- Records of wms_wave
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

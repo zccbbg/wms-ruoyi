@@ -1,5 +1,6 @@
 package com.cyl.wms.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseAudit;
@@ -26,6 +27,7 @@ public class ShipmentOrderDetail extends BaseAudit {
      * 订单号
      */
     @Excel(name = "订单号")
+    @TableField(exist = false)
     private String orderNo;
 
     @ApiModelProperty("出库单")

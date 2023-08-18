@@ -3,10 +3,11 @@ package com.ruoyi.common.core.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class BaseAudit {
+public class BaseAudit implements Serializable {
     /**
      * 创建者
      */

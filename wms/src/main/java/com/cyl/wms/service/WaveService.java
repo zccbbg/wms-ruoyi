@@ -2,14 +2,16 @@ package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.wms.constant.ShipmentOrderConstant;
+import com.cyl.wms.convert.ShipmentOrderDetailConvert;
 import com.cyl.wms.domain.ShipmentOrderDetail;
 import com.cyl.wms.domain.Wave;
+import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
 import com.cyl.wms.mapper.ShipmentOrderMapper;
 import com.cyl.wms.mapper.WaveMapper;
 import com.cyl.wms.pojo.query.WaveQuery;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
-import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +42,14 @@ public class WaveService {
     @Autowired
 
     private ShipmentOrderDetailService shipmentOrderDetailService;
+    @Autowired
+    private ShipmentOrderDetailConvert shipmentOrderDetailConvert;
 
     @Autowired
     private ShipmentOrderMapper shipmentOrderMapper;
+
+    @Autowired
+    private ShipmentOrderDetailMapper shipmentOrderDetailMapper;
     @Autowired
     private InventoryService inventoryService;
 
@@ -135,7 +139,6 @@ public class WaveService {
     }
 
 
-
     /**
      * 修改波次
      *
@@ -154,8 +157,8 @@ public class WaveService {
      */
     public int deleteByIds(Long[] ids) {
         shipmentOrderService.deleteByWaveIds(waveMapper.selectList(new LambdaQueryWrapper<Wave>()
-                .select(Wave::getWaveNo)
-                .in(Wave::getId, Arrays.asList(ids)))
+                        .select(Wave::getWaveNo)
+                        .in(Wave::getId, Arrays.asList(ids)))
                 .stream().map(Wave::getWaveNo).collect(Collectors.toList()));
         return waveMapper.updateDelFlagByIds(ids);
     }
@@ -174,15 +177,27 @@ public class WaveService {
     /*
      * 波次单分配仓库
      * */
+    @Transactional
     public OrderWaveFrom allocatedInventory(Long id) {
         log.info("波次单分配仓库分配仓库,波次单id:{}", id);
         Wave wave = selectById(id);
         String waveNo = wave.getWaveNo();
         OrderWaveFrom shipmentOrderFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
-        List<ShipmentOrderDetailVO> details = shipmentOrderFrom.getDetails();
+        List<ShipmentOrderDetailVO> originalDetail = (List<ShipmentOrderDetailVO>) shipmentOrderDetailConvert.copyList(shipmentOrderFrom.getDetails());
 
+        // 单个出库单分配后库区，还可以波次？ 可以，这一步就是重新聚合订单分散得拣货数据。
+        // 聚合出库单，防止用户先前分配过库存。如果分配过库存，需要把分配过的库存加回来。保留原始订单信息
+        Map<String, ShipmentOrderDetailVO> aggregatedDetails = new HashMap<>();
+        originalDetail.forEach(vo -> {
+            String key = vo.getItemId() + "_" + vo.getOrderNo();
+            aggregatedDetails.merge(key, vo, (existingVo, newVo) -> {
+                existingVo.setPlanQuantity(existingVo.getPlanQuantity().add(newVo.getPlanQuantity()));
+                return existingVo;
+            });
+        });
+        List<ShipmentOrderDetailVO> originalDetails = new ArrayList<>(aggregatedDetails.values());
         // 根据itemId分组，统计数量
-        Map<Long, BigDecimal> collect = details.parallelStream().collect(Collectors.groupingBy(ShipmentOrderDetailVO::getItemId,
+        Map<Long, BigDecimal> collect = originalDetails.parallelStream().collect(Collectors.groupingBy(ShipmentOrderDetailVO::getItemId,
                 Collectors.reducing(BigDecimal.ZERO, ShipmentOrderDetailVO::getPlanQuantity, BigDecimal::add)));
 
         List<ShipmentOrderDetail> allocationDetails = new ArrayList<>();
@@ -197,9 +212,75 @@ public class WaveService {
 
         log.info("分配库存详情\n{}", allocationDetails);
         List<ShipmentOrderDetailVO> list = shipmentOrderDetailService.toVos(allocationDetails);
-        //todo 1.更新出库单明细
-        //todo 2.针对波次分配失败的打包创建子波次
-        shipmentOrderFrom.setAllocationDetails(list);
+        List<ShipmentOrderDetailVO> allocatedDetails = new ArrayList<>();
+
+        //2.更新原始库存
+        originalDetails.forEach(originalOrder -> {
+            Long itemId = originalOrder.getItemId();
+            BigDecimal planQuantity = originalOrder.getPlanQuantity();
+            // 从list里面取出相同物料得库存记录，需要取planQuantity数量，
+            // 如果planQuantity数量小于库存数量，需要继续取下一个库存记录，直到planQuantity为0。
+            // 已经被使用得list记录需要从list中移除
+            for (int i = 0; i < list.size() && planQuantity.compareTo(BigDecimal.ZERO) > 0; i++) {
+                ShipmentOrderDetailVO availableDetail = list.get(i);
+                Long itemId1 = availableDetail.getItemId();
+                BigDecimal availableQuantity = availableDetail.getPlanQuantity();
+                if (itemId.equals(itemId1)) {
+                    if (planQuantity.compareTo(availableQuantity) >= 0) {
+                        //深拷贝一个新的对象
+                        planQuantity = planQuantity.subtract(availableQuantity);
+                        originalOrder.setPlanQuantity(planQuantity);
+                        allocatedDetails.add(convert2vo(originalOrder, availableDetail, availableQuantity));
+                        list.remove(i);
+                        i--;
+                    } else {
+                        availableQuantity = availableQuantity.subtract(planQuantity);
+                        convert2vo(originalOrder, availableDetail, planQuantity);
+                        // 更新list当前item得数量
+                        availableDetail.setPlanQuantity(availableQuantity);
+                        list.set(i, availableDetail);
+                        allocatedDetails.add(convert2vo(originalOrder, availableDetail, planQuantity));
+                        planQuantity = BigDecimal.ZERO;
+                    }
+                }
+            }
+
+        });
+        //log.info("波次单分配仓库分配仓库,list:{}", list);
+        //todo 2.针对波次分配失败的打包创建子波次(当前不具备拆分子波次功能)
+        shipmentOrderFrom.setAllocationDetails(allocatedDetails);
+        //log.info("波次单分配仓库分配仓库,originalDetails:{},分配库存详情\n{}", originalDetails, allocatedDetails);
         return shipmentOrderFrom;
+    }
+
+    private ShipmentOrderDetailVO convert2vo(ShipmentOrderDetailVO originalOrder, ShipmentOrderDetailVO availableDetail, BigDecimal availableQuantity) {
+        ShipmentOrderDetailVO shipmentOrderDetailVO2 = new ShipmentOrderDetailVO();
+        shipmentOrderDetailVO2.setOrderNo(originalOrder.getOrderNo());
+        shipmentOrderDetailVO2.setItemId(originalOrder.getItemId());
+        shipmentOrderDetailVO2.setShipmentOrderId(originalOrder.getShipmentOrderId());
+        shipmentOrderDetailVO2.setPlanQuantity(availableQuantity);
+        shipmentOrderDetailVO2.setWarehouseId(availableDetail.getWarehouseId());
+        shipmentOrderDetailVO2.setAreaId(availableDetail.getAreaId());
+        shipmentOrderDetailVO2.setPlace(availableDetail.getPlace());
+        shipmentOrderDetailVO2.setDelFlag(0);
+        // 默认出库状态为未出库
+        shipmentOrderDetailVO2.setShipmentOrderStatus(ShipmentOrderConstant.NOT_IN);
+        return shipmentOrderDetailVO2;
+    }
+
+    @Transactional
+    public Integer confirmWave(OrderWaveFrom order) {
+        List<ShipmentOrderDetailVO> details = order.getAllocationDetails();
+        // 删除出库单明细表
+        List<Long> orderIds = details.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
+        LambdaQueryWrapper<ShipmentOrderDetail> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.in(ShipmentOrderDetail::getShipmentOrderId, orderIds);
+        shipmentOrderDetailMapper.delete(deleteWrapper);
+
+        // 插入出库单明细表
+        List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailConvert.vos2dos(details);
+
+        return shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
+
     }
 }
