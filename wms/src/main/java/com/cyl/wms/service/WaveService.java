@@ -2,8 +2,10 @@ package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
+import com.cyl.wms.domain.ShipmentOrder;
 import com.cyl.wms.domain.ShipmentOrderDetail;
 import com.cyl.wms.domain.Wave;
 import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
@@ -75,6 +77,7 @@ public class WaveService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Wave> qw = new QueryWrapper<>();
+        qw.orderByDesc("id");
         qw.eq("del_flag", 0);
         String waveNo = query.getWaveNo();
         if (!StringUtils.isEmpty(waveNo)) {
@@ -156,6 +159,17 @@ public class WaveService {
      * @return 结果
      */
     public int deleteByIds(Long[] ids) {
+        Arrays.asList(ids).forEach(id -> {
+            Wave wave = selectById(id);
+            if (wave == null) {
+                throw new ServiceException("波次单不存在");
+            }
+            String waveNo = wave.getWaveNo();
+            LambdaUpdateWrapper<ShipmentOrder> updateWrapper = new LambdaUpdateWrapper<ShipmentOrder>()
+                    .eq(ShipmentOrder::getWaveNo, waveNo)
+                    .set(ShipmentOrder::getWaveNo, null);
+            shipmentOrderMapper.update(null, updateWrapper);
+        });
         shipmentOrderService.deleteByWaveIds(waveMapper.selectList(new LambdaQueryWrapper<Wave>()
                         .select(Wave::getWaveNo)
                         .in(Wave::getId, Arrays.asList(ids)))
@@ -243,10 +257,9 @@ public class WaveService {
     }
 
 
-
     /*
-    * 取消分配 即还原出库单明细
-    * */
+     * 取消分配 即还原出库单明细
+     * */
     private static List<ShipmentOrderDetailVO> aggregatedShipmentOrderDetailVOS(List<ShipmentOrderDetailVO> originalDetail) {
         // 单个出库单分配后库区，还可以波次？ 可以，这一步就是重新聚合订单分散得拣货数据。
         // 聚合出库单，防止用户先前分配过库存。如果分配过库存，需要把分配过的库存加回来。保留原始订单信息
@@ -294,8 +307,8 @@ public class WaveService {
     }
 
     /*
-    * 取消波次作业
-    * */
+     * 取消波次作业
+     * */
     @Transactional
     public Integer cancelAllocatedInventory(Long id) {
         Wave wave = selectById(id);
