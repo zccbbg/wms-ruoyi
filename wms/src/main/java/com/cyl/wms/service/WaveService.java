@@ -185,17 +185,7 @@ public class WaveService {
         OrderWaveFrom shipmentOrderFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
         List<ShipmentOrderDetailVO> originalDetail = (List<ShipmentOrderDetailVO>) shipmentOrderDetailConvert.copyList(shipmentOrderFrom.getDetails());
 
-        // 单个出库单分配后库区，还可以波次？ 可以，这一步就是重新聚合订单分散得拣货数据。
-        // 聚合出库单，防止用户先前分配过库存。如果分配过库存，需要把分配过的库存加回来。保留原始订单信息
-        Map<String, ShipmentOrderDetailVO> aggregatedDetails = new HashMap<>();
-        originalDetail.forEach(vo -> {
-            String key = vo.getItemId() + "_" + vo.getOrderNo();
-            aggregatedDetails.merge(key, vo, (existingVo, newVo) -> {
-                existingVo.setPlanQuantity(existingVo.getPlanQuantity().add(newVo.getPlanQuantity()));
-                return existingVo;
-            });
-        });
-        List<ShipmentOrderDetailVO> originalDetails = new ArrayList<>(aggregatedDetails.values());
+        List<ShipmentOrderDetailVO> originalDetails = aggregatedShipmentOrderDetailVOS(originalDetail);
         // 根据itemId分组，统计数量
         Map<Long, BigDecimal> collect = originalDetails.parallelStream().collect(Collectors.groupingBy(ShipmentOrderDetailVO::getItemId,
                 Collectors.reducing(BigDecimal.ZERO, ShipmentOrderDetailVO::getPlanQuantity, BigDecimal::add)));
@@ -235,7 +225,6 @@ public class WaveService {
                         i--;
                     } else {
                         availableQuantity = availableQuantity.subtract(planQuantity);
-                        convert2vo(originalOrder, availableDetail, planQuantity);
                         // 更新list当前item得数量
                         availableDetail.setPlanQuantity(availableQuantity);
                         list.set(i, availableDetail);
@@ -251,6 +240,26 @@ public class WaveService {
         shipmentOrderFrom.setAllocationDetails(allocatedDetails);
         //log.info("波次单分配仓库分配仓库,originalDetails:{},分配库存详情\n{}", originalDetails, allocatedDetails);
         return shipmentOrderFrom;
+    }
+
+
+
+    /*
+    * 取消分配 即还原出库单明细
+    * */
+    private static List<ShipmentOrderDetailVO> aggregatedShipmentOrderDetailVOS(List<ShipmentOrderDetailVO> originalDetail) {
+        // 单个出库单分配后库区，还可以波次？ 可以，这一步就是重新聚合订单分散得拣货数据。
+        // 聚合出库单，防止用户先前分配过库存。如果分配过库存，需要把分配过的库存加回来。保留原始订单信息
+        Map<String, ShipmentOrderDetailVO> aggregatedDetails = new HashMap<>();
+        originalDetail.forEach(vo -> {
+            String key = vo.getItemId() + "_" + vo.getOrderNo();
+            aggregatedDetails.merge(key, vo, (existingVo, newVo) -> {
+                existingVo.setPlanQuantity(existingVo.getPlanQuantity().add(newVo.getPlanQuantity()));
+                existingVo.setDelFlag(0);
+                return existingVo;
+            });
+        });
+        return new ArrayList<>(aggregatedDetails.values());
     }
 
     private ShipmentOrderDetailVO convert2vo(ShipmentOrderDetailVO originalOrder, ShipmentOrderDetailVO availableDetail, BigDecimal availableQuantity) {
@@ -282,5 +291,31 @@ public class WaveService {
 
         return shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
 
+    }
+
+    /*
+    * 取消波次作业
+    * */
+    @Transactional
+    public Integer cancelAllocatedInventory(Long id) {
+        Wave wave = selectById(id);
+        String waveNo = wave.getWaveNo();
+        OrderWaveFrom shipmentOrderFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
+        List<ShipmentOrderDetailVO> originalDetail = (List<ShipmentOrderDetailVO>) shipmentOrderDetailConvert.copyList(shipmentOrderFrom.getDetails());
+
+        List<ShipmentOrderDetailVO> originalDetails = aggregatedShipmentOrderDetailVOS(originalDetail);
+        // 删除出库单明细表
+        List<Long> orderIds = originalDetail.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
+        LambdaQueryWrapper<ShipmentOrderDetail> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.in(ShipmentOrderDetail::getShipmentOrderId, orderIds);
+        shipmentOrderDetailMapper.delete(deleteWrapper);
+
+        // 插入出库单明细表
+        List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailConvert.vos2dos(originalDetails);
+        shipmentOrderDetails.forEach(shipmentOrderDetail -> {
+            shipmentOrderDetail.setDelFlag(0);
+            shipmentOrderDetail.setShipmentOrderStatus(ShipmentOrderConstant.NOT_IN);
+        });
+        return shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
     }
 }

@@ -87,6 +87,14 @@ public class WaveController extends BaseController {
         return ResponseEntity.ok(service.confirmWave(order));
     }
 
+    @ApiOperation("取消波次作业")
+    @PreAuthorize("@ss.hasPermi('wms:wave:edit')")
+    @Log(title = "波次单", businessType = BusinessType.UPDATE)
+    @PostMapping("cancelAllocatedInventory/{id}")
+    public ResponseEntity<Integer> cancelAllocatedInventory(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.cancelAllocatedInventory(id));
+    }
+
     @ApiOperation("修改波次")
     @PreAuthorize("@ss.hasPermi('wms:wave:edit')")
     @Log(title = "波次", businessType = BusinessType.UPDATE)
