@@ -294,7 +294,7 @@ public class ShipmentOrderService {
             h.setCreateBy(userId);
             adds.add(h);
         });
-        if (adds.size() > 0) {
+        if (!adds.isEmpty()) {
             int add1 = inventoryHistoryService.batchInsert(adds);
 //            adds.forEach(it -> it.setQuantity(it.getQuantity().negate()));
             int update1 = inventoryService.batchUpdate1(adds);

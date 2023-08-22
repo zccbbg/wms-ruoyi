@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
+import com.cyl.wms.domain.InventoryHistory;
 import com.cyl.wms.domain.ShipmentOrder;
 import com.cyl.wms.domain.ShipmentOrderDetail;
 import com.cyl.wms.domain.Wave;
@@ -16,6 +17,7 @@ import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,8 @@ import java.util.stream.Collectors;
 public class WaveService {
     @Autowired
     private WaveMapper waveMapper;
-
+    @Autowired
+    private InventoryHistoryService inventoryHistoryService;
     @Autowired
     private ShipmentOrderService shipmentOrderService;
     @Autowired
@@ -281,6 +284,7 @@ public class WaveService {
         shipmentOrderDetailVO2.setItemId(originalOrder.getItemId());
         shipmentOrderDetailVO2.setShipmentOrderId(originalOrder.getShipmentOrderId());
         shipmentOrderDetailVO2.setPlanQuantity(availableQuantity);
+        shipmentOrderDetailVO2.setRealQuantity(availableQuantity);
         shipmentOrderDetailVO2.setWarehouseId(availableDetail.getWarehouseId());
         shipmentOrderDetailVO2.setAreaId(availableDetail.getAreaId());
         shipmentOrderDetailVO2.setPlace(availableDetail.getPlace());
@@ -302,7 +306,45 @@ public class WaveService {
         // 插入出库单明细表
         List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailConvert.vos2dos(details);
 
-        return shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
+        List<InventoryHistory> adds = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        Long userId = SecurityUtils.getUserId();
+
+
+        // todo 根据发货状态进行出库操作 更新出库单发货状态，库存
+        details.forEach(it -> {
+            Integer status = it.getShipmentOrderStatus();
+            if (status == ShipmentOrderConstant.NOT_IN || status == ShipmentOrderConstant.DROP) {
+                // 未出库，跳过
+                return;
+            }
+            if (status == ShipmentOrderConstant.PART_IN) {
+                // 部分出库，需要更新出库单状态为未出库
+                BigDecimal added = it.getRealQuantity();
+                //判断库存是否足够出库
+                inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
+
+                // 1. 前一次的实际数量是 0
+                InventoryHistory h = shipmentOrderDetailConvert.do2InventoryHistory(it);
+                h.setFormId(order.getId());
+//                h.setFormType(order.getShipmentOrderType());
+                h.setQuantity(added.negate());
+                h.setDelFlag(0);
+                h.setId(null);
+                h.setCreateTime(now);
+                h.setCreateBy(userId);
+                adds.add(h);
+            }
+        });
+        if (!adds.isEmpty()) {
+            int add1 = inventoryHistoryService.batchInsert(adds);
+//            adds.forEach(it -> it.setQuantity(it.getQuantity().negate()));
+            int update1 = inventoryService.batchUpdate1(adds);
+            log.info("inventoryHistory: {}, inventory: {}", add1, update1);
+        }
+        int batchInsert = shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
+
+        return batchInsert;
 
     }
 
