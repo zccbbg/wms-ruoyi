@@ -29,6 +29,9 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 ## B站视频介绍
 https://www.bilibili.com/video/BV1ys4y1q7uG
 
+## 系统部署文档
+https://docs.ichengle.top/wms/
+
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
 2. 仓库/库区：管理维护仓库基础数据
@@ -40,8 +43,8 @@ https://www.bilibili.com/video/BV1ys4y1q7uG
 8. 库存看板：查看当前物料库存数量
 9. 库存记录：查看当前物料库存操作记录
 10. 库存盘点：已完成
-11. 库存月结：todo
-12. 各类报表: todo
+11. 库存月结：已完成
+12. 各类报表: 已完成
 ## 状态流转
 #### 入库状态流转
 ![入库状态流转](https://oscimg.oschina.net/oscnet/up-6bdb5ad6d8ab236f763300b71cf175d9a99.jpg)
