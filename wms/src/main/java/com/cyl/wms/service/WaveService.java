@@ -142,7 +142,9 @@ public class WaveService {
             throw new ServiceException("波次单不存在");
         }
         String waveNo = wave.getWaveNo();
-        return shipmentOrderService.selectDetailByWaveNo(waveNo);
+        OrderWaveFrom orderWaveFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
+        orderWaveFrom.setRemark(wave.getRemark());
+        return orderWaveFrom;
     }
 
 
@@ -292,7 +294,7 @@ public class WaveService {
             wave.setRemark(order.getRemark());
             waveMapper.updateById(wave);
         }
-        List<ShipmentOrderDetailVO> details = order.getDetails();
+        List<ShipmentOrderDetailVO> details = order.getAllocationDetails();
         // 删除出库单明细表
         List<Long> orderIds = details.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
         LambdaQueryWrapper<ShipmentOrderDetail> deleteWrapper = new LambdaQueryWrapper<>();
