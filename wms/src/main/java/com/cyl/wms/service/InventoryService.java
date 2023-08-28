@@ -547,27 +547,20 @@ public class InventoryService {
      * @param itemId 物料id
      * @param planQuantity 计划数量
      * */
-    public List<ShipmentOrderDetail> allocatedInventory(Long itemId, BigDecimal planQuantity) {
-        //  默认使用仓库库存数量最小优先原则
-        List<Inventory> inventoryList = inventoryMapper.selectList(new LambdaQueryWrapper<Inventory>()
-                .eq(Inventory::getItemId, itemId)
-                .eq(Inventory::getDelFlag, 0)
-                .gt(Inventory::getQuantity, BigDecimal.ZERO)
-                .orderByAsc(Inventory::getQuantity));
+    public List<ShipmentOrderDetail> allocatedInventory(Long itemId, BigDecimal planQuantity,Integer type) {
+        List<Inventory> inventoryList = new ArrayList<>();
+        if (type == 1) {
+            //  默认使用仓库库存数量最小优先原则
+            inventoryList = inventoryMapper.selectLastInventory(itemId,"asc");
+        } else if (type == 2) {
+            //使用仓库库存数量最大优先原则
+            inventoryList = inventoryMapper.selectLastInventory(itemId,"desc");
+        }
+
         if (CollUtil.isEmpty(inventoryList)) {
             log.error("库存不足,itemId:{},计划数量：{}", itemId, planQuantity);
             throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
-
-        /*//  默认使用仓库库存数量最大优先原则
-        List<Inventory> inventoryList = inventoryMapper.selectList(new LambdaQueryWrapper<Inventory>()
-                .eq(Inventory::getItemId, itemId)
-                .gt(Inventory::getQuantity, BigDecimal.ZERO)
-                .orderByDesc(Inventory::getQuantity));
-        if (CollUtil.isEmpty(inventoryList)) {
-            throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
-        }*/
-        //  默认使用仓库库存数量最大优先原则
         // 拆分物料明细
         List<ShipmentOrderDetail> shipmentOrderDetailList = new ArrayList<>();
         for (Inventory inventory : inventoryList) {

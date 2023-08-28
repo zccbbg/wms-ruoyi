@@ -73,10 +73,10 @@ public class WaveController extends BaseController {
     @ApiOperation("波次单分配仓库")
     @PreAuthorize("@ss.hasPermi('wms:wave:edit')")
     @Log(title = "波次单", businessType = BusinessType.UPDATE)
-    @PostMapping("allocated/{id}")
-    public ResponseEntity<OrderWaveFrom> allocatedInventory(@PathVariable("id") Long id) {
+    @PostMapping("allocated")
+    public ResponseEntity<OrderWaveFrom> allocatedInventory(Long id,Integer type) {
 
-        return ResponseEntity.ok(service.allocatedInventory(id));
+        return ResponseEntity.ok(service.allocatedInventory(id,type));
     }
 
     @ApiOperation("应用波次作业")

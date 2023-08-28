@@ -155,6 +155,20 @@
           AND ww.del_flag = 0
           AND (wa.del_flag = 0 OR wa.del_flag IS NULL);
     </select>
+    <select id="selectLastInventory" resultType="com.cyl.wms.domain.Inventory">
+        select i.*
+        from wms_inventory i
+                 left join wms_warehouse w on w.id = i.warehouse_id
+                 left join wms_rack r on r.id = i.rack_id
+                 left join wms_area a on a.id = i.area_id
+        where i.item_id = #{itemId}
+          and i.del_flag = 0
+          and i.quantity > 0
+          and (i.rack_id != '' and i.rack_id is not null and r.del_flag = 0 or i.rack_id is null)
+          and (i.warehouse_id != '' and i.warehouse_id is not null and w.del_flag = 0 or i.warehouse_id is null)
+          and (i.area_id != '' and i.area_id is not null and a.del_flag = 0 or i.area_id is null)
+        order by i.quantity ${sort}
+    </select>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory
         (item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by, update_time, warehouse_id,

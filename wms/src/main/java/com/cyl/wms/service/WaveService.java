@@ -116,6 +116,7 @@ public class WaveService {
         ArrayList<Long> orderIds = wave.getIds();
         log.info("出库单进行波次作业:{}", orderIds);
         wave.setWaveNo("WV" + System.currentTimeMillis());
+        wave.setStatus("1");
         wave.setDelFlag(0);
         wave.setCreateTime(LocalDateTime.now());
         boolean flag = waveMapper.insert(wave) > 0;
@@ -162,17 +163,6 @@ public class WaveService {
      * @return 结果
      */
     public int deleteByIds(Long[] ids) {
-        Arrays.asList(ids).forEach(id -> {
-            Wave wave = selectById(id);
-            if (wave == null) {
-                throw new ServiceException("波次单不存在");
-            }
-            String waveNo = wave.getWaveNo();
-            LambdaUpdateWrapper<ShipmentOrder> updateWrapper = new LambdaUpdateWrapper<ShipmentOrder>()
-                    .eq(ShipmentOrder::getWaveNo, waveNo)
-                    .set(ShipmentOrder::getWaveNo, null);
-            shipmentOrderMapper.update(null, updateWrapper);
-        });
         shipmentOrderService.deleteByWaveIds(waveMapper.selectList(new LambdaQueryWrapper<Wave>()
                         .select(Wave::getWaveNo)
                         .in(Wave::getId, Arrays.asList(ids)))
@@ -195,7 +185,7 @@ public class WaveService {
      * 波次单分配仓库
      * */
     @Transactional
-    public OrderWaveFrom allocatedInventory(Long id) {
+    public OrderWaveFrom allocatedInventory(Long id, Integer type) {
         log.info("波次单分配仓库分配仓库,波次单id:{}", id);
         Wave wave = selectById(id);
         String waveNo = wave.getWaveNo();
@@ -213,7 +203,7 @@ public class WaveService {
         collect.forEach((itemId, quantity) -> {
             log.info("波次单分配仓库分配仓库,波次单id:{},物料id：{},数量：{}", id, itemId, quantity);
             List<ShipmentOrderDetail> shipmentOrderDetails = inventoryService.
-                    allocatedInventory(itemId, quantity);
+                    allocatedInventory(itemId, quantity, type);
             allocationDetails.addAll(shipmentOrderDetails);
         });
 
@@ -296,7 +286,13 @@ public class WaveService {
 
     @Transactional
     public Integer confirmWave(OrderWaveFrom order) {
-        List<ShipmentOrderDetailVO> details = order.getAllocationDetails();
+        //获取波次单
+        Wave wave = waveMapper.selectById(order.getId());
+        if (!Objects.equals(order.getRemark(), wave.getRemark())) {
+            wave.setRemark(order.getRemark());
+            waveMapper.updateById(wave);
+        }
+        List<ShipmentOrderDetailVO> details = order.getDetails();
         // 删除出库单明细表
         List<Long> orderIds = details.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
         LambdaQueryWrapper<ShipmentOrderDetail> deleteWrapper = new LambdaQueryWrapper<>();

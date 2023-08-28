@@ -95,9 +95,9 @@ public class ShipmentOrderController extends BaseController {
     @ApiOperation("单个订单分配仓库")
     @PreAuthorize("@ss.hasPermi('wms:shipmentOrder:edit')")
     @Log(title = "出库单", businessType = BusinessType.UPDATE)
-    @PostMapping("allocated/{id}")
-    public ResponseEntity allocatedInventory(@PathVariable("id") Long id) {
-        service.allocatedInventory(id);
+    @PostMapping("allocated")
+    public ResponseEntity allocatedInventory(Long id,Integer type) {
+        service.allocatedInventory(id,type);
         return ResponseEntity.ok().build();
     }
 }

@@ -366,7 +366,7 @@ public class ShipmentOrderService {
      * 5.修改出库单
      * */
     @Transactional
-    public void allocatedInventory(long id) {
+    public void allocatedInventory(long id, Integer type) {
         log.info("单个订单分配仓库,出库单id:{}", id);
         // 1.根据出库单id查询出库单
         ShipmentOrder shipmentOrder = shipmentOrderMapper.selectById(id);
@@ -382,7 +382,7 @@ public class ShipmentOrderService {
         shipmentOrderDetails.forEach(shipmentOrderDetail -> {
             // 4.根据库存分配规则分配库存
             List<ShipmentOrderDetail> shipmentOrderDetail1 = inventoryService.allocatedInventory(shipmentOrderDetail.getItemId(),
-                    shipmentOrderDetail.getPlanQuantity());
+                    shipmentOrderDetail.getPlanQuantity(), type);
             allocationDetails.addAll(shipmentOrderDetail1);
         });
         allocationDetails.forEach(it -> {
@@ -415,12 +415,12 @@ public class ShipmentOrderService {
     }
 
     /*
-    *
-    * */
+     *
+     * */
     public OrderWaveFrom selectDetailByWaveNo(String waveNo) {
-        OrderWaveFrom  form =new OrderWaveFrom();
+        OrderWaveFrom form = new OrderWaveFrom();
         List<ShipmentOrderDetail> shipmentOrderDetails = shipmentOrderDetailMapper.selectDetailByWaveNo(waveNo);
-        List<ShipmentOrderDetailVO> shipmentOrderDetailVOS =  shipmentOrderDetailService.toVos(shipmentOrderDetails);
+        List<ShipmentOrderDetailVO> shipmentOrderDetailVOS = shipmentOrderDetailService.toVos(shipmentOrderDetails);
         form.setDetails(shipmentOrderDetailVOS);
         if (!CollUtil.isEmpty(form.getDetails())) {
             List<Long> itemIds = form.getDetails().stream()
