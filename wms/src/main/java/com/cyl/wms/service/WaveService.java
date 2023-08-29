@@ -2,7 +2,6 @@ package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
 import com.cyl.wms.domain.InventoryHistory;
@@ -28,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -290,10 +290,6 @@ public class WaveService {
     public Integer confirmWave(OrderWaveFrom order) {
         //获取波次单
         Wave wave = waveMapper.selectById(order.getId());
-        if (!Objects.equals(order.getRemark(), wave.getRemark())) {
-            wave.setRemark(order.getRemark());
-            waveMapper.updateById(wave);
-        }
         List<ShipmentOrderDetailVO> details = order.getAllocationDetails();
         // 删除出库单明细表
         List<Long> orderIds = details.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
@@ -308,8 +304,6 @@ public class WaveService {
         LocalDateTime now = LocalDateTime.now();
         Long userId = SecurityUtils.getUserId();
 
-
-        // todo 根据发货状态进行出库操作 更新出库单发货状态，库存
         details.forEach(it -> {
             Integer status = it.getShipmentOrderStatus();
             if (status == ShipmentOrderConstant.NOT_IN || status == ShipmentOrderConstant.DROP) {
@@ -342,6 +336,40 @@ public class WaveService {
         }
         int batchInsert = shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
 
+        //先按照出库单ID分组
+        Map<Long, List<ShipmentOrderDetail>> map = shipmentOrderDetails.stream().collect(Collectors.groupingBy(it -> it.getShipmentOrderId()));
+        Map<Long, ShipmentOrder> orderMap = shipmentOrderMapper.selectList(new QueryWrapper<ShipmentOrder>().in("id", map.keySet())).stream().collect(Collectors.toMap(it -> it.getId(), it -> it));
+        // 2.2 更新出库单
+        AtomicReference<Boolean> finish = new AtomicReference<>(true);
+        map.forEach((key,val)->{
+            //判断出库单的整体状态
+            Set<Integer> statusList = val.stream().map(ShipmentOrderDetail::getShipmentOrderStatus).collect(Collectors.toSet());
+            ShipmentOrder shipmentOrder = orderMap.get(key);
+            if (statusList.size() == 1) {
+                shipmentOrder.setShipmentOrderStatus(statusList.iterator().next());
+            } else if (statusList.size() == 2) {
+                if (statusList.contains(ShipmentOrderConstant.DROP) && statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+                    //此时单据状态只有报废和全部出库，则出库单状态为全部出库
+                    shipmentOrder.setShipmentOrderStatus(ShipmentOrderConstant.ALL_IN);
+                } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+                    //此时单据状态有两个，包含部分出库和全部出库都是部分出库
+                    shipmentOrder.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
+                }
+
+            } else if (statusList.contains(ShipmentOrderConstant.PART_IN) || statusList.contains(ShipmentOrderConstant.ALL_IN)) {
+                //此时单据状态有两个，包含部分出库和全部出库都是部分出库
+                shipmentOrder.setShipmentOrderStatus(ShipmentOrderConstant.PART_IN);
+            }
+            if (finish.get()) {
+                finish.set(shipmentOrder.getShipmentOrderStatus() == ShipmentOrderConstant.ALL_IN);
+            }
+            shipmentOrderMapper.updateById(shipmentOrder);
+        });
+        wave.setStatus(finish.get() ? "3":"2");
+        if (!Objects.equals(order.getRemark(), wave.getRemark())) {
+            wave.setRemark(order.getRemark());
+        }
+        waveMapper.updateById(wave);
         return batchInsert;
 
     }
