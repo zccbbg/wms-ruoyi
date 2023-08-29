@@ -16,7 +16,7 @@ public class ServiceTest {
     private ShipmentOrderService shipmentOrderService;
     @Test
     public void contextLoads() {
-        shipmentOrderService.allocatedInventory(490L);
+        shipmentOrderService.allocatedInventory(490L,1);
     }
 
     /*
