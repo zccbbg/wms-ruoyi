@@ -22,4 +22,9 @@ public class ItemDTO extends BaseAudit {
     private BigDecimal quantity;
     private LocalDateTime expiryDate;
     private String remark;
+
+    private String specification;
+    private String batch;
+    private LocalDateTime productionDate;
+    private BigDecimal unitPrice;
 }

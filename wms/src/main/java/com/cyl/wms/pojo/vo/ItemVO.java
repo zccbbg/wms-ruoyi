@@ -58,4 +58,17 @@ public class ItemVO extends BaseAudit {
     private String remark;
     private List<Long> place;
     private Integer delFlag;
+
+    @Excel(name = "规格")
+    private String specification;
+
+    @Excel(name = "单价")
+    private BigDecimal unitPrice;
+
+    @Excel(name = "生产日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime productionDate;
+
+    @Excel(name = "批次")
+    private String batch;
 }

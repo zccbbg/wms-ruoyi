@@ -35,6 +35,10 @@ public class Item extends BaseAudit {
     @Excel(name = "名称")
     private String itemName;
 
+    @ApiModelProperty("规格")
+    @Excel(name = "规格")
+    private String specification;
+
     @ApiModelProperty("分类")
     @Excel(name = "分类")
     private String itemType;
@@ -42,6 +46,10 @@ public class Item extends BaseAudit {
     @ApiModelProperty("单位类别")
     @Excel(name = "单位类别")
     private String unit;
+
+    @ApiModelProperty("单价")
+    @Excel(name = "单价")
+    private String unitPrice;
 
     @ApiModelProperty("所属货架")
     @Excel(name = "所属货架")
@@ -64,6 +72,16 @@ public class Item extends BaseAudit {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;
+
+    @ApiModelProperty("生产日期")
+    @Excel(name = "生产日期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime productionDate;
+
+    @ApiModelProperty("批次")
+    @Excel(name = "批次")
+    private String batch;
 
     @ApiModelProperty("删除标识")
     private Integer delFlag;
