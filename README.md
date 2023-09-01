@@ -7,8 +7,8 @@
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 ## 代码自动生成
 修改application.yml文件中的backPath和frontPath路径。
-backPath为后端项目路径
-frontPath为前端项目路径
+backPath:为后端项目路径 
+frontPath:为前端项目路径
 
 ## 前端项目地址
 ### gitee
