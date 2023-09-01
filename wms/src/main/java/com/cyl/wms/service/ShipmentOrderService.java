@@ -15,14 +15,17 @@ import com.cyl.wms.pojo.query.ItemQuery;
 import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
 import com.cyl.wms.pojo.query.ShipmentOrderQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
+import com.cyl.wms.pojo.vo.ReceiptOrderVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderVO;
 import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +71,8 @@ public class ShipmentOrderService {
     private InventoryService inventoryService;
     @Autowired
     private CustomerTransactionService customerTransactionService;
+    @Autowired
+    private SysUserMapper userMapper;
 
     /**
      * 查询出库单
@@ -145,7 +150,11 @@ public class ShipmentOrderService {
             List<Long> ids = res.stream().map(ShipmentOrderVO::getId).collect(Collectors.toList());
             Map<Long, Integer> id2count = shipmentOrderDetailMapper.countByOrderId(ids)
                     .stream().collect(Collectors.toMap(ShipmentOrderVO::getId, ShipmentOrderVO::getDetailCount));
-            res.forEach(it -> it.setDetailCount(id2count.get(it.getId())));
+            Map<Long, String> nickNameMap = userMapper.selectByBatchIds(res.stream().map(ShipmentOrderVO::getCreateBy).collect(Collectors.toSet())).stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getNickName));
+            res.forEach(it -> {
+                it.setDetailCount(id2count.get(it.getId()));
+                it.setCreateByName(nickNameMap.get(it.getCreateBy()));
+            });
         }
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
     }

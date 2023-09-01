@@ -140,7 +140,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
 		select user_id, email from sys_user where email = #{email} limit 1
 	</select>
-	
+	<select id="selectByBatchIds" resultType="com.ruoyi.common.core.domain.entity.SysUser">
+		<include refid="selectUserVo"/>
+		where u.user_id in
+		    <foreach collection="list" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+	</select>
+
 	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>

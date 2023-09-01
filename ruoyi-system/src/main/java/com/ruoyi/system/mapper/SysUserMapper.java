@@ -1,6 +1,9 @@
 package com.ruoyi.system.mapper;
 
+import java.util.Collection;
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import org.apache.ibatis.annotations.Select;
@@ -128,4 +131,6 @@ public interface SysUserMapper
 
     @Select("SELECT  * from sys_user WHERE (phonenumber = #{phone} or user_name = #{phone}) limit 1")
     SysUser selectUserByPhone(@Param("phone") String phone);
+
+    List<SysUser> selectByBatchIds(@Param("list") Collection<Long> list);
 }

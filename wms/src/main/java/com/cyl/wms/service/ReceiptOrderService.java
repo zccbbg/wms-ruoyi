@@ -1,6 +1,7 @@
 package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.constant.ReceiptOrderConstant;
 import com.cyl.wms.convert.ReceiptOrderConvert;
@@ -16,8 +17,11 @@ import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderVO;
 import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +66,11 @@ public class ReceiptOrderService {
 
     @Autowired
     private SupplierTransactionService supplierTransactionService;
+
+    @Autowired
+    private SysUserServiceImpl userService;
+    @Autowired
+    private SysUserMapper userMapper;
 
     /**
      * 查询入库单
@@ -111,7 +120,11 @@ public class ReceiptOrderService {
         if (!CollUtil.isEmpty(res)) {
             List<Long> ids = res.stream().map(ReceiptOrderVO::getId).collect(Collectors.toList());
             Map<Long, Integer> id2count = receiptOrderDetailMapper.countByOrderId(ids).stream().collect(Collectors.toMap(ReceiptOrderVO::getId, ReceiptOrderVO::getDetailCount));
-            res.forEach(it -> it.setDetailCount(id2count.get(it.getId())));
+            Map<Long, String> nickNameMap = userMapper.selectByBatchIds(res.stream().map(ReceiptOrderVO::getCreateBy).collect(Collectors.toSet())).stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getNickName));
+            res.forEach(it -> {
+                it.setDetailCount(id2count.get(it.getId()));
+                it.setCreateByName(nickNameMap.get(it.getCreateBy()));
+            });
         }
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
     }

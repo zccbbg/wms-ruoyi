@@ -37,4 +37,6 @@ public class ReceiptOrderVO extends BaseAudit {
     @Excel(name = "备注")
     private String remark;
     private Integer detailCount;
+
+    private String createByName;
 }

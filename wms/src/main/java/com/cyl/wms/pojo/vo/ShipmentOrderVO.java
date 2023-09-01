@@ -70,4 +70,6 @@ public class ShipmentOrderVO extends BaseAudit {
 
   private Integer detailCount;
 
+  private String createByName;
+
 }
