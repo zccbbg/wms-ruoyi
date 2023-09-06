@@ -54,4 +54,7 @@ public class ReceiptOrder extends BaseAudit {
     @ApiModelProperty("删除标识")
     private Integer delFlag;
 
+    @ApiModelProperty("波次号")
+    private String waveNo;
+
 }

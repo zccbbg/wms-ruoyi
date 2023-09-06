@@ -1,6 +1,8 @@
 package com.cyl.wms.domain;
 
 import java.math.BigDecimal;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,6 +22,10 @@ public class ReceiptOrderDetail extends BaseAudit {
 
     @ApiModelProperty("ID")
     private Long id;
+
+    @Excel(name = "订单号")
+    @TableField(exist = false)
+    private String orderNo;
 
     @ApiModelProperty("入库单号")
     @Excel(name = "入库单号")

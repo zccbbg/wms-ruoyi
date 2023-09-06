@@ -38,6 +38,12 @@ public class Wave extends BaseAudit {
 
     @ApiModelProperty("删除标识")
     private Integer delFlag;
+
+    @ApiModelProperty("类型")
+    @Excel(name = "类型")
+    private Integer type;
+
+
     @TableField(exist = false)
     private ArrayList<Long> ids;
 

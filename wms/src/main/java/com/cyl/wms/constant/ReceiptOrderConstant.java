@@ -10,7 +10,7 @@ public interface ReceiptOrderConstant {
     // 全部入库
     int ALL_IN = 3;
     // 作废
-    int DROP = 2;
+    int DROP = 4;
 
     /*订单类型*/
     //采购

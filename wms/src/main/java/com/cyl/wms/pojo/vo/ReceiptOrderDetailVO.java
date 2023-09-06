@@ -19,6 +19,8 @@ public class ReceiptOrderDetailVO extends BaseAudit {
    /** 入库单号 */
     @Excel(name = "入库单号")
     private Long receiptOrderId;
+    @Excel(name = "订单号")
+    private String orderNo;
    /** 物料 */
     @Excel(name = "物料")
     private Long itemId;

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.wms.domain.ReceiptOrder;
+import com.cyl.wms.domain.ShipmentOrderDetail;
 import com.cyl.wms.pojo.vo.ReceiptOrderVO;
 import org.apache.ibatis.annotations.Param;
 import com.cyl.wms.domain.ReceiptOrderDetail;
@@ -32,4 +33,6 @@ public interface ReceiptOrderDetailMapper extends BaseMapper<ReceiptOrderDetail>
     int batchInsert(List<ReceiptOrderDetail> details);
 
     List<ReceiptOrderVO> countByOrderId(@Param("ids") Collection<Long> ids);
+
+    List<ReceiptOrderDetail> selectDetailByWaveNo(String waveNo);
 }

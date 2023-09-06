@@ -18,4 +18,6 @@ public class WaveQuery {
     @ApiModelProperty("状态 精确匹配")
     private String status;
 
+    private Integer type;
+
 }

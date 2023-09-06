@@ -2,7 +2,9 @@ package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyl.wms.constant.ReceiptOrderConstant;
+import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.ReceiptOrderConvert;
 import com.cyl.wms.convert.ReceiptOrderDetailConvert;
 import com.cyl.wms.domain.*;
@@ -14,8 +16,12 @@ import com.cyl.wms.pojo.query.ReceiptOrderQuery;
 import com.cyl.wms.pojo.vo.ItemVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderVO;
+import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
+import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
+import com.cyl.wms.pojo.vo.form.OrderWaveReceiptFrom;
 import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,6 +69,13 @@ public class ReceiptOrderService {
 
     @Autowired
     private SupplierTransactionService supplierTransactionService;
+
+    public void deleteByWaveIds(Collection<String> ids) {
+        LambdaUpdateWrapper<ReceiptOrder> qw = new LambdaUpdateWrapper<>();
+        qw.in(ReceiptOrder::getWaveNo, ids);
+        qw.set(ReceiptOrder::getWaveNo, null);
+        receiptOrderMapper.update(null, qw);
+    }
 
     /**
      * 查询入库单
@@ -326,5 +340,38 @@ public class ReceiptOrderService {
     public int deleteById(Long id) {
         Long[] ids = {id};
         return receiptOrderMapper.updateDelFlagByIds(ids);
+    }
+
+    public OrderWaveReceiptFrom selectDetailByWaveNo(String waveNo) {
+        OrderWaveReceiptFrom form = new OrderWaveReceiptFrom();
+        List<ReceiptOrderDetail> orderDetails = receiptOrderDetailMapper.selectDetailByWaveNo(waveNo);
+        List<ReceiptOrderDetailVO> orderDetailVOS = receiptOrderDetailService.toVos(orderDetails);
+        form.setDetails(orderDetailVOS);
+        if (!CollUtil.isEmpty(form.getDetails())) {
+            List<Long> itemIds = form.getDetails().stream()
+                    .map(ReceiptOrderDetailVO::getItemId).distinct().collect(Collectors.toList());
+            ItemQuery query1 = new ItemQuery();
+            query1.setIds(itemIds);
+            List<Item> list = itemService.selectList(query1, null);
+            List<ItemVO> items = itemService.toVos(list);
+            form.setItems(items);
+        }
+        return form;
+    }
+
+    public void updateWaveNo(Long orderId, String waveNo) {
+        ReceiptOrder receiptOrder = receiptOrderMapper.selectById(orderId);
+        if (receiptOrder == null) {
+            throw new ServiceException("入库单不存在");
+        }
+        String orderNo = receiptOrder.getReceiptOrderNo();
+        if (receiptOrder.getReceiptOrderStatus() == ShipmentOrderConstant.ALL_IN || receiptOrder.getReceiptOrderStatus() == ShipmentOrderConstant.PART_IN) {
+            throw new ServiceException("订单" + orderNo + "已经入库，不能新增批量入库");
+        }
+        if (!StringUtils.isEmpty(receiptOrder.getWaveNo())) {
+            throw new ServiceException("订单" + orderNo + "已经分配批次，不能重复分配");
+        }
+        receiptOrder.setWaveNo(waveNo);
+        receiptOrderMapper.updateById(receiptOrder);
     }
 }

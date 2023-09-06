@@ -77,4 +77,5 @@ public interface InventoryMapper extends BaseMapper<Inventory> {
     List<Inventory> selectValidAll();
 
     List<Inventory> selectLastInventory(@Param("itemId")Long itemId, @Param("sort")String sort);
+    List<Inventory> selectLastInventoryForReceipt(@Param("itemId")Long itemId, @Param("sort")String sort);
 }

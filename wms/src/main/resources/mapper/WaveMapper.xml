@@ -18,10 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time" />
+        <result property="type" column="type" />
     </resultMap>
 
     <sql id="selectWaveVo">
-        select id, wave_no, status, remark, del_flag, create_by, create_time, update_by, update_time   from wms_wave
+        select id, wave_no, status, remark, del_flag, create_by, create_time, update_by, update_time,type   from wms_wave
     </sql>
 
     <select id="selectByEntity" parameterType="Wave" resultMap="WaveResult">

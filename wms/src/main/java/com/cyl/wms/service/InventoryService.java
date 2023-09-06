@@ -22,6 +22,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.system.service.ISysDictDataService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -314,13 +315,26 @@ public class InventoryService {
     }
 
     public int batchUpdateQuantity(List<Inventory> updates, LocalDateTime updateTime, Long userId) {
-        if (CollUtil.isEmpty(updates)) {
+        //将updates按照id分组
+        Map<Long, List<Inventory>> collect = updates.stream().collect(Collectors.groupingBy(it -> it.getId()));
+        List<Inventory> saveList = new ArrayList<>();
+        collect.forEach((k, v) -> {
+            Inventory inventory = new Inventory();
+            BeanUtils.copyProperties(v.get(0), inventory);
+            BigDecimal amount = BigDecimal.ZERO;
+            for (Inventory it : v) {
+                amount = amount.add(it.getQuantity());
+            }
+            inventory.setQuantity(amount);
+            saveList.add(inventory);
+        });
+        if (CollUtil.isEmpty(saveList)) {
             return 0;
         }
         int re = 0;
-        for (int s = 0; s < updates.size(); s += CommonConstant.BATCH_SIZE) {
+        for (int s = 0; s < saveList.size(); s += CommonConstant.BATCH_SIZE) {
             re += inventoryMapper.batchUpdateQuantityById(
-                    updates.subList(s, Math.min(s + CommonConstant.BATCH_SIZE, updates.size())),
+                    saveList.subList(s, Math.min(s + CommonConstant.BATCH_SIZE, saveList.size())),
                     updateTime,
                     userId
             );
@@ -547,14 +561,14 @@ public class InventoryService {
      * @param itemId 物料id
      * @param planQuantity 计划数量
      * */
-    public List<ShipmentOrderDetail> allocatedInventory(Long itemId, BigDecimal planQuantity,Integer type) {
+    public List<ShipmentOrderDetail> allocatedInventory(Long itemId, BigDecimal planQuantity, Integer type) {
         List<Inventory> inventoryList = new ArrayList<>();
         if (type == 1) {
             //  默认使用仓库库存数量最小优先原则
-            inventoryList = inventoryMapper.selectLastInventory(itemId,"asc");
+            inventoryList = inventoryMapper.selectLastInventory(itemId, "asc");
         } else if (type == 2) {
             //使用仓库库存数量最大优先原则
-            inventoryList = inventoryMapper.selectLastInventory(itemId,"desc");
+            inventoryList = inventoryMapper.selectLastInventory(itemId, "desc");
         }
 
         if (CollUtil.isEmpty(inventoryList)) {
@@ -588,5 +602,21 @@ public class InventoryService {
             throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
         return shipmentOrderDetailList;
+    }
+
+    public Inventory allocatedInventoryForReceipt(Long itemId, BigDecimal planQuantity, Integer type) {
+        List<Inventory> inventoryList = new ArrayList<>();
+        if (type == 1) {
+            //  默认使用仓库库存数量最小优先原则
+            inventoryList = inventoryMapper.selectLastInventoryForReceipt(itemId, "asc");
+        } else if (type == 2) {
+            //使用仓库库存数量最大优先原则
+            inventoryList = inventoryMapper.selectLastInventoryForReceipt(itemId, "desc");
+        }
+
+        if (CollUtil.isEmpty(inventoryList)) {
+            throw new ServiceException("没有仓库", HttpStatus.CONFIRMATION);
+        }
+        return inventoryList.get(0);
     }
 }

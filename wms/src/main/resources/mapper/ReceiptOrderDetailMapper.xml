@@ -74,4 +74,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and del_flag = 0
         group by receipt_order_id
     </select>
+    <select id="selectDetailByWaveNo" resultType="com.cyl.wms.domain.ReceiptOrderDetail">
+        select sod.id,
+               sod.item_id,
+               sod.receipt_order_id,
+               sod.plan_quantity,
+               sod.real_quantity,
+               so.receipt_order_no order_no,
+               sod.receipt_order_status,
+               sod.warehouse_id,
+               sod.rack_id,
+               sod.area_id
+        from wms_receipt_order_detail sod
+                 left join wms_receipt_order so on sod.receipt_order_id = so.id
+        where sod.del_flag = 0
+          and so.wave_no = #{waveNo}
+    </select>
 </mapper>

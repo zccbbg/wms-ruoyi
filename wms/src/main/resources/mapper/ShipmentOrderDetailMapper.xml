@@ -125,9 +125,11 @@
     </select>
 
     <select id="selectDetailByWaveNo" resultMap="ShipmentOrderDetailResult">
-        select sod.item_id,
+        select sod.id,
+               sod.item_id,
                sod.shipment_order_id,
                sod.plan_quantity,
+               sod.real_quantity,
                so.shipment_order_no order_no,
                sod.shipment_order_status,
                sod.warehouse_id,
@@ -136,6 +138,6 @@
         from wms_shipment_order_detail sod
                  left join wms_shipment_order so on sod.shipment_order_id = so.id
         where sod.del_flag = 0
-          and so.wave_no = #{waveNo};
+          and so.wave_no = #{waveNo}
     </select>
 </mapper>

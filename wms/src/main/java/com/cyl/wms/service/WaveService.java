@@ -2,16 +2,15 @@ package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.wms.constant.ReceiptOrderConstant;
 import com.cyl.wms.constant.ShipmentOrderConstant;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.domain.ShipmentOrder;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.domain.Wave;
+import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
 import com.cyl.wms.mapper.ShipmentOrderMapper;
 import com.cyl.wms.mapper.WaveMapper;
 import com.cyl.wms.pojo.query.WaveQuery;
+import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
 import com.github.pagehelper.PageHelper;
@@ -45,10 +44,10 @@ public class WaveService {
     @Autowired
     private ShipmentOrderService shipmentOrderService;
     @Autowired
-
     private ShipmentOrderDetailService shipmentOrderDetailService;
     @Autowired
     private ShipmentOrderDetailConvert shipmentOrderDetailConvert;
+
 
     @Autowired
     private ShipmentOrderMapper shipmentOrderMapper;
@@ -90,6 +89,9 @@ public class WaveService {
         if (!StringUtils.isEmpty(status)) {
             qw.eq("status", status);
         }
+        if (query.getType() != null) {
+            qw.eq("type", query.getType());
+        }
         return waveMapper.selectList(qw);
     }
 
@@ -118,6 +120,7 @@ public class WaveService {
         wave.setWaveNo("WV" + System.currentTimeMillis());
         wave.setStatus("1");
         wave.setDelFlag(0);
+        wave.setType(2);
         wave.setCreateTime(LocalDateTime.now());
         boolean flag = waveMapper.insert(wave) > 0;
         if (flag) {
@@ -138,12 +141,13 @@ public class WaveService {
     @Transactional
     public OrderWaveFrom getShipmentOrders(long id) {
         Wave wave = selectById(id);
-        if (wave == null) {
+        if (wave == null || wave.getType() != 2) {
             throw new ServiceException("波次单不存在");
         }
         String waveNo = wave.getWaveNo();
         OrderWaveFrom orderWaveFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
         orderWaveFrom.setRemark(wave.getRemark());
+        orderWaveFrom.setStatus(wave.getStatus());
         return orderWaveFrom;
     }
 
@@ -192,6 +196,8 @@ public class WaveService {
         Wave wave = selectById(id);
         String waveNo = wave.getWaveNo();
         OrderWaveFrom shipmentOrderFrom = shipmentOrderService.selectDetailByWaveNo(waveNo);
+        shipmentOrderFrom.setStatus(wave.getStatus());
+        shipmentOrderFrom.setRemark(wave.getRemark());
         List<ShipmentOrderDetailVO> originalDetail = (List<ShipmentOrderDetailVO>) shipmentOrderDetailConvert.copyList(shipmentOrderFrom.getDetails());
 
         List<ShipmentOrderDetailVO> originalDetails = aggregatedShipmentOrderDetailVOS(originalDetail);
@@ -270,6 +276,7 @@ public class WaveService {
         return new ArrayList<>(aggregatedDetails.values());
     }
 
+
     private ShipmentOrderDetailVO convert2vo(ShipmentOrderDetailVO originalOrder, ShipmentOrderDetailVO availableDetail, BigDecimal availableQuantity) {
         ShipmentOrderDetailVO shipmentOrderDetailVO2 = new ShipmentOrderDetailVO();
         shipmentOrderDetailVO2.setOrderNo(originalOrder.getOrderNo());
@@ -286,10 +293,16 @@ public class WaveService {
         return shipmentOrderDetailVO2;
     }
 
+
+
     @Transactional
     public Integer confirmWave(OrderWaveFrom order) {
         //获取波次单
         Wave wave = waveMapper.selectById(order.getId());
+        //数据库中的详情
+        Map<Long, ShipmentOrderDetailVO> dbDetailMap = order.getDetails().stream().collect(Collectors.toMap(it->it.getId(), it->it));
+
+
         List<ShipmentOrderDetailVO> details = order.getAllocationDetails();
         // 删除出库单明细表
         List<Long> orderIds = details.stream().map(ShipmentOrderDetailVO::getShipmentOrderId).distinct().collect(Collectors.toList());
@@ -304,23 +317,29 @@ public class WaveService {
         LocalDateTime now = LocalDateTime.now();
         Long userId = SecurityUtils.getUserId();
 
+        //获取订单
+        Map<Long, ShipmentOrder> orderMap1 = shipmentOrderMapper.selectList(new QueryWrapper<ShipmentOrder>().in("id", details.stream().map(it->it.getShipmentOrderId()).collect(Collectors.toSet()))).stream().collect(Collectors.toMap(it -> it.getId(), it -> it));
+
+
         details.forEach(it -> {
             Integer status = it.getShipmentOrderStatus();
             if (status == ShipmentOrderConstant.NOT_IN || status == ShipmentOrderConstant.DROP) {
                 // 未出库，跳过
                 return;
             }
-            if (status == ShipmentOrderConstant.PART_IN) {
-                // 部分出库，需要更新出库单状态为未出库
-                BigDecimal added = it.getRealQuantity();
-                //判断库存是否足够出库
-                inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
-
-                // 1. 前一次的实际数量是 0
+            ShipmentOrderDetailVO dbObj = dbDetailMap.get(it.getId());
+            if (dbObj == null || !Objects.equals(dbObj.getShipmentOrderStatus(),status) || !Objects.equals(it.getRealQuantity(), dbObj.getRealQuantity())) {
+                //计算真实的入库数量
+                BigDecimal added;
+                if (dbObj == null || dbObj.getShipmentOrderStatus() == ShipmentOrderConstant.NOT_IN) {
+                    added = it.getRealQuantity();
+                } else {
+                    added = it.getRealQuantity().subtract(dbObj.getRealQuantity());
+                }
                 InventoryHistory h = shipmentOrderDetailConvert.do2InventoryHistory(it);
                 h.setFormId(order.getId());
-//                h.setFormType(order.getShipmentOrderType());
                 h.setQuantity(added.negate());
+                h.setFormType(orderMap1.get(it.getShipmentOrderId()).getShipmentOrderType());
                 h.setDelFlag(0);
                 h.setId(null);
                 h.setCreateTime(now);
@@ -341,7 +360,7 @@ public class WaveService {
         Map<Long, ShipmentOrder> orderMap = shipmentOrderMapper.selectList(new QueryWrapper<ShipmentOrder>().in("id", map.keySet())).stream().collect(Collectors.toMap(it -> it.getId(), it -> it));
         // 2.2 更新出库单
         AtomicReference<Boolean> finish = new AtomicReference<>(true);
-        map.forEach((key,val)->{
+        map.forEach((key, val) -> {
             //判断出库单的整体状态
             Set<Integer> statusList = val.stream().map(ShipmentOrderDetail::getShipmentOrderStatus).collect(Collectors.toSet());
             ShipmentOrder shipmentOrder = orderMap.get(key);
@@ -365,7 +384,13 @@ public class WaveService {
             }
             shipmentOrderMapper.updateById(shipmentOrder);
         });
-        wave.setStatus(finish.get() ? "3":"2");
+        //判断是否开始出库
+        Set<Integer> totalStatusList = shipmentOrderDetails.stream().map(it -> it.getShipmentOrderStatus()).collect(Collectors.toSet());
+        if (totalStatusList.size() == 1 && totalStatusList.contains(ShipmentOrderConstant.NOT_IN)) {
+            wave.setStatus("1");
+        } else {
+            wave.setStatus(finish.get() ? "3" : "2");
+        }
         if (!Objects.equals(order.getRemark(), wave.getRemark())) {
             wave.setRemark(order.getRemark());
         }
