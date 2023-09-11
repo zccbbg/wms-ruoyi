@@ -47,4 +47,5 @@ public class ReceiptOrderDetailVO extends BaseAudit {
     private Integer receiptOrderStatus;
     private Integer delFlag;
     private List<Long> place;
+    private ItemVO item;
 }

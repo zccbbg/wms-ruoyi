@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +97,10 @@ public class ReceiptOrderService {
             List<Item> list = itemService.selectList(query1, null);
             List<ItemVO> items = itemService.toVos(list);
             form.setItems(items);
+            Map<Long, ItemVO> itemMap = items.stream().collect(Collectors.toMap(ItemVO::getId, Function.identity()));
+            form.getDetails().forEach(detail -> {
+                detail.setItem(itemMap.get(detail.getItemId()));
+            });
         }
         return form;
     }
