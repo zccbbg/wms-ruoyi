@@ -30,4 +30,8 @@ public class InventoryHistoryQuery {
     @ApiModelProperty("库存变化 精确匹配")
     private BigDecimal quantity;
 
+    private String beginTime;
+
+    private String endTime;
+
 }

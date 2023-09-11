@@ -1,6 +1,7 @@
 package com.cyl.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryHistoryConvert;
@@ -87,6 +88,9 @@ public class InventoryHistoryService {
         BigDecimal quantity = query.getQuantity();
         if (quantity != null) {
             qw.eq("quantity", quantity);
+        }
+        if (StrUtil.isNotBlank(query.getBeginTime()) && StrUtil.isNotBlank(query.getEndTime())) {
+            qw.between("create_time", query.getBeginTime(), query.getEndTime());
         }
         List<InventoryHistory> list = inventoryHistoryMapper.selectList(qw);
         return list;
