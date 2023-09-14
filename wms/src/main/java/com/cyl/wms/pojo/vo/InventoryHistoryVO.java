@@ -61,4 +61,17 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
      */
     @Excel(name = "备注")
     private String remark;
+
+    private String itemUnit;
+    private String itemUnitPrice;
+    private String itemSpecification;
+    private String itemFactory;
+    /**
+     * 客户或供应商姓名
+     */
+    private String name;
+    /**
+     * 出入库单号
+     */
+    private String orderId;
 }

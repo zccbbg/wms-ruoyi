@@ -5,8 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryHistoryConvert;
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.mapper.InventoryHistoryMapper;
+import com.cyl.wms.domain.*;
+import com.cyl.wms.mapper.*;
 import com.cyl.wms.pojo.query.InventoryHistoryQuery;
 import com.cyl.wms.pojo.vo.InventoryHistoryVO;
 import com.github.pagehelper.PageHelper;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 库存记录Service业务层处理
@@ -35,6 +35,14 @@ public class InventoryHistoryService {
     private InventoryHistoryConvert inventoryHistoryConvert;
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private ReceiptOrderMapper receiptOrderMapper;
+    @Autowired
+    private ShipmentOrderMapper shipmentOrderMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private SupplierMapper supplierMapper;
 
     /**
      * 查询库存记录
@@ -58,6 +66,48 @@ public class InventoryHistoryService {
         inventoryService.injectAreaAndItemInfo(res);
         inventoryService.injectDictDataLabel(res);
         return res;
+    }
+
+    /**
+     * 注入顾客或供应商姓名，出入库单号
+     * @param res
+     */
+    private void injectOrderIdAndName(List<InventoryHistoryVO> res) {
+        List<Long> receiptIds = res.stream().filter(it -> it.getFormType() < 10).map(InventoryHistoryVO::getFormId).collect(Collectors.toList());
+        List<Long> shipmentIds = res.stream().filter(it -> it.getFormType() > 10).map(InventoryHistoryVO::getFormId).collect(Collectors.toList());
+        Map<Long, String> receiptOrderMap = new HashMap<>();
+        Map<Long, String> supplierMap = new HashMap<>();
+        Map<Long, Long> receiptMap = new HashMap<>();
+        Map<Long, String> shipmentOrderMap = new HashMap<>();
+        Map<Long, String> customerMap = new HashMap<>();
+        Map<Long, Long> shipmentMap = new HashMap<>();
+        if (CollUtil.isNotEmpty(receiptIds)) {
+            List<ReceiptOrder> receiptOrderList = receiptOrderMapper.selectBatchIds(receiptIds);
+            receiptMap = receiptOrderList.stream().collect(Collectors.toMap(ReceiptOrder::getId, v -> Optional.ofNullable(v.getSupplierId()).orElse(0L)));
+            Set<Long> supplierIds = receiptOrderList.stream().map(ReceiptOrder::getSupplierId).collect(Collectors.toSet());
+            if (CollUtil.isNotEmpty(supplierIds)) {
+                supplierMap = supplierMapper.selectBatchIds(supplierIds).stream().collect(Collectors.toMap(Supplier::getId, Supplier::getSupplierName));
+            }
+            receiptOrderMap = receiptOrderList.stream().collect(Collectors.toMap(ReceiptOrder::getId, ReceiptOrder::getReceiptOrderNo));
+        }
+        if (CollUtil.isNotEmpty(shipmentIds)) {
+            List<ShipmentOrder> shipmentOrderList = shipmentOrderMapper.selectBatchIds(shipmentIds);
+            shipmentMap = shipmentOrderList.stream().collect(Collectors.toMap(ShipmentOrder::getId, v -> Optional.ofNullable(v.getCustomerId()).orElse(0L)));
+            Set<Long> customerIds = shipmentOrderList.stream().map(ShipmentOrder::getCustomerId).collect(Collectors.toSet());
+            if (CollUtil.isNotEmpty(customerIds)) {
+                customerMap = customerMapper.selectBatchIds(customerIds).stream().collect(Collectors.toMap(Customer::getId, Customer::getCustomerName));
+            }
+            shipmentOrderMap = shipmentOrderList.stream().collect(Collectors.toMap(ShipmentOrder::getId, ShipmentOrder::getShipmentOrderNo));
+        }
+        for (InventoryHistoryVO vo : res) {
+            if (vo.getFormType() < 10) {
+                vo.setOrderId(receiptOrderMap.get(vo.getFormId()));
+                vo.setName(supplierMap.get(receiptMap.get(vo.getFormId())));
+            } else if (vo.getFormType() > 10){
+                vo.setOrderId(shipmentOrderMap.get(vo.getFormId()));
+                vo.setName(customerMap.get(shipmentMap.get(vo.getFormId())));
+            }
+        }
     }
 
     private List<InventoryHistory> queryInventoryHistories(InventoryHistoryQuery query) {
@@ -101,6 +151,7 @@ public class InventoryHistoryService {
         List<InventoryHistory> list = queryInventoryHistories(query);
         List<InventoryHistoryVO> res = inventoryHistoryConvert.dos2vos(list);
         inventoryService.injectAreaAndItemInfo(res);
+        injectOrderIdAndName(res);
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
     }
 

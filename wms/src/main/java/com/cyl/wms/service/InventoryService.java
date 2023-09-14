@@ -396,6 +396,10 @@ public class InventoryService {
                 it.setItemName(item.getItemName());
                 it.setItemNo(item.getItemNo());
                 it.setItemDelFlag(item.getDelFlag());
+                it.setItemUnit(item.getUnit());
+                it.setItemUnitPrice(item.getUnitPrice());
+                it.setItemUnit(item.getUnit());
+                it.setItemSpecification(item.getSpecification());
             }
         });
     }
