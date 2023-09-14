@@ -16,6 +16,7 @@ import com.cyl.wms.pojo.vo.ItemVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderDetailVO;
 import com.cyl.wms.pojo.vo.ReceiptOrderVO;
 import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
+import com.github.pagehelper.Constant;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
@@ -168,12 +169,32 @@ public class ReceiptOrderService {
      */
     @Transactional
     public int add(ReceiptOrderForm receiptOrder) {
+        Long userId = SecurityUtils.getUserId();
+        LocalDateTime optDate = LocalDateTime.now();
         int res;
         // 1. 新增
         receiptOrder.setDelFlag(0);
-        receiptOrder.setCreateTime(LocalDateTime.now());
+        receiptOrder.setCreateTime(optDate);
+        // 直接入库完成
+        receiptOrder.setReceiptOrderStatus(ReceiptOrderConstant.ALL_IN);
         res = receiptOrderMapper.insert(receiptOrder);
         saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
+        // 库存更新
+        List<InventoryHistory> addList = new ArrayList<>();
+        receiptOrder.getDetails().forEach(detail -> {
+            InventoryHistory history = receiptOrderDetailConvert.do2InventoryHistory(detail);
+            history.setFormId(receiptOrder.getId());
+            history.setFormType(receiptOrder.getReceiptOrderType());
+            history.setQuantity(detail.getPlanQuantity());
+            history.setDelFlag(0);
+            history.setCreateTime(optDate);
+            history.setCreateBy(userId);
+            addList.add(history);
+        });
+        // 记录出入库历史
+        inventoryHistoryService.batchInsert(addList);
+        // 更新库存
+        inventoryService.batchUpdate1(addList);
         if (receiptOrder.getSupplierId() != null && receiptOrder.getPayableAmount() != null) {
             //保存订单金额到供应商流水表
             saveOrUpdatePayAmount(receiptOrder);
@@ -273,9 +294,17 @@ public class ReceiptOrderService {
 
     private void saveDetails(Long orderId, List<ReceiptOrderDetailVO> details) {
         if (!CollUtil.isEmpty(details)) {
-            details.forEach(it -> it.setReceiptOrderId(orderId));
+            details.forEach(
+                    it -> {
+                        it.setReceiptOrderId(orderId);
+                        it.setRealQuantity(it.getPlanQuantity());
+                        it.setReceiptOrderStatus(ReceiptOrderConstant.ALL_IN);
+                    }
+            );
             List<ReceiptOrderDetail> receiptOrders = receiptOrderDetailConvert.vos2dos(details);
-            receiptOrderDetailMapper.batchInsert(receiptOrders);
+            if (receiptOrderDetailMapper.batchInsert(receiptOrders) < 1) {
+                throw new RuntimeException("批量创建入库单明细失败");
+            }
         }
     }
 
