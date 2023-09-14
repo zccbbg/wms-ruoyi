@@ -247,11 +247,31 @@ public class ShipmentOrderService {
 
     @Transactional
     public int add(ShipmentOrderFrom order) {
+        LocalDateTime optDate = LocalDateTime.now();
+        Long userId = SecurityUtils.getUserId();
         int res;
         order.setDelFlag(0);
-        order.setCreateTime(LocalDateTime.now());
+        order.setCreateTime(optDate);
+        order.setShipmentOrderStatus(ShipmentOrderConstant.ALL_IN);
+        //直接出库完成
         res = shipmentOrderMapper.insert(order);
-        saveDetails(order.getId(), order.getDetails());
+        saveDetailsAllOut(order.getId(), order.getDetails());
+        // 记录出库历史
+        List<InventoryHistory> addList = new ArrayList<>();
+        order.getDetails().forEach(detail -> {
+            inventoryService.checkInventory(detail.getItemId(), detail.getWarehouseId(), detail.getAreaId(), detail.getRackId(), detail.getPlanQuantity());
+            InventoryHistory history = detailConvert.do2InventoryHistory(detail);
+            history.setFormId(order.getId());
+            history.setFormType(order.getShipmentOrderType());
+            history.setQuantity(detail.getPlanQuantity());
+            history.setDelFlag(0);
+            history.setCreateTime(optDate);
+            history.setCreateBy(userId);
+            addList.add(history);
+        });
+        inventoryHistoryService.batchInsert(addList);
+        // 更新库存
+        inventoryService.batchUpdate1(addList);
         if (order.getReceivableAmount() != null && order.getCustomerId() != null) {
             //保存订单金额到客户流水表
             saveOrUpdatePayAmount(order);
@@ -365,6 +385,19 @@ public class ShipmentOrderService {
     private void saveDetails(Long orderId, List<ShipmentOrderDetailVO> details) {
         if (!CollUtil.isEmpty(details)) {
             details.forEach(it -> it.setShipmentOrderId(orderId));
+            List<ShipmentOrderDetail> shipmentOrderDetails = detailConvert.vos2dos(details);
+            shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
+        }
+    }
+
+    private void saveDetailsAllOut(Long orderId, List<ShipmentOrderDetailVO> details) {
+        if (!CollUtil.isEmpty(details)) {
+            details.forEach(
+                    it -> {
+                        it.setShipmentOrderId(orderId);
+                        it.setRealQuantity(it.getPlanQuantity());
+                        it.setShipmentOrderStatus(ShipmentOrderConstant.ALL_IN);
+                    });
             List<ShipmentOrderDetail> shipmentOrderDetails = detailConvert.vos2dos(details);
             shipmentOrderDetailMapper.batchInsert(shipmentOrderDetails);
         }

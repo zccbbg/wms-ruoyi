@@ -178,8 +178,7 @@ public class ReceiptOrderService {
         // 直接入库完成
         receiptOrder.setReceiptOrderStatus(ReceiptOrderConstant.ALL_IN);
         res = receiptOrderMapper.insert(receiptOrder);
-        saveDetails(receiptOrder.getId(), receiptOrder.getDetails());
-        // 库存更新
+        saveDetailsAllIn(receiptOrder.getId(), receiptOrder.getDetails());
         List<InventoryHistory> addList = new ArrayList<>();
         receiptOrder.getDetails().forEach(detail -> {
             InventoryHistory history = receiptOrderDetailConvert.do2InventoryHistory(detail);
@@ -293,6 +292,16 @@ public class ReceiptOrderService {
     }
 
     private void saveDetails(Long orderId, List<ReceiptOrderDetailVO> details) {
+        if (!CollUtil.isEmpty(details)) {
+            details.forEach(it -> it.setReceiptOrderId(orderId));
+            List<ReceiptOrderDetail> receiptOrders = receiptOrderDetailConvert.vos2dos(details);
+            if (receiptOrderDetailMapper.batchInsert(receiptOrders) < 1) {
+                throw new RuntimeException("批量创建入库单明细失败");
+            }
+        }
+    }
+
+    private void saveDetailsAllIn(Long orderId, List<ReceiptOrderDetailVO> details) {
         if (!CollUtil.isEmpty(details)) {
             details.forEach(
                     it -> {
