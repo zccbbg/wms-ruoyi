@@ -49,6 +49,67 @@
             <if test="quantity != null ">and quantity = #{quantity}</if>
         </where>
     </select>
+    <select id="selectPageList" resultType="com.cyl.wms.pojo.vo.InventoryHistoryVO">
+        select
+            a.id,
+            a.form_id,
+            a.form_type,
+            a.item_id,
+            a.rack_id,
+            a.quantity,
+            a.remark,
+            a.del_flag,
+            a.create_by,
+            a.create_time,
+            a.update_by,
+            a.update_time,
+            a.warehouse_id,
+            a.area_id,
+            b.receipt_order_no,
+            c.shipment_order_no,
+            d.supplier_name,
+            e.customer_name
+            from wms_inventory_history a
+        left join wms_receipt_order b on a.form_id=b.id
+        left join wms_shipment_order c on a.form_id=c.id
+        left join wms_supplier d on b.supplier_id=d.id
+        left join wms_customer e on c.customer_id=e.id
+        where a.del_flag=0
+        <if test="formId != null">
+            and a.form_id=#{formId}
+        </if>
+        <if test="formType != null">
+            and a.form_type=#{formType}
+        </if>
+        <if test="itemId != null">
+            and a.item_id=#{itemId}
+        </if>
+        <if test="warehouseId != null">
+            and a.warehouse_id=#{warehouseId}
+        </if>
+        <if test="areaId != null">
+            and a.area_id=#{areaId}
+        </if>
+        <if test="rackId != null">
+            and a.rack_id=#{rackId}
+        </if>
+        <if test="quantity != null">
+            and a.quantity=#{quantity}
+        </if>
+        <if test="(beginTime != null and beginTime != '') and (endTime != null and endTime != '')">
+            and a.create_time between #{beginTime} and #{endTime}
+        </if>
+        <if test="(customerName != null and customerName != '') and (supplierName == null || supplierName == '')">
+            and e.customer_name=#{customerName}
+        </if>
+        <if test="(supplierName != null and supplierName != '') and (customerName == null || customerName == '')">
+            and d.supplier_name=#{supplierName}
+        </if>
+        <if test="(supplierName != null and supplierName != '') and (customerName != null || customerName != '')">
+            and (d.supplier_name =#{supplierName} or e.customer_name=#{customerName})
+        </if>
+        order by a.create_time desc
+    </select>
 
     <update id="updateDelFlagByIds">
         update wms_inventory_history set del_flag=1

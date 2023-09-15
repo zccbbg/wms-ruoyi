@@ -3,6 +3,8 @@ package com.cyl.wms.mapper;
 import java.util.Collection;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyl.wms.pojo.query.InventoryHistoryQuery;
+import com.cyl.wms.pojo.vo.InventoryHistoryVO;
 import org.apache.ibatis.annotations.Param;
 import com.cyl.wms.domain.InventoryHistory;
 
@@ -28,4 +30,6 @@ public interface InventoryHistoryMapper extends BaseMapper<InventoryHistory> {
     int updateDelFlagByIds(@Param("ids") Long[] ids);
 
     int batchInsert(@Param("list") Collection<InventoryHistory> list);
+
+    List<InventoryHistoryVO> selectPageList(InventoryHistoryQuery query);
 }

@@ -74,4 +74,9 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
      * 出入库单号
      */
     private String orderId;
+
+    private String receiptOrderNo;
+    private String shipmentOrderNo;
+    private String customerName;
+    private String supplierName;
 }

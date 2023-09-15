@@ -148,11 +148,9 @@ public class InventoryHistoryService {
 
     public Page<InventoryHistoryVO> selectList(InventoryHistoryQuery query, Pageable page) {
         PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), "create_time desc");
-        List<InventoryHistory> list = queryInventoryHistories(query);
-        List<InventoryHistoryVO> res = inventoryHistoryConvert.dos2vos(list);
-        inventoryService.injectAreaAndItemInfo(res);
-        injectOrderIdAndName(res);
-        return new PageImpl<>(res, page, ((com.github.pagehelper.Page) list).getTotal());
+        List<InventoryHistoryVO> list = inventoryHistoryMapper.selectPageList(query);
+        inventoryService.injectAreaAndItemInfo(list);
+        return new PageImpl<>(list, page, ((com.github.pagehelper.Page) list).getTotal());
     }
 
     /**

@@ -34,4 +34,14 @@ public class InventoryHistoryQuery {
 
     private String endTime;
 
+    /**
+     * 客户姓名
+     */
+    private String customerName;
+
+    /**
+     * 客户姓名
+     */
+    private String supplierName;
+
 }
