@@ -99,14 +99,14 @@
         <if test="(beginTime != null and beginTime != '') and (endTime != null and endTime != '')">
             and a.create_time between #{beginTime} and #{endTime}
         </if>
-        <if test="(customerName != null and customerName != '') and (supplierName == null || supplierName == '')">
-            and e.customer_name=#{customerName}
+        <if test="customerId != null and supplierId == null">
+            and e.id=#{customerId} and a.form_type > 10
         </if>
-        <if test="(supplierName != null and supplierName != '') and (customerName == null || customerName == '')">
-            and d.supplier_name=#{supplierName}
+        <if test="supplierId != null and customerId == null">
+            and d.id=#{supplierId} and a.form_type <![CDATA[ < ]]> 10
         </if>
-        <if test="(supplierName != null and supplierName != '') and (customerName != null || customerName != '')">
-            and (d.supplier_name =#{supplierName} or e.customer_name=#{customerName})
+        <if test="supplierId != null and customerId != null">
+            and (d.id =#{supplierId} and e.id=#{customerId})
         </if>
         order by a.create_time desc
     </select>

@@ -35,13 +35,13 @@ public class InventoryHistoryQuery {
     private String endTime;
 
     /**
-     * 客户姓名
+     * 客户id
      */
-    private String customerName;
+    private Long customerId;
 
     /**
-     * 客户姓名
+     * 供应商id
      */
-    private String supplierName;
+    private Long supplierId;
 
 }
