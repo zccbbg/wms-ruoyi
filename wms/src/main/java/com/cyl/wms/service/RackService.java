@@ -111,8 +111,9 @@ public class RackService {
     }
 
     public List<Rack> selectByIdIn(Collection<Long> ids) {
-        if (ids.isEmpty())
+        if (ids.isEmpty()) {
             return new ArrayList<>();
+        }
         QueryWrapper<Rack> qw = new QueryWrapper<>();
         qw.in("id", ids);
         return rackMapper.selectList(qw);

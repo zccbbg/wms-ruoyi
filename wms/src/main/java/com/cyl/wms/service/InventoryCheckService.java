@@ -75,7 +75,9 @@ public class InventoryCheckService {
      */
     public InventoryCheckFrom selectById(Long id) {
         InventoryCheck inventoryCheck = inventoryCheckMapper.selectById(id);
-        if (inventoryCheck == null) return null;
+        if (inventoryCheck == null) {
+            return null;
+        }
         InventoryCheckFrom from = do2form(inventoryCheck);
 
         InventoryCheckDetailQuery inventoryCheckDetailQuery = new InventoryCheckDetailQuery();

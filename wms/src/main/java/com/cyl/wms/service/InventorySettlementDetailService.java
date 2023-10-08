@@ -211,7 +211,9 @@ public class InventorySettlementDetailService {
 
             List<InventoryHistory> inventoryHistories1 = inventoryHistoryMap.get(inventoryVO.getItemId() + "_" + inventoryVO.getWarehouseId() + "_" + inventoryVO.getAreaId());
 
-            if (CollectionUtils.isEmpty(inventoryHistories1)) inventoryHistories1 = new ArrayList<>();
+            if (CollectionUtils.isEmpty(inventoryHistories1)) {
+                inventoryHistories1 = new ArrayList<>();
+            }
 
             //获取入库的库存变化总和
             List<Integer> receipt = Arrays.asList(ReceiptOrderConstant.PURCHASE, ReceiptOrderConstant.OUTSOURCING, ReceiptOrderConstant.RETURN);

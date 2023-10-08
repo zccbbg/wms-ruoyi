@@ -46,7 +46,9 @@ public class InventorySettlementService {
      */
     public InventorySettlementFrom selectById(Long id) {
         InventorySettlement inventorySettlement = inventorySettlementMapper.selectById(id);
-        if (inventorySettlement == null) return null;
+        if (inventorySettlement == null) {
+            return null;
+        }
         InventorySettlementFrom from = convert.do2form(inventorySettlement);
 
         //注入 详情单
