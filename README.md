@@ -18,7 +18,8 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 
 ## 在线体验
 - 演示地址：http://wms.ichengle.top
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+- 给大家一个便宜寄快递的福利，大件5折，小件6折：
+- <img src="doc/express.jpg" width="200px">
 
 ## CSDN若依技术专栏
 - 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
