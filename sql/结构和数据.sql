@@ -1170,9 +1170,9 @@ CREATE TABLE `sys_user`  (
 
 -- ----------------------------
 -- Records of sys_user
+-- admin的密码是：admin123
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$0tqHcqxM9blGFO9IvnhbMObVg4BKgEGuPN7bLVt3kuGyrv2T9ha8e', '0', '0', '127.0.0.1', '2023-09-05 10:14:09', 1, '2022-06-17 17:20:19.000', NULL, '2023-09-05 18:14:05.000', '管理员');
-INSERT INTO `sys_user` VALUES (115, 100, 'cyl', 'cyl', '00', '', '', '0', '/profile/avatar/2023/05/04/da0856cab288434ca478403209616581.jpeg', '$2a$10$0tqHcqxM9blGFO9IvnhbMObVg4BKgEGuPN7bLVt3kuGyrv2T9ha8e', '0', '0', '114.95.54.21', '2023-09-06 02:03:54', 1, '2022-11-04 17:06:20.000', 1, '2023-09-06 10:03:54.000', NULL);
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$XTBg.o5w5/cHtvjRe5yy7eqSgvjWBKgztwp67wmWSx6ITKhN40rEq', '0', '0', '127.0.0.1', '2023-09-05 10:14:09', 1, '2022-06-17 17:20:19.000', NULL, '2023-09-05 18:14:05.000', '管理员');
 
 -- ----------------------------
 -- Table structure for sys_user_post
