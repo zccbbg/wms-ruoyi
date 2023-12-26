@@ -314,7 +314,7 @@ public class WaveService {
                 // 部分出库，需要更新出库单状态为未出库
                 BigDecimal added = it.getRealQuantity();
                 //判断库存是否足够出库
-                inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
+                inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), null, added);
 
                 // 1. 前一次的实际数量是 0
                 InventoryHistory h = shipmentOrderDetailConvert.do2InventoryHistory(it);

@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </update>
     <sql id="Base_Column_List_No_Pk">
-        receipt_order_id, item_id, plan_quantity, real_quantity, rack_id, money, del_flag, remark, create_by, create_time, update_by, update_time, warehouse_id, area_id, receipt_order_status
+        receipt_order_id, item_id, plan_quantity, real_quantity, rack_id, money, del_flag, remark, create_by, create_time, update_by, update_time, warehouse_id, area_id, receipt_order_status, batch, production_date, expiry_date
     </sql>
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_receipt_order_detail
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         values
         <foreach collection="list" item="item" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                #{item.receiptOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT}, #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL}, #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL},#{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR}, #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT}, #{item.receiptOrderStatus, jdbcType=TINYINT},             </trim>
+                #{item.receiptOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT}, #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL}, #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL},#{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR}, #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT}, #{item.receiptOrderStatus, jdbcType=TINYINT}, #{item.batch, jdbcType=VARCHAR}, #{item.productionDate, jdbcType=DATE}, #{item.expiryDate, jdbcType=DATE},         </trim>
         </foreach>
     </insert>
     <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.ReceiptOrderVO">

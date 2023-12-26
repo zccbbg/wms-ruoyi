@@ -102,6 +102,9 @@ public class InventoryService {
         if (query.getQuantityEnd() != null) {
             qw.le("quantity", query.getQuantityEnd());
         }
+        if (StrUtil.isNotBlank(query.getBatch())) {
+            qw.eq("batch", query.getBatch());
+        }
         return getInventoryList(query.getPanelType(), qw);
     }
 
@@ -212,7 +215,7 @@ public class InventoryService {
     /*
      * 根据物料id查询库存
      * */
-    public Inventory queryInventoryByItemId(Long itemId, Long warehouseId, Long areaId, Long rackId) {
+    public Inventory queryInventoryByItemId(Long itemId, Long warehouseId, Long areaId, Long rackId, String batch) {
         QueryWrapper<Inventory> qw = new QueryWrapper<>();
         qw.eq("item_id", itemId).eq("warehouse_id", warehouseId);
         if (rackId != null) {
@@ -221,16 +224,21 @@ public class InventoryService {
         if (areaId != null) {
             qw.eq("area_id", areaId);
         }
+        if (StrUtil.isNotBlank(batch)) {
+            qw.eq("batch", batch);
+        } else {
+            qw.isNull("batch");
+        }
         return inventoryMapper.selectOne(qw);
     }
 
     /*
      * 判断库存是否足够出库
      * */
-    public void checkInventory(Long itemId, Long warehouseId, Long areaId, Long rackId, BigDecimal added) {
+    public void checkInventory(Long itemId, Long warehouseId, Long areaId, Long rackId, String batch, BigDecimal added) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("itemId", itemId);
-        Inventory inventory = this.queryInventoryByItemId(itemId, warehouseId, areaId, rackId);
+        Inventory inventory = this.queryInventoryByItemId(itemId, warehouseId, areaId, rackId, batch);
         if (inventory == null) {
             Item item = itemService.selectById(itemId);
             String msg = "商品：" + item.getItemName() + "(" + item.getItemNo() + ")" + ",<span style='color:red'>库存不存在</span> 无法出库</br>";
@@ -267,19 +275,19 @@ public class InventoryService {
         int res = 0;
         if (warehouses.size() > 0) {
             res += saveData(warehouses, now, userId,
-                    it -> it.getWarehouseId() + "_" + it.getItemId(),
+                    it -> it.getWarehouseId() + "_" + it.getItemId() + "_" + it.getBatch(),
                     inventoryMapper::selectAllByWarehouseAndItemId
             );
         }
         if (areas.size() > 0) {
             res += saveData(areas, now, userId,
-                    it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getItemId(),
+                    it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getItemId() + "_" + it.getBatch(),
                     inventoryMapper::selectAllByAreaAndItemId
             );
         }
         if (racks.size() > 0) {
             res += saveData(racks, now, userId,
-                    it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getRackId() + "_" + it.getItemId(),
+                    it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getRackId() + "_" + it.getItemId() + "_" + it.getBatch(),
                     inventoryMapper::selectAllByRackAndItemId
             );
         }

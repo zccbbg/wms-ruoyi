@@ -99,7 +99,10 @@
         update_time,
         warehouse_id,
         area_id,
-        shipment_order_status)
+        shipment_order_status,
+        batch,
+        production_date,
+        expiry_date)
         values
         <foreach collection="list" item="item" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -109,7 +112,8 @@
                 #{item.remark, jdbcType=VARCHAR},
                 #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT},
                 #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT},
-                #{item.areaId, jdbcType=BIGINT}, #{item.shipmentOrderStatus, jdbcType=TINYINT},
+                #{item.areaId, jdbcType=BIGINT}, #{item.shipmentOrderStatus, jdbcType=TINYINT},#{item.batch, jdbcType=VARCHAR},
+                #{item.productionDate, jdbcType=DATE}, #{item.expiryDate, jdbcType=DATE}
             </trim>
         </foreach>
     </insert>

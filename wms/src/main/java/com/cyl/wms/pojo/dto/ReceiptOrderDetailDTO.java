@@ -1,6 +1,8 @@
 package com.cyl.wms.pojo.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 /**
@@ -20,4 +22,7 @@ public class ReceiptOrderDetailDTO extends BaseAudit {
     private Long warehouseId;
     private Long areaId;
     private Integer receiptOrderStatus;
+    private LocalDateTime productionDate;
+    private LocalDateTime expiryDate;
+    private String batch;
 }

@@ -259,7 +259,7 @@ public class InventoryMovementService {
                 added = after.subtract(before);
             }
             //判断库存是否足够出库
-            inventoryService.checkInventory(it.getItemId(), it.getSourceWarehouseId(), it.getSourceAreaId(), it.getSourceRackId(), added);
+            inventoryService.checkInventory(it.getItemId(), it.getSourceWarehouseId(), it.getSourceAreaId(), it.getSourceRackId(), null, added);
 
             // 1. 创建移库日志
             InventoryHistory h = detailConvert.do2InventoryHistory(it);

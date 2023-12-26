@@ -172,14 +172,15 @@
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory
         (item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by, update_time, warehouse_id,
-        area_id)
+        area_id, batch, production_date, expiry_date)
         values
         <foreach collection="list" item="item" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 #{item.itemId, jdbcType=BIGINT}, #{item.rackId, jdbcType=BIGINT}, #{item.quantity, jdbcType=DECIMAL},
                 #{item.remark, jdbcType=VARCHAR}, #{item.delFlag, jdbcType=TINYINT}, #{item.createBy, jdbcType=BIGINT},
                 #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE},
-                #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT},
+                #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT},#{item.batch, jdbcType=VARCHAR},
+                #{item.productionDate, jdbcType=DATE},#{item.expiryDate, jdbcType=DATE}
             </trim>
         </foreach>
     </insert>

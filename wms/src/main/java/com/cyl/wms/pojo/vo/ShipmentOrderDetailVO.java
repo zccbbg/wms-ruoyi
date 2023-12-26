@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -75,6 +76,22 @@ public class ShipmentOrderDetailVO extends BaseAudit {
 
     @Excel(name = "出库状态")
     private Integer shipmentOrderStatus;
+
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+
+    /**
+     * 有效期
+     */
+    private LocalDateTime expiryDate;
+
+    /**
+     * 批次
+     */
+    private String batch;
+
     private List<Long> place;
 
     private ItemVO item;

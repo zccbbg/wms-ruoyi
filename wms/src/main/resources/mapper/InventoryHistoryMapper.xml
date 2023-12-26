@@ -121,7 +121,7 @@
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into wms_inventory_history
         (form_id, form_type, item_id, rack_id, quantity, remark, del_flag, create_by, create_time, update_by,
-        update_time, warehouse_id, area_id)
+        update_time, warehouse_id, area_id, batch, production_date, expiry_date)
         values
         <foreach collection="list" item="item" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -138,6 +138,9 @@
                 #{item.updateTime, jdbcType=DATE},
                 #{item.warehouseId, jdbcType=BIGINT},
                 #{item.areaId, jdbcType=BIGINT},
+                #{item.batch, jdbcType=VARCHAR},
+                #{item.productionDate, jdbcType=DATE},
+                #{item.expiryDate, jdbcType=DATE},
             </trim>
         </foreach>
     </insert>

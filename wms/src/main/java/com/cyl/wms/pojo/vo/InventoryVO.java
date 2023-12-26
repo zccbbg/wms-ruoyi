@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 库存 数据视图对象
@@ -65,4 +66,25 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
      * 仓库删除标识
      */
     private Integer warehouseDelFlag;
+
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+
+    /**
+     * 有效期
+     */
+    private LocalDateTime expiryDate;
+
+    /**
+     * 批次
+     */
+    private String batch;
+
+    private String itemUnit;
+
+    private String itemSpecification;
+
+    private String itemUnitPrice;
 }

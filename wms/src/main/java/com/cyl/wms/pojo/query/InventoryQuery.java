@@ -33,5 +33,7 @@ public class InventoryQuery implements InventoryPanelType {
     private BigDecimal quantityStart;
     @ApiModelProperty("库存 结束值")
     private BigDecimal quantityEnd;
+    @ApiModelProperty("批次")
+    private String batch;
 
 }

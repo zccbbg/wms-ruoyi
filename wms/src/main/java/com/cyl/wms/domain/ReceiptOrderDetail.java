@@ -1,12 +1,17 @@
 package com.cyl.wms.domain;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * 入库单详情对象 wms_receipt_order_detail
  * 
@@ -63,5 +68,20 @@ public class ReceiptOrderDetail extends BaseAudit {
     @ApiModelProperty("入库状态")
     @Excel(name = "入库状态")
     private Integer receiptOrderStatus;
+
+    @ApiModelProperty("生产日期")
+    @Excel(name = "生产日期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime productionDate;
+
+    @ApiModelProperty("有效期")
+    @Excel(name = "有效期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime expiryDate;
+
+    @ApiModelProperty("批次")
+    private String batch;
 
 }

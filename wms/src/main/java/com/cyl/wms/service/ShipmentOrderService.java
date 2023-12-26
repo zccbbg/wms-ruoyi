@@ -259,7 +259,7 @@ public class ShipmentOrderService {
         // 记录出库历史
         List<InventoryHistory> addList = new ArrayList<>();
         order.getDetails().forEach(detail -> {
-            inventoryService.checkInventory(detail.getItemId(), detail.getWarehouseId(), detail.getAreaId(), detail.getRackId(), detail.getPlanQuantity());
+            inventoryService.checkInventory(detail.getItemId(), detail.getWarehouseId(), detail.getAreaId(), detail.getRackId(), detail.getBatch(), detail.getPlanQuantity());
             InventoryHistory history = detailConvert.do2InventoryHistory(detail);
             history.setFormId(order.getId());
             history.setFormType(order.getShipmentOrderType());
@@ -271,6 +271,7 @@ public class ShipmentOrderService {
         });
         inventoryHistoryService.batchInsert(addList);
         // 更新库存
+        addList.forEach(it -> it.setQuantity(it.getQuantity().negate()));
         inventoryService.batchUpdate1(addList);
         if (order.getReceivableAmount() != null && order.getCustomerId() != null) {
             //保存订单金额到客户流水表
@@ -315,7 +316,7 @@ public class ShipmentOrderService {
                 added = after.subtract(before);
             }
             //判断库存是否足够出库
-            inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), added);
+            inventoryService.checkInventory(it.getItemId(), it.getWarehouseId(), it.getAreaId(), it.getRackId(), null, added);
 
             // 1. 前一次的实际数量是 0
             InventoryHistory h = detailConvert.do2InventoryHistory(it);

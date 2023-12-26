@@ -1,12 +1,15 @@
 package com.cyl.wms.pojo.vo;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * 入库单详情 数据视图对象
  * 
@@ -45,6 +48,25 @@ public class ReceiptOrderDetailVO extends BaseAudit {
    /** 入库状态 */
     @Excel(name = "入库状态")
     private Integer receiptOrderStatus;
+
+    /**
+     * 生产日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime productionDate;
+
+    /**
+     * 有效期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime expiryDate;
+
+    /**
+     * 批次
+     */
+    private String batch;
     private Integer delFlag;
     private List<Long> place;
     private ItemVO item;
