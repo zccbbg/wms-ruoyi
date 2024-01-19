@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.wms.convert.InventoryConvert;
 import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.InventoryMapper;
@@ -30,7 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -408,6 +411,7 @@ public class InventoryService {
                 it.setItemUnitPrice(item.getUnitPrice());
                 it.setItemUnit(item.getUnit());
                 it.setItemSpecification(item.getSpecification());
+                it.setSafetyQuantity(item.getQuantity());
             }
         });
     }
@@ -423,7 +427,7 @@ public class InventoryService {
         Map<Long, BigDecimal> saftyItems = allItems.stream().collect(Collectors.toMap(Item::getId, item -> item.getQuantity()));
         res.forEach(item -> {
             BigDecimal saftyQuantify = saftyItems.get(item.getItemId());
-            item.setSaftyQuantity(saftyQuantify);
+            item.setSafetyQuantity(saftyQuantify);
         });
         return new PageImpl<>(res, page, ((com.github.pagehelper.Page) inventories).getTotal());
     }
@@ -600,5 +604,18 @@ public class InventoryService {
             throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
         return shipmentOrderDetailList;
+    }
+
+    public Page<InventoryVO> queryExpiry(Pageable page) {
+        if (page != null) {
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort()));
+        }
+        LambdaQueryWrapper<Inventory> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.isNotNull(Inventory::getExpiryDate);
+        queryWrapper.lt(Inventory::getExpiryDate, LocalDateTime.of(LocalDate.now(), LocalTime.MIN));
+        List<Inventory> inventories = inventoryMapper.selectList(queryWrapper);
+        List<InventoryVO> res = inventoryConvert.dos2vos(inventories);
+        injectAreaAndItemInfo(res);
+        return new PageImpl<>(res, page, ((com.github.pagehelper.Page) inventories).getTotal());
     }
 }

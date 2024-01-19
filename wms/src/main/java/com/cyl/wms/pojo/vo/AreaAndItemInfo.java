@@ -13,6 +13,7 @@ public interface AreaAndItemInfo extends PlaceAndItem {
 
     void setItemNo(String name);
 
+
     default void setItemUnit(String unit){}
 
     default void setItemUnitPrice(String money) {}
@@ -32,4 +33,6 @@ public interface AreaAndItemInfo extends PlaceAndItem {
     default void setWarehouseDelFlag(Integer delFlag) {
 
     }
+
+    default void setSafetyQuantity(BigDecimal safetyQuantity) {}
 }

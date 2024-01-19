@@ -67,6 +67,7 @@ public class InventoryHistoryVO extends BaseAudit implements AreaAndItemInfo {
     private String itemUnitPrice;
     private String itemSpecification;
     private String itemFactory;
+    private BigDecimal safetyQuantity;
     /**
      * 客户或供应商姓名
      */

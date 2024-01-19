@@ -1,5 +1,6 @@
 package com.cyl.wms.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
@@ -55,7 +56,7 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
      */
     @Excel(name = "备注")
     private String remark;
-    private BigDecimal saftyQuantity;
+    private BigDecimal safetyQuantity;
 
     /**
      * 物料删除标识
@@ -70,11 +71,13 @@ public class InventoryVO extends BaseAudit implements AreaAndItemInfo {
     /**
      * 生产日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime productionDate;
 
     /**
      * 有效期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;
 
     /**
