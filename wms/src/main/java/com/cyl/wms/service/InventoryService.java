@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.wms.convert.InventoryConvert;
 import com.cyl.wms.domain.*;
 import com.cyl.wms.mapper.InventoryMapper;
+import com.cyl.wms.mapper.ItemMapper;
 import com.cyl.wms.pojo.query.InventoryQuery;
 import com.cyl.wms.pojo.vo.AreaAndItemInfo;
 import com.cyl.wms.pojo.vo.InventoryHistoryVO;
@@ -59,6 +60,8 @@ public class InventoryService {
     @Autowired
     private ItemService itemService;
     @Autowired
+    private ItemMapper itemMapper;
+    @Autowired
     private ItemTypeService itemTypeService;
     @Autowired
     private ISysDictDataService sysDictDataService;
@@ -107,6 +110,9 @@ public class InventoryService {
         }
         if (StrUtil.isNotBlank(query.getBatch())) {
             qw.eq("batch", query.getBatch());
+        }
+        if (CollUtil.isNotEmpty(query.getItemIds())) {
+            qw.in("item_id", query.getItemIds());
         }
         return getInventoryList(query.getPanelType(), qw);
     }
@@ -351,6 +357,17 @@ public class InventoryService {
     }
 
     public Page<InventoryVO> queryPage(InventoryQuery query, Pageable page) {
+        if (StrUtil.isNotBlank(query.getItemName())) {
+            LambdaQueryWrapper<Item> itemLqw = Wrappers.lambdaQuery();
+            itemLqw.select(Item::getId);
+            itemLqw.like(Item::getItemName, query.getItemName());
+            List<Item> items = itemMapper.selectList(itemLqw);
+            if (CollUtil.isNotEmpty(items)) {
+                query.setItemIds(items.stream().map(Item::getId).collect(Collectors.toList()));
+            } else {
+                return new PageImpl<>(new ArrayList<>(), page, 0);
+            }
+        }
         List<Inventory> list = selectList(query, page);
         List<InventoryVO> res = inventoryConvert.dos2vos(list);
         injectAreaAndItemInfo(res);

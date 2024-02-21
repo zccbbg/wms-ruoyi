@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 库存 查询 对象
@@ -35,5 +36,9 @@ public class InventoryQuery implements InventoryPanelType {
     private BigDecimal quantityEnd;
     @ApiModelProperty("批次")
     private String batch;
+    @ApiModelProperty("物料名称")
+    private String itemName;
+    @ApiModelProperty("物料ids")
+    private List<Long> itemIds;
 
 }
