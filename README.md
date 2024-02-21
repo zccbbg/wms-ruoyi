@@ -29,6 +29,9 @@ https://github.com/zccbbg/RuoYi-WMS-VUE
 ## B站视频介绍
 https://www.bilibili.com/video/BV1ys4y1q7uG
 
+## 若依框架视频介绍
+对若依框架不了解，不知道怎么部署、修改密码等操作的，请参考：https://www.bilibili.com/video/BV1Fi4y1q74p/
+
 ## 本地运行文档
 https://docs.ichengle.top/wms/open/run.html
 ## 系统部署文档
