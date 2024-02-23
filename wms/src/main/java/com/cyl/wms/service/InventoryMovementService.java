@@ -287,7 +287,6 @@ public class InventoryMovementService {
         });
         if (outList.size() > 0) {
             inventoryHistoryService.batchInsert(outList);
-            outList.forEach(it -> it.setQuantity(it.getQuantity().negate()));
             inventoryService.batchUpdate1(outList);
         }
         if (inList.size() > 0) {
