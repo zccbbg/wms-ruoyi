@@ -25,13 +25,9 @@
 		<encoder>
 			<pattern>${log.pattern}</pattern>
 		</encoder>
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <!-- 过滤的级别 -->
             <level>INFO</level>
-            <!-- 匹配时的操作：接收（记录） -->
-            <onMatch>ACCEPT</onMatch>
-            <!-- 不匹配时的操作：拒绝（不记录） -->
-            <onMismatch>DENY</onMismatch>
         </filter>
 	</appender>
 	
@@ -47,13 +43,9 @@
         <encoder>
             <pattern>${log.pattern}</pattern>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <!-- 过滤的级别 -->
             <level>ERROR</level>
-            <!-- 匹配时的操作：接收（记录） -->
-            <onMatch>ACCEPT</onMatch>
-            <!-- 不匹配时的操作：拒绝（不记录） -->
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
@@ -63,8 +55,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 按天回滚 daily -->
             <fileNamePattern>${log.path}/sys-user.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 60天 -->
-            <maxHistory>60</maxHistory>
+            <!-- 日志最大的历史 10天 -->
+            <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
