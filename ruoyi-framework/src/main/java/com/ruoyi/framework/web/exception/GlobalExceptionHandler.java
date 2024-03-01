@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public AjaxResult handleBaseException(BaseException e, HttpServletRequest request) {
-        log.error("请求地址'{}',发生未知异常.", request.getRequestURI(), e);
+        log.warn("请求地址'{}',发生已知异常.", request.getRequestURI(), e);
         return AjaxResult.error(e.getMessage(), e.getCode());
     }
 
