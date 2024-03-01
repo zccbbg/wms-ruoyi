@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(WmsServiceException.class)
     public AjaxResult handleWmsServiceException(WmsServiceException e, HttpServletRequest request) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         Integer code = e.getCode();
         Object data = e.getData();
         return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage(), data) : AjaxResult.error(e.getMessage(), data);
