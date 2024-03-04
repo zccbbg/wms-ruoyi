@@ -73,7 +73,7 @@
         <foreach collection="list" open="(" separator="," close=")" item="it">
             (#{it.areaId}, #{it.itemId})
         </foreach>
-        and rack_id is null
+        and rack_id is null and del_flag=0
     </select>
     <select id="selectAllByRackAndItemId" resultType="com.cyl.wms.domain.Inventory">
         select * from wms_inventory
@@ -81,6 +81,7 @@
         <foreach collection="list" open="(" separator="," close=")" item="it">
             (#{it.rackId}, #{it.itemId})
         </foreach>
+        and del_flag=0
     </select>
     <select id="selectAllByWarehouseAndItemId" resultType="com.cyl.wms.domain.Inventory">
         select * from wms_inventory
@@ -88,7 +89,7 @@
         <foreach collection="list" open="(" separator="," close=")" item="it">
             (#{it.warehouseId}, #{it.itemId})
         </foreach>
-        and area_id is null and rack_id is null
+        and area_id is null and rack_id is null and del_flag=0
     </select>
     <select id="selectWarning" resultType="com.cyl.wms.domain.Inventory">
         select a.*, b.*
