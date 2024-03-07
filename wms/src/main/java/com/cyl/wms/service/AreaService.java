@@ -60,6 +60,7 @@ public class AreaService {
         if (warehouseId != null) {
             qw.eq("warehouse_id", warehouseId);
         }
+        qw.orderByDesc("create_time");
         return areaMapper.selectList(qw);
     }
 
