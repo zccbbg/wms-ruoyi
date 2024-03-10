@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.wms.domain.ItemTypeTreeSelect;
+import com.cyl.wms.domain.entity.ItemTypeTreeSelect;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.wms.mapper.ItemTypeMapper;
-import com.cyl.wms.domain.ItemType;
-import com.cyl.wms.pojo.query.ItemTypeQuery;
+import com.cyl.wms.domain.entity.ItemType;
+import com.cyl.wms.domain.query.ItemTypeQuery;
 
 /**
  * 物料类型表Service业务层处理

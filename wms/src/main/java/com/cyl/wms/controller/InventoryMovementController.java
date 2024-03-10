@@ -1,12 +1,8 @@
 package com.cyl.wms.controller;
 
-import java.util.List;
-
-import com.cyl.wms.pojo.vo.form.InventoryMovementFrom;
-import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
+import com.cyl.wms.domain.form.InventoryMovementFrom;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +20,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.InventoryMovementConvert;
-import com.cyl.wms.domain.InventoryMovement;
-import com.cyl.wms.pojo.query.InventoryMovementQuery;
+import com.cyl.wms.domain.entity.InventoryMovement;
+import com.cyl.wms.domain.query.InventoryMovementQuery;
 import com.cyl.wms.service.InventoryMovementService;
-import com.cyl.wms.pojo.vo.InventoryMovementVO;
+import com.cyl.wms.domain.vo.InventoryMovementVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 库存移动Controller

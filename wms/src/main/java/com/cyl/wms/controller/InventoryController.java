@@ -1,9 +1,9 @@
 package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.InventoryConvert;
-import com.cyl.wms.domain.Inventory;
-import com.cyl.wms.pojo.query.InventoryQuery;
-import com.cyl.wms.pojo.vo.InventoryVO;
+import com.cyl.wms.domain.entity.Inventory;
+import com.cyl.wms.domain.query.InventoryQuery;
+import com.cyl.wms.domain.vo.InventoryVO;
 import com.cyl.wms.service.InventoryService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

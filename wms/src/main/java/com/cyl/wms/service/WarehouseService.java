@@ -1,9 +1,9 @@
 package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.wms.domain.Warehouse;
+import com.cyl.wms.domain.entity.Warehouse;
 import com.cyl.wms.mapper.WarehouseMapper;
-import com.cyl.wms.pojo.query.WarehouseQuery;
+import com.cyl.wms.domain.query.WarehouseQuery;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

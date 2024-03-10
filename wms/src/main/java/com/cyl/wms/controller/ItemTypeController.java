@@ -1,9 +1,9 @@
 package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.ItemTypeConvert;
-import com.cyl.wms.domain.ItemType;
-import com.cyl.wms.pojo.query.ItemTypeQuery;
-import com.cyl.wms.pojo.vo.ItemTypeVO;
+import com.cyl.wms.domain.entity.ItemType;
+import com.cyl.wms.domain.query.ItemTypeQuery;
+import com.cyl.wms.domain.vo.ItemTypeVO;
 import com.cyl.wms.service.ItemTypeService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

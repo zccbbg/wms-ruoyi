@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.wms.domain.InventoryHistory;
+import com.cyl.wms.domain.entity.InventoryHistory;
 
 /**
  * 库存记录Mapper接口

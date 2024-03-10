@@ -1,34 +1,18 @@
 package com.cyl.wms.convert;
 
-import com.cyl.wms.pojo.vo.form.InventoryMovementFrom;
+import com.cyl.wms.domain.form.InventoryMovementFrom;
 import org.mapstruct.Mapper;
-import com.cyl.wms.domain.InventoryMovement;
-import com.cyl.wms.pojo.dto.InventoryMovementDTO;
-import com.cyl.wms.pojo.vo.InventoryMovementVO;
-
+import com.cyl.wms.domain.entity.InventoryMovement;
+import com.cyl.wms.domain.vo.InventoryMovementVO;
 import java.util.List;
-
 /**
- * 库存移动  DO <=> DTO <=> VO / BO / Query
+ * 库存移动  ENTITY <=> VO / Form / Query
  *
  * @author zcc
  */
 @Mapper(componentModel = "spring")
-public interface InventoryMovementConvert {
+public interface InventoryMovementConvert  {
+    List<InventoryMovementVO> dos2vos(List<InventoryMovement> list);
 
-  /**
-   * @param source DO
-   * @return DTO
-   */
-  InventoryMovementDTO do2dto(InventoryMovement source);
-
-  /**
-   * @param source DTO
-   * @return DO
-   */
-  InventoryMovement dto2do(InventoryMovementDTO source);
-
-  List<InventoryMovementVO> dos2vos(List<InventoryMovement> list);
-
-  InventoryMovementFrom do2form(InventoryMovement order);
+    InventoryMovementFrom do2form(InventoryMovement order);
 }

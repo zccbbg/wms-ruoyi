@@ -1,11 +1,11 @@
 package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.WaveConvert;
-import com.cyl.wms.domain.Wave;
-import com.cyl.wms.pojo.query.WaveQuery;
-import com.cyl.wms.pojo.vo.WaveVO;
-import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
-import com.cyl.wms.pojo.vo.form.OrderWaveReceiptFrom;
+import com.cyl.wms.domain.entity.Wave;
+import com.cyl.wms.domain.query.WaveQuery;
+import com.cyl.wms.domain.vo.WaveVO;
+import com.cyl.wms.domain.form.OrderWaveFrom;
+import com.cyl.wms.domain.form.OrderWaveReceiptFrom;
 import com.cyl.wms.service.WaveForReceiptService;
 import com.cyl.wms.service.WaveService;
 import com.ruoyi.common.annotation.Log;

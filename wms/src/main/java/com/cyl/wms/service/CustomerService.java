@@ -1,6 +1,5 @@
 package com.cyl.wms.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.wms.mapper.CustomerMapper;
-import com.cyl.wms.domain.Customer;
-import com.cyl.wms.pojo.query.CustomerQuery;
+import com.cyl.wms.domain.entity.Customer;
+import com.cyl.wms.domain.query.CustomerQuery;
 
 /**
  * 客户Service业务层处理

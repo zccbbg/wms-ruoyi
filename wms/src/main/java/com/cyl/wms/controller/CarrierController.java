@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.CarrierConvert;
-import com.cyl.wms.domain.Carrier;
-import com.cyl.wms.pojo.query.CarrierQuery;
+import com.cyl.wms.domain.entity.Carrier;
+import com.cyl.wms.domain.query.CarrierQuery;
 import com.cyl.wms.service.CarrierService;
-import com.cyl.wms.pojo.vo.CarrierVO;
+import com.cyl.wms.domain.vo.CarrierVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 承运商Controller

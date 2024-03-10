@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.CustomerConvert;
-import com.cyl.wms.domain.Customer;
-import com.cyl.wms.pojo.query.CustomerQuery;
+import com.cyl.wms.domain.entity.Customer;
+import com.cyl.wms.domain.query.CustomerQuery;
 import com.cyl.wms.service.CustomerService;
-import com.cyl.wms.pojo.vo.CustomerVO;
+import com.cyl.wms.domain.vo.CustomerVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 客户Controller

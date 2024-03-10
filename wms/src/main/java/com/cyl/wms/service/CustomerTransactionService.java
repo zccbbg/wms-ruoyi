@@ -2,23 +2,19 @@ package com.cyl.wms.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.wms.domain.Customer;
-import com.cyl.wms.domain.SupplierTransaction;
+import com.cyl.wms.domain.entity.Customer;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.wms.mapper.CustomerTransactionMapper;
-import com.cyl.wms.domain.CustomerTransaction;
-import com.cyl.wms.pojo.query.CustomerTransactionQuery;
+import com.cyl.wms.domain.entity.CustomerTransaction;
+import com.cyl.wms.domain.query.CustomerTransactionQuery;
 
 /**
  * 客户账户流水Service业务层处理

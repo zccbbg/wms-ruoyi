@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.AreaConvert;
-import com.cyl.wms.domain.Area;
-import com.cyl.wms.pojo.query.AreaQuery;
+import com.cyl.wms.domain.entity.Area;
+import com.cyl.wms.domain.query.AreaQuery;
 import com.cyl.wms.service.AreaService;
-import com.cyl.wms.pojo.vo.AreaVO;
+import com.cyl.wms.domain.vo.AreaVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 货区Controller

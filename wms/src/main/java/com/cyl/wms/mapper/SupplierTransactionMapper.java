@@ -2,9 +2,8 @@ package com.cyl.wms.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.wms.pojo.query.SupplierTransactionQuery;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.wms.domain.SupplierTransaction;
+import com.cyl.wms.domain.entity.SupplierTransaction;
 
 /**
  * 供应商账户流水Mapper接口

@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.CustomerTransactionConvert;
-import com.cyl.wms.domain.CustomerTransaction;
-import com.cyl.wms.pojo.query.CustomerTransactionQuery;
+import com.cyl.wms.domain.entity.CustomerTransaction;
+import com.cyl.wms.domain.query.CustomerTransactionQuery;
 import com.cyl.wms.service.CustomerTransactionService;
-import com.cyl.wms.pojo.vo.CustomerTransactionVO;
+import com.cyl.wms.domain.vo.CustomerTransactionVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 客户账户流水Controller

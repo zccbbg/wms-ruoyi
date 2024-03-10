@@ -2,10 +2,9 @@ package com.cyl.wms.controller;
 
 import java.util.List;
 
-import com.cyl.wms.pojo.vo.form.ReceiptOrderForm;
+import com.cyl.wms.domain.form.ReceiptOrderForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.ReceiptOrderConvert;
-import com.cyl.wms.domain.ReceiptOrder;
-import com.cyl.wms.pojo.query.ReceiptOrderQuery;
+import com.cyl.wms.domain.entity.ReceiptOrder;
+import com.cyl.wms.domain.query.ReceiptOrderQuery;
 import com.cyl.wms.service.ReceiptOrderService;
-import com.cyl.wms.pojo.vo.ReceiptOrderVO;
+import com.cyl.wms.domain.vo.ReceiptOrderVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 入库单Controller

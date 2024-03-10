@@ -1,20 +1,17 @@
 package com.cyl.wms.service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.wms.convert.DeliveryConvert;
-import com.cyl.wms.pojo.vo.DeliveryVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.wms.mapper.DeliveryMapper;
-import com.cyl.wms.domain.Delivery;
-import com.cyl.wms.pojo.query.DeliveryQuery;
+import com.cyl.wms.domain.entity.Delivery;
+import com.cyl.wms.domain.query.DeliveryQuery;
 
 /**
  * 发货记录Service业务层处理

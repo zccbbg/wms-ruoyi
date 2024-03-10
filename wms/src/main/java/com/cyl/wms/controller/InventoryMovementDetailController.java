@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.InventoryMovementDetailConvert;
-import com.cyl.wms.domain.InventoryMovementDetail;
-import com.cyl.wms.pojo.query.InventoryMovementDetailQuery;
+import com.cyl.wms.domain.entity.InventoryMovementDetail;
+import com.cyl.wms.domain.query.InventoryMovementDetailQuery;
 import com.cyl.wms.service.InventoryMovementDetailService;
-import com.cyl.wms.pojo.vo.InventoryMovementDetailVO;
+import com.cyl.wms.domain.vo.InventoryMovementDetailVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 库存移动详情Controller

@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +21,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.InventoryHistoryConvert;
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.pojo.query.InventoryHistoryQuery;
+import com.cyl.wms.domain.entity.InventoryHistory;
+import com.cyl.wms.domain.query.InventoryHistoryQuery;
 import com.cyl.wms.service.InventoryHistoryService;
-import com.cyl.wms.pojo.vo.InventoryHistoryVO;
+import com.cyl.wms.domain.vo.InventoryHistoryVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 库存记录Controller

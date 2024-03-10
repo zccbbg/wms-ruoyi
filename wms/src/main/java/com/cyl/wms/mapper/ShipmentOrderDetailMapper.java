@@ -1,8 +1,8 @@
 package com.cyl.wms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.pojo.vo.ShipmentOrderVO;
+import com.cyl.wms.domain.entity.ShipmentOrderDetail;
+import com.cyl.wms.domain.vo.ShipmentOrderVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

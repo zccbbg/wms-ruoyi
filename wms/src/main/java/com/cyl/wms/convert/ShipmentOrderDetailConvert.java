@@ -1,37 +1,22 @@
 package com.cyl.wms.convert;
 
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.pojo.dto.ShipmentOrderDetailDTO;
-import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
-import org.apache.commons.lang3.SerializationUtils;
+import com.cyl.wms.domain.entity.InventoryHistory;
 import org.mapstruct.Mapper;
+import com.cyl.wms.domain.entity.ShipmentOrderDetail;
+import com.cyl.wms.domain.vo.ShipmentOrderDetailVO;
+import org.apache.commons.lang3.SerializationUtils;
 import org.mapstruct.Mapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 /**
- * 出库单详情  DO <=> DTO <=> VO / BO / Query
+ * 出库单详情  ENTITY <=> VO / Form / Query
  *
  * @author zcc
  */
 @Mapper(componentModel = "spring")
-public interface ShipmentOrderDetailConvert {
-
-    /**
-     * @param source DO
-     * @return DTO
-     */
-    ShipmentOrderDetailDTO do2dto(ShipmentOrderDetail source);
-
-    /**
-     * @param source DTO
-     * @return DO
-     */
-    ShipmentOrderDetail dto2do(ShipmentOrderDetailDTO source);
-
+public interface ShipmentOrderDetailConvert  {
     List<ShipmentOrderDetailVO> dos2vos(List<ShipmentOrderDetail> list);
 
     List<ShipmentOrderDetail> vos2dos(List<ShipmentOrderDetailVO> details);

@@ -1,10 +1,10 @@
 package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.InventorySettlementConvert;
-import com.cyl.wms.domain.InventorySettlement;
-import com.cyl.wms.pojo.query.InventorySettlementQuery;
-import com.cyl.wms.pojo.vo.InventorySettlementVO;
-import com.cyl.wms.pojo.vo.form.InventorySettlementFrom;
+import com.cyl.wms.domain.entity.InventorySettlement;
+import com.cyl.wms.domain.query.InventorySettlementQuery;
+import com.cyl.wms.domain.vo.InventorySettlementVO;
+import com.cyl.wms.domain.form.InventorySettlementFrom;
 import com.cyl.wms.service.InventorySettlementService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

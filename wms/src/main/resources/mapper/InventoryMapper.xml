@@ -67,7 +67,7 @@
             #{it.id}
         </foreach>
     </update>
-    <select id="selectAllByAreaAndItemId" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectAllByAreaAndItemId" resultType="com.cyl.wms.domain.entity.Inventory">
         select * from wms_inventory
         where (area_id, item_id) in
         <foreach collection="list" open="(" separator="," close=")" item="it">
@@ -75,7 +75,7 @@
         </foreach>
         and rack_id is null and del_flag=0
     </select>
-    <select id="selectAllByRackAndItemId" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectAllByRackAndItemId" resultType="com.cyl.wms.domain.entity.Inventory">
         select * from wms_inventory
         where (rack_id, item_id) in
         <foreach collection="list" open="(" separator="," close=")" item="it">
@@ -83,7 +83,7 @@
         </foreach>
         and del_flag=0
     </select>
-    <select id="selectAllByWarehouseAndItemId" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectAllByWarehouseAndItemId" resultType="com.cyl.wms.domain.entity.Inventory">
         select * from wms_inventory
         where (warehouse_id, item_id) in
         <foreach collection="list" open="(" separator="," close=")" item="it">
@@ -91,7 +91,7 @@
         </foreach>
         and area_id is null and rack_id is null and del_flag=0
     </select>
-    <select id="selectWarning" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectWarning" resultType="com.cyl.wms.domain.entity.Inventory">
         select a.*, b.*
         from wms_inventory a
                  left join wms_item b on a.item_id = b.id
@@ -156,7 +156,7 @@
           AND ww.del_flag = 0
           AND (wa.del_flag = 0 OR wa.del_flag IS NULL);
     </select>
-    <select id="selectLastInventory" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectLastInventory" resultType="com.cyl.wms.domain.entity.Inventory">
         select i.*
         from wms_inventory i
                  left join wms_warehouse w on w.id = i.warehouse_id
@@ -170,7 +170,7 @@
           and (i.area_id != '' and i.area_id is not null and a.del_flag = 0 or i.area_id is null)
         order by i.quantity ${sort}
     </select>
-    <select id="selectLastInventoryForReceipt" resultType="com.cyl.wms.domain.Inventory">
+    <select id="selectLastInventoryForReceipt" resultType="com.cyl.wms.domain.entity.Inventory">
         select i.*
         from wms_inventory i
                  left join wms_warehouse w on w.id = i.warehouse_id

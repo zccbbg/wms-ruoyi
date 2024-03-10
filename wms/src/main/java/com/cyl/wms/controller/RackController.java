@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.RackConvert;
-import com.cyl.wms.domain.Rack;
-import com.cyl.wms.pojo.query.RackQuery;
+import com.cyl.wms.domain.entity.Rack;
+import com.cyl.wms.domain.query.RackQuery;
 import com.cyl.wms.service.RackService;
-import com.cyl.wms.pojo.vo.RackVO;
+import com.cyl.wms.domain.vo.RackVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 货架Controller

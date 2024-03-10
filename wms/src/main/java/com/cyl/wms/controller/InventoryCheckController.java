@@ -2,7 +2,7 @@ package com.cyl.wms.controller;
 
 import java.util.List;
 
-import com.cyl.wms.pojo.vo.form.InventoryCheckFrom;
+import com.cyl.wms.domain.form.InventoryCheckFrom;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -23,10 +23,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.InventoryCheckConvert;
-import com.cyl.wms.domain.InventoryCheck;
-import com.cyl.wms.pojo.query.InventoryCheckQuery;
+import com.cyl.wms.domain.entity.InventoryCheck;
+import com.cyl.wms.domain.query.InventoryCheckQuery;
 import com.cyl.wms.service.InventoryCheckService;
-import com.cyl.wms.pojo.vo.InventoryCheckVO;
+import com.cyl.wms.domain.vo.InventoryCheckVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 库存盘点单据Controller

@@ -1,31 +1,17 @@
 package com.cyl.wms.convert;
 
-import com.cyl.wms.domain.InventoryHistory;
+import com.cyl.wms.domain.entity.InventoryHistory;
 import org.mapstruct.Mapper;
-import com.cyl.wms.domain.Inventory;
-import com.cyl.wms.pojo.dto.InventoryDTO;
-import com.cyl.wms.pojo.vo.InventoryVO;
+import com.cyl.wms.domain.entity.Inventory;
+import com.cyl.wms.domain.vo.InventoryVO;
 import java.util.List;
 /**
- * 库存  DO <=> DTO <=> VO / BO / Query
+ * 库存  ENTITY <=> VO / Form / Query
  *
  * @author zcc
  */
 @Mapper(componentModel = "spring")
 public interface InventoryConvert  {
-
-    /**
-     * @param source DO
-     * @return DTO
-     */
-    InventoryDTO do2dto(Inventory source);
-
-    /**
-     * @param source DTO
-     * @return DO
-     */
-    Inventory dto2do(InventoryDTO source);
-
     List<InventoryVO> dos2vos(List<Inventory> list);
 
     Inventory inventoryHistory2invertory(InventoryHistory it);

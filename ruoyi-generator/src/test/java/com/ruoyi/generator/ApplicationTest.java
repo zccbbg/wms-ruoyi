@@ -37,15 +37,19 @@ public class ApplicationTest {
 //                "wms_inventory",
 //                "wms_inventory_history",
 //                "wms_receipt_order",
-//                "wms_receipt_order_detail"
+//                "wms_receipt_order_detail",
 //                "wms_shipment_order",
 //                "wms_shipment_order_detail",
 //                "wms_inventory_movement",
 //                "wms_inventory_movement_detail",
-//                "wms_delivery"
+//                "wms_delivery",
 //                "wms_inventory_check",
-//                "wms_inventory_check_detail"
-                "wms_item_type"
+//                "wms_inventory_check_detail",
+//                "wms_item_type",
+                "wms_supplier_transaction",
+                "wms_customer_transaction",
+                "wms_inventory_settlement",
+                "wms_inventory_settlement_detail"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

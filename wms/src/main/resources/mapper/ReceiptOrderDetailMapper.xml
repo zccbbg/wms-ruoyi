@@ -62,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 #{item.receiptOrderId, jdbcType=BIGINT}, #{item.itemId, jdbcType=BIGINT}, #{item.planQuantity, jdbcType=DECIMAL}, #{item.realQuantity, jdbcType=DECIMAL}, #{item.rackId, jdbcType=BIGINT},#{item.money, jdbcType=DECIMAL},#{item.delFlag, jdbcType=TINYINT}, #{item.remark, jdbcType=VARCHAR}, #{item.createBy, jdbcType=BIGINT}, #{item.createTime, jdbcType=DATE}, #{item.updateBy, jdbcType=BIGINT}, #{item.updateTime, jdbcType=DATE}, #{item.warehouseId, jdbcType=BIGINT}, #{item.areaId, jdbcType=BIGINT}, #{item.receiptOrderStatus, jdbcType=TINYINT},             </trim>
         </foreach>
     </insert>
-    <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.ReceiptOrderVO">
+    <select id="countByOrderId" resultType="com.cyl.wms.domain.vo.ReceiptOrderVO">
         select
             receipt_order_id id,
             count(*) detail_count
@@ -74,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and del_flag = 0
         group by receipt_order_id
     </select>
-    <select id="selectDetailByWaveNo" resultType="com.cyl.wms.domain.ReceiptOrderDetail">
+    <select id="selectDetailByWaveNo" resultType="com.cyl.wms.domain.entity.ReceiptOrderDetail">
         select sod.id,
                sod.item_id,
                sod.receipt_order_id,

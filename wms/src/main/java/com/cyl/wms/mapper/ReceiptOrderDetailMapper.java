@@ -3,11 +3,9 @@ package com.cyl.wms.mapper;
 import java.util.Collection;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.wms.domain.ReceiptOrder;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.pojo.vo.ReceiptOrderVO;
+import com.cyl.wms.domain.vo.ReceiptOrderVO;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.wms.domain.ReceiptOrderDetail;
+import com.cyl.wms.domain.entity.ReceiptOrderDetail;
 
 /**
  * 入库单详情Mapper接口

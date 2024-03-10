@@ -1,10 +1,10 @@
 package com.cyl.wms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyl.wms.domain.Supplier;
-import com.cyl.wms.domain.SupplierTransaction;
+import com.cyl.wms.domain.entity.Supplier;
+import com.cyl.wms.domain.entity.SupplierTransaction;
 import com.cyl.wms.mapper.SupplierTransactionMapper;
-import com.cyl.wms.pojo.query.SupplierTransactionQuery;
+import com.cyl.wms.domain.query.SupplierTransactionQuery;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

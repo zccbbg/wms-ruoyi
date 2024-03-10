@@ -3,7 +3,7 @@ package com.cyl.wms.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.wms.domain.InventoryCheckDetail;
+import com.cyl.wms.domain.entity.InventoryCheckDetail;
 
 /**
  * 库存盘点单据详情Mapper接口

@@ -99,7 +99,7 @@
             </foreach>
         </where>
     </update>
-    <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.InventoryMovementVO">
+    <select id="countByOrderId" resultType="com.cyl.wms.domain.vo.InventoryMovementVO">
         select inventory_movement_id id,
                count(*)              detail_count,
                sum(plan_quantity)    itemCount

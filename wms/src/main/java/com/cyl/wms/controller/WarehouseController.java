@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.WarehouseConvert;
-import com.cyl.wms.domain.Warehouse;
-import com.cyl.wms.pojo.query.WarehouseQuery;
+import com.cyl.wms.domain.entity.Warehouse;
+import com.cyl.wms.domain.query.WarehouseQuery;
 import com.cyl.wms.service.WarehouseService;
-import com.cyl.wms.pojo.vo.WarehouseVO;
+import com.cyl.wms.domain.vo.WarehouseVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 仓库Controller

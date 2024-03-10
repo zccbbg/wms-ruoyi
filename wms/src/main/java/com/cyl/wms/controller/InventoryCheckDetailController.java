@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.InventoryCheckDetailConvert;
-import com.cyl.wms.domain.InventoryCheckDetail;
-import com.cyl.wms.pojo.query.InventoryCheckDetailQuery;
+import com.cyl.wms.domain.entity.InventoryCheckDetail;
+import com.cyl.wms.domain.query.InventoryCheckDetailQuery;
 import com.cyl.wms.service.InventoryCheckDetailService;
-import com.cyl.wms.pojo.vo.InventoryCheckDetailVO;
+import com.cyl.wms.domain.vo.InventoryCheckDetailVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 库存盘点单据详情Controller

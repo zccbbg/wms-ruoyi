@@ -1,22 +1,20 @@
 package com.cyl.wms.service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.wms.convert.InventoryCheckDetailConvert;
-import com.cyl.wms.domain.InventoryHistory;
-import com.cyl.wms.pojo.vo.InventoryCheckDetailVO;
+import com.cyl.wms.domain.entity.InventoryHistory;
+import com.cyl.wms.domain.vo.InventoryCheckDetailVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.wms.mapper.InventoryCheckDetailMapper;
-import com.cyl.wms.domain.InventoryCheckDetail;
-import com.cyl.wms.pojo.query.InventoryCheckDetailQuery;
+import com.cyl.wms.domain.entity.InventoryCheckDetail;
+import com.cyl.wms.domain.query.InventoryCheckDetailQuery;
 
 /**
  * 库存盘点单据详情Service业务层处理

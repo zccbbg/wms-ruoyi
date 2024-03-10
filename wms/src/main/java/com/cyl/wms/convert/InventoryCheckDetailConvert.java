@@ -1,31 +1,17 @@
 package com.cyl.wms.convert;
 
-import com.cyl.wms.domain.InventoryHistory;
+import com.cyl.wms.domain.entity.InventoryHistory;
 import org.mapstruct.Mapper;
-import com.cyl.wms.domain.InventoryCheckDetail;
-import com.cyl.wms.pojo.dto.InventoryCheckDetailDTO;
-import com.cyl.wms.pojo.vo.InventoryCheckDetailVO;
+import com.cyl.wms.domain.entity.InventoryCheckDetail;
+import com.cyl.wms.domain.vo.InventoryCheckDetailVO;
 import java.util.List;
 /**
- * 库存盘点单据详情  DO <=> DTO <=> VO / BO / Query
+ * 库存盘点单据详情  ENTITY <=> VO / Form / Query
  *
  * @author zcc
  */
 @Mapper(componentModel = "spring")
 public interface InventoryCheckDetailConvert  {
-
-    /**
-     * @param source DO
-     * @return DTO
-     */
-    InventoryCheckDetailDTO do2dto(InventoryCheckDetail source);
-
-    /**
-     * @param source DTO
-     * @return DO
-     */
-    InventoryCheckDetail dto2do(InventoryCheckDetailDTO source);
-
     List<InventoryCheckDetailVO> dos2vos(List<InventoryCheckDetail> list);
 
     List<InventoryCheckDetail> vos2dos(List<InventoryCheckDetailVO> details);

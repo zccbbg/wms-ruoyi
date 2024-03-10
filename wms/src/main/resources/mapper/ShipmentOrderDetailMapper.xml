@@ -72,7 +72,7 @@
             </foreach>
         </where>
     </update>
-    <select id="countByOrderId" resultType="com.cyl.wms.pojo.vo.ShipmentOrderVO">
+    <select id="countByOrderId" resultType="com.cyl.wms.domain.vo.ShipmentOrderVO">
         select shipment_order_id id,
                count(*)          detail_count
         from wms_shipment_order_detail

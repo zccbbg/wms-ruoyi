@@ -1,7 +1,7 @@
 package com.cyl.wms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.wms.domain.InventorySettlement;
+import com.cyl.wms.domain.entity.InventorySettlement;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

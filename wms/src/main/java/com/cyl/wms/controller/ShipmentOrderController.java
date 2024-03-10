@@ -1,10 +1,10 @@
 package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.ShipmentOrderConvert;
-import com.cyl.wms.domain.ShipmentOrder;
-import com.cyl.wms.pojo.query.ShipmentOrderQuery;
-import com.cyl.wms.pojo.vo.ShipmentOrderVO;
-import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
+import com.cyl.wms.domain.entity.ShipmentOrder;
+import com.cyl.wms.domain.query.ShipmentOrderQuery;
+import com.cyl.wms.domain.vo.ShipmentOrderVO;
+import com.cyl.wms.domain.form.ShipmentOrderFrom;
 import com.cyl.wms.service.ShipmentOrderService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

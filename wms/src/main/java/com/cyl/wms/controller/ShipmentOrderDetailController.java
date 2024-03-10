@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
-import com.cyl.wms.domain.ShipmentOrderDetail;
-import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
+import com.cyl.wms.domain.entity.ShipmentOrderDetail;
+import com.cyl.wms.domain.query.ShipmentOrderDetailQuery;
 import com.cyl.wms.service.ShipmentOrderDetailService;
-import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
+import com.cyl.wms.domain.vo.ShipmentOrderDetailVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 出库单详情Controller

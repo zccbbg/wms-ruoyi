@@ -1,12 +1,11 @@
 package com.cyl.wms.mapper;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.wms.pojo.vo.InventoryMovementVO;
+import com.cyl.wms.domain.vo.InventoryMovementVO;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.wms.domain.InventoryMovementDetail;
+import com.cyl.wms.domain.entity.InventoryMovementDetail;
 
 /**
  * 库存移动详情Mapper接口

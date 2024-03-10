@@ -1,6 +1,5 @@
 package com.cyl.wms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -23,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.wms.convert.ItemConvert;
-import com.cyl.wms.domain.Item;
-import com.cyl.wms.pojo.query.ItemQuery;
+import com.cyl.wms.domain.entity.Item;
+import com.cyl.wms.domain.query.ItemQuery;
 import com.cyl.wms.service.ItemService;
-import com.cyl.wms.pojo.vo.ItemVO;
+import com.cyl.wms.domain.vo.ItemVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 物料Controller

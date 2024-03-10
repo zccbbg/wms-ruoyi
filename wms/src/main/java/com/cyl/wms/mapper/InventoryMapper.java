@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.cyl.wms.domain.Inventory;
-import com.cyl.wms.domain.InventoryHistory;
+import com.cyl.wms.domain.entity.Inventory;
+import com.cyl.wms.domain.entity.InventoryHistory;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
