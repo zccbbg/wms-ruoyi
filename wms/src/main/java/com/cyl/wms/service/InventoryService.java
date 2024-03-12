@@ -572,7 +572,7 @@ public class InventoryService {
         }
 
         if (CollUtil.isEmpty(inventoryList)) {
-            log.error("库存不足,itemId:{},计划数量：{}", itemId, planQuantity);
+            log.warn("库存不足,itemId:{},计划数量：{}", itemId, planQuantity);
             throw new ServiceException("库存不足", HttpStatus.CONFIRMATION);
         }
         // 拆分物料明细
