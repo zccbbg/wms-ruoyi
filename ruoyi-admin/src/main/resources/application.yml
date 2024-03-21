@@ -117,7 +117,7 @@ spring:
 token:
   # 令牌自定义标识
   header: Authorization
-  # 令牌密钥
+  # 令牌密钥，这个地方改了的话，密码会失效，请用ruoyi-admin\src\test\java\com\fjp\lc\test\service\ServiceTest.java重新生成密码插入到数据库
   secret: abcdefghijkomnopqrstuvwxyx
   # 令牌有效期（默认30分钟）
   expireTime: 30
