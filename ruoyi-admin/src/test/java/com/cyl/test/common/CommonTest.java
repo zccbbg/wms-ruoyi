@@ -1,4 +1,4 @@
-package com.fjp.lc.test.common;
+package com.cyl.test.common;
 
 import cn.hutool.core.img.Img;
 import cn.hutool.core.img.ImgUtil;

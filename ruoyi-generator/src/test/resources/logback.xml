@@ -67,7 +67,6 @@
 	<logger name="com.ruoyi" level="info" />
 	<!-- Spring日志级别控制  -->
 	<logger name="org.springframework" level="warn" />
-    <logger name="com.fjp.lc.mapper" level="debug" />
     <logger name="com.ruoyi.generator.mapper" level="info" />
     <logger name="com.ruoyi.framework.aspectj.LoggingAspect" level="info" />
     <root level="info">
