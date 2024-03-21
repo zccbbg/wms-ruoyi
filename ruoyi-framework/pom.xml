@@ -45,6 +45,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.version}</version>
+        </dependency>
         <!-- 验证码 -->
         <dependency>
             <groupId>com.github.penggle</groupId>
