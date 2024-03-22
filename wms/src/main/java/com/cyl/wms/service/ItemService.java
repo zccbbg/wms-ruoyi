@@ -103,7 +103,6 @@ public class ItemService {
         qw.orderByDesc("id");
         if (!StrUtil.isEmpty(query.getSearch())) {
             String search = query.getSearch();
-            qw.eq("create_by", SecurityUtils.getUserId());
             qw.and((qw1) -> {
                 qw1 = qw1.like("item_no", search)
                         .or()
