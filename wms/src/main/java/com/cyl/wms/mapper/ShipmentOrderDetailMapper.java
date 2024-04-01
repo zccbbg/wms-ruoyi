@@ -2,6 +2,9 @@ package com.cyl.wms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.wms.domain.ShipmentOrderDetail;
+import com.cyl.wms.pojo.query.CustomerShipmentStatQuery;
+import com.cyl.wms.pojo.vo.CustomerShipmentStatVO;
+import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,4 +39,6 @@ public interface ShipmentOrderDetailMapper extends BaseMapper<ShipmentOrderDetai
     List<ShipmentOrderDetail> selectListGroupByItemId(@Param("id") long ids);
 
     List<ShipmentOrderDetail> selectDetailByWaveNo(String waveNo);
+
+    List<ShipmentOrderDetailVO> statByCustomerAndType(@Param("query") CustomerShipmentStatQuery query);
 }

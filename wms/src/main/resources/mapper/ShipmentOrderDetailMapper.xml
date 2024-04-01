@@ -142,4 +142,20 @@
         where sod.del_flag = 0
           and so.wave_no = #{waveNo};
     </select>
+    <select id="statByCustomerAndType" resultType="com.cyl.wms.pojo.vo.ShipmentOrderDetailVO">
+        select b.customer_id,a.money,a.real_quantity,d.item_type
+            from wms_shipment_order_detail a
+            left join wms_shipment_order b on a.shipment_order_id=b.id
+            left join wms_item d on a.item_id=d.id
+            where b.customer_id is not null and d.item_type is not null
+            <if test="(query.beginTime != null and query.beginTime != '') and (query.endTime != null and query.endTime != '')">
+                and b.create_time between #{query.beginTime} and #{query.endTime}
+            </if>
+            <if test="query.customerId != null">
+                and b.customer_id=#{query.customerId}
+            </if>
+            <if test="query.itemTypeId != null">
+                and d.item_type=#{query.itemTypeId}
+            </if>
+    </select>
 </mapper>

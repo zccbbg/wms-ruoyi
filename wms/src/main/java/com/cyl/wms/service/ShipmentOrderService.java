@@ -8,16 +8,11 @@ import com.cyl.wms.convert.DeliveryConvert;
 import com.cyl.wms.convert.ShipmentOrderConvert;
 import com.cyl.wms.convert.ShipmentOrderDetailConvert;
 import com.cyl.wms.domain.*;
+import com.cyl.wms.mapper.CustomerMapper;
 import com.cyl.wms.mapper.ShipmentOrderDetailMapper;
 import com.cyl.wms.mapper.ShipmentOrderMapper;
-import com.cyl.wms.pojo.query.DeliveryQuery;
-import com.cyl.wms.pojo.query.ItemQuery;
-import com.cyl.wms.pojo.query.ShipmentOrderDetailQuery;
-import com.cyl.wms.pojo.query.ShipmentOrderQuery;
-import com.cyl.wms.pojo.vo.ItemVO;
-import com.cyl.wms.pojo.vo.ReceiptOrderVO;
-import com.cyl.wms.pojo.vo.ShipmentOrderDetailVO;
-import com.cyl.wms.pojo.vo.ShipmentOrderVO;
+import com.cyl.wms.pojo.query.*;
+import com.cyl.wms.pojo.vo.*;
 import com.cyl.wms.pojo.vo.form.OrderWaveFrom;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.github.pagehelper.PageHelper;
@@ -74,6 +69,8 @@ public class ShipmentOrderService {
     private CustomerTransactionService customerTransactionService;
     @Autowired
     private SysUserMapper userMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     /**
      * 查询出库单
@@ -487,5 +484,43 @@ public class ShipmentOrderService {
         qw.in(ShipmentOrder::getWaveNo, ids);
         qw.set(ShipmentOrder::getWaveNo, null);
         shipmentOrderMapper.update(null, qw);
+    }
+
+    public List<CustomerShipmentStatVO> statByCustomerAndType(CustomerShipmentStatQuery query) {
+        query.setBeginTime(query.getBeginTime() + " 00:00:00");
+        query.setEndTime(query.getEndTime() + " 23:59:59");
+        List<ShipmentOrderDetailVO> shipmentOrderDetailVOS = shipmentOrderDetailMapper.statByCustomerAndType(query);
+        if (CollUtil.isEmpty(shipmentOrderDetailVOS)) {
+            return new ArrayList<>();
+        }
+        //根据客户id和type分组统计
+        // k:客户id k2:typeId v:统计后的金额
+        Map<Long, Map<Long, BigDecimal>> data = shipmentOrderDetailVOS.stream().collect(Collectors.groupingBy(
+                it -> it.getCustomerId() == null ? -1L : it.getCustomerId(),
+                Collectors.groupingBy(
+                        ShipmentOrderDetailVO::getItemType,
+                        Collectors.reducing(
+                                BigDecimal.ZERO,
+                                v -> v.getMoney() == null ? BigDecimal.ZERO : v.getMoney().multiply(new BigDecimal(String.valueOf(v.getRealQuantity()))),
+                                BigDecimal::add)))
+        );
+        Map<Long, String> customerNameMap = customerMapper.selectBatchIds(data.keySet()).stream().collect(Collectors.toMap(Customer::getId, Customer::getCustomerName));
+        List<CustomerShipmentStatVO> result = new ArrayList<>();
+        for (Map.Entry<Long, Map<Long, BigDecimal>> entry : data.entrySet()) {
+            CustomerShipmentStatVO vo = new CustomerShipmentStatVO();
+            vo.setCustomerId(entry.getKey());
+            vo.setData(new ArrayList<>());
+            vo.setCustomerName(customerNameMap.get(entry.getKey()));
+            vo.setTotal(BigDecimal.ZERO);
+            result.add(vo);
+            for (Map.Entry<Long, BigDecimal> inner : entry.getValue().entrySet()) {
+                AmountStatByItemTypeVO innerVo = new AmountStatByItemTypeVO();
+                innerVo.setItemTypeId(inner.getKey());
+                innerVo.setAmount(inner.getValue());
+                vo.getData().add(innerVo);
+                vo.setTotal(vo.getTotal().add(innerVo.getAmount()));
+            }
+        }
+        return result;
     }
 }

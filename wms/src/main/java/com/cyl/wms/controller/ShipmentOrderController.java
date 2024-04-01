@@ -2,22 +2,29 @@ package com.cyl.wms.controller;
 
 import com.cyl.wms.convert.ShipmentOrderConvert;
 import com.cyl.wms.domain.ShipmentOrder;
+import com.cyl.wms.pojo.query.CustomerShipmentStatQuery;
 import com.cyl.wms.pojo.query.ShipmentOrderQuery;
+import com.cyl.wms.pojo.vo.CustomerShipmentStatVO;
 import com.cyl.wms.pojo.vo.ShipmentOrderVO;
 import com.cyl.wms.pojo.vo.form.ShipmentOrderFrom;
 import com.cyl.wms.service.ShipmentOrderService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 /**
  * 出库单Controller
  *
@@ -99,5 +106,14 @@ public class ShipmentOrderController extends BaseController {
     public ResponseEntity allocatedInventory(Long id,Integer type) {
         service.allocatedInventory(id,type);
         return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation("客户物料类型维度统计出库金额")
+    @PostMapping("/statByCustomerAndType")
+    public ResponseEntity<List<CustomerShipmentStatVO>> statByCustomerAndType(@RequestBody CustomerShipmentStatQuery query) {
+        if(StringUtils.isBlank(query.getBeginTime()) || StringUtils.isBlank(query.getEndTime())){
+            throw new RuntimeException("开始或结束时间不可为空");
+        }
+        return ResponseEntity.ok(service.statByCustomerAndType(query));
     }
 }

@@ -101,4 +101,10 @@ public class ShipmentOrderDetailVO extends BaseAudit {
     private List<Long> place;
 
     private ItemVO item;
+
+    private Long itemType;
+
+    private String customerName;
+
+    private Long customerId;
 }
