@@ -221,6 +221,8 @@ public class InventoryService {
         }
         if (areaId != null) {
             qw.eq("area_id", areaId);
+        } else {
+            qw.isNull("area_id");
         }
         return inventoryMapper.selectOne(qw);
     }
