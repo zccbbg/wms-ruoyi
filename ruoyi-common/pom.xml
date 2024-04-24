@@ -16,6 +16,12 @@
     </description>
 
     <dependencies>
+        <!-- 离线IP地址定位库 -->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>1.7.2</version>
+        </dependency>
 
         <!-- Spring框架基本的核心工具 -->
         <dependency>
