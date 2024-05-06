@@ -1,7 +1,5 @@
 ## 在线体验
 - 演示地址：http://wms.ichengle.top
-- 给大家一个便宜寄快递的福利，大件5折，小件6折：
-- <img src="doc/express.jpg" width="200px">
 
 ## 若依wms简介
 若依wms是一套基于若依的wms仓库管理系统，支持lodop和网页打印入库单、出库单。毫无保留给个人及企业免费使用。
