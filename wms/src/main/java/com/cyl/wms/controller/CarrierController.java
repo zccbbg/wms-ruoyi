@@ -68,15 +68,17 @@ public class CarrierController extends BaseController {
     }
 
     @ApiOperation("新增承运商")
-    @PreAuthorize("@ss.hasPermi('wms:carrier:add')")
+//    @PreAuthorize("@ss.hasPermi('wms:carrier:add')")
     @Log(title = "承运商", businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasRole('admin')")
     @PostMapping
     public ResponseEntity<Integer> add(@RequestBody Carrier carrier) {
         return ResponseEntity.ok(service.insert(carrier));
     }
 
     @ApiOperation("修改承运商")
-    @PreAuthorize("@ss.hasPermi('wms:carrier:edit')")
+//    @PreAuthorize("@ss.hasPermi('wms:carrier:edit')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "承运商", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResponseEntity<Integer> edit(@RequestBody Carrier carrier) {
@@ -84,7 +86,8 @@ public class CarrierController extends BaseController {
     }
 
     @ApiOperation("删除承运商")
-    @PreAuthorize("@ss.hasPermi('wms:carrier:remove')")
+//    @PreAuthorize("@ss.hasPermi('wms:carrier:remove')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "承运商", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {

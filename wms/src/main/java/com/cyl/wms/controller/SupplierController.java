@@ -68,7 +68,8 @@ public class SupplierController extends BaseController {
     }
 
     @ApiOperation("新增供应商")
-    @PreAuthorize("@ss.hasPermi('wms:supplier:add')")
+//    @PreAuthorize("@ss.hasPermi('wms:supplier:add')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "供应商", businessType = BusinessType.INSERT)
     @PostMapping
     public ResponseEntity<Integer> add(@RequestBody Supplier supplier) {
@@ -76,7 +77,8 @@ public class SupplierController extends BaseController {
     }
 
     @ApiOperation("修改供应商")
-    @PreAuthorize("@ss.hasPermi('wms:supplier:edit')")
+//    @PreAuthorize("@ss.hasPermi('wms:supplier:edit')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "供应商", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResponseEntity<Integer> edit(@RequestBody Supplier supplier) {
@@ -84,7 +86,8 @@ public class SupplierController extends BaseController {
     }
 
     @ApiOperation("删除供应商")
-    @PreAuthorize("@ss.hasPermi('wms:supplier:remove')")
+//    @PreAuthorize("@ss.hasPermi('wms:supplier:remove')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "供应商", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {

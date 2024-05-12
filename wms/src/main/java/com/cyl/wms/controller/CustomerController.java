@@ -68,7 +68,8 @@ public class CustomerController extends BaseController {
     }
 
     @ApiOperation("新增客户")
-    @PreAuthorize("@ss.hasPermi('wms:customer:add')")
+//    @PreAuthorize("@ss.hasPermi('wms:customer:add')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "客户", businessType = BusinessType.INSERT)
     @PostMapping
     public ResponseEntity<Integer> add(@RequestBody Customer customer) {
@@ -76,7 +77,8 @@ public class CustomerController extends BaseController {
     }
 
     @ApiOperation("修改客户")
-    @PreAuthorize("@ss.hasPermi('wms:customer:edit')")
+//    @PreAuthorize("@ss.hasPermi('wms:customer:edit')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "客户", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResponseEntity<Integer> edit(@RequestBody Customer customer) {
@@ -84,7 +86,8 @@ public class CustomerController extends BaseController {
     }
 
     @ApiOperation("删除客户")
-    @PreAuthorize("@ss.hasPermi('wms:customer:remove')")
+//    @PreAuthorize("@ss.hasPermi('wms:customer:remove')")
+    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "客户", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {

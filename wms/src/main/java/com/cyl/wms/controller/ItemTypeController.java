@@ -82,7 +82,8 @@ public class ItemTypeController extends BaseController {
     }
 
     @ApiOperation("新增物料类型表")
-    @PreAuthorize("@ss.hasPermi('wms:itemType:add')")
+    @PreAuthorize("@ss.hasRole('admin')")
+//    @PreAuthorize("@ss.hasPermi('wms:itemType:add')")
     @Log(title = "物料类型表", businessType = BusinessType.INSERT)
     @PostMapping
     public ResponseEntity<Integer> add(@RequestBody ItemType itemType) {
@@ -90,7 +91,8 @@ public class ItemTypeController extends BaseController {
     }
 
     @ApiOperation("修改物料类型表")
-    @PreAuthorize("@ss.hasPermi('wms:itemType:edit')")
+    @PreAuthorize("@ss.hasRole('admin')")
+//    @PreAuthorize("@ss.hasPermi('wms:itemType:edit')")
     @Log(title = "物料类型表", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResponseEntity<Integer> edit(@RequestBody ItemType itemType) {
@@ -98,7 +100,8 @@ public class ItemTypeController extends BaseController {
     }
 
     @ApiOperation("删除物料类型表")
-    @PreAuthorize("@ss.hasPermi('wms:itemType:remove')")
+    @PreAuthorize("@ss.hasRole('admin')")
+//    @PreAuthorize("@ss.hasPermi('wms:itemType:remove')")
     @Log(title = "物料类型表", businessType = BusinessType.DELETE)
     @DeleteMapping("/{itemTypeIds}")
     public ResponseEntity<Integer> remove(@PathVariable Long[] itemTypeIds) {
