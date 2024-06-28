@@ -1,0 +1,56 @@
+package ${packageName}.domain.bo;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import jakarta.validation.constraints.*;
+import io.github.linpeilie.annotations.AutoMapper;
+
+#foreach ($import in $importList)
+import ${import};
+#end
+#if($table.crud || $table.sub)
+#elseif($table.tree)
+#end
+
+/**
+ * ${functionName}业务对象 ${tableName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+#if($table.crud || $table.sub)
+#set($Entity="BaseEntity")
+#elseif($table.tree)
+#set($Entity="TreeEntity<${ClassName}Bo>")
+#end
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AutoMapper(target = ${ClassName}.class, reverseConvertGenerate = false)
+public class ${ClassName}Bo extends ${Entity} {
+
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField) && ($column.query || $column.insert || $column.edit))
+    /**
+     * $column.columnComment
+     */
+#if($column.insert && $column.edit)
+#set($Group="AddGroup.class, EditGroup.class")
+#elseif($column.insert)
+#set($Group="AddGroup.class")
+#elseif($column.edit)
+#set($Group="EditGroup.class")
+#end
+#if($column.required)
+#if($column.javaType == 'String')
+    @NotBlank(message = "$column.columnComment不能为空", groups = { $Group })
+#else
+    @NotNull(message = "$column.columnComment不能为空", groups = { $Group })
+#end
+#end
+    private $column.javaType $column.javaField;
+
+#end
+#end
+
+}

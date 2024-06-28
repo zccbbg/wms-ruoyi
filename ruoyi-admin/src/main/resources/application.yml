@@ -1,21 +1,25 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: RuoYi
+  name: RuoYi-Vue-Plus-Service
   # 版本
-  version: 3.7.0
+  version: ${revision}
   # 版权年份
-  copyrightYear: 2022
-  # 实例演示开关
-  demoEnabled: true
-  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: C:/ruoyi/uploadPath
-  # 获取ip地址开关
-  addressEnabled: true
+  copyrightYear: 2023
+  # 缓存懒加载
+  cacheLazy: false
+
+captcha:
+  enable: true
+  # 页面 <参数设置> 可开启关闭 验证码校验
   # 验证码类型 math 数组计算 char 字符验证
-  captchaType: math
-  # 前端请求的 跟踪 header name
-  traceIdName: x-web-trace-id
+  type: MATH
+  # line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
+  category: CIRCLE
+  # 数字验证码位数
+  numberLength: 1
+  # 字符验证码长度
+  charLength: 4
 
 # 开发环境配置
 server:
@@ -24,28 +28,46 @@ server:
   servlet:
     # 应用的访问路径
     context-path: /
-  tomcat:
-    # tomcat的URI编码
-    uri-encoding: UTF-8
-    # tomcat最大线程数，默认为200
-    max-threads: 800
-    # Tomcat启动初始化的线程数，默认值25
-    min-spare-threads: 30
+  # undertow 配置
+  undertow:
+    # HTTP post内容的最大大小。当值为-1时，默认值为大小是无限的
+    max-http-post-size: -1
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 512
+    # 是否分配的直接内存
+    direct-buffers: true
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+      io: 8
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
+      worker: 256
 
 # 日志配置
 logging:
   level:
-    com.ruoyi: debug
+    com.ruoyi: @logging.level@
     org.springframework: warn
+  config: classpath:logback-plus.xml
+
+# 用户配置
+user:
+  password:
+    # 密码最大错误次数
+    maxRetryCount: 5
+    # 密码锁定时间（默认10分钟）
+    lockTime: 10
 
 # Spring配置
 spring:
+  application:
+    name: ${ruoyi.name}
   # 资源信息
   messages:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles:
-    active: druid
+    active: @profiles.active@
   # 文件上传
   servlet:
     multipart:
@@ -58,92 +80,156 @@ spring:
     restart:
       # 热部署开关
       enabled: true
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
-    druid:
-      # 初始连接数
-      initialSize: 5
-      # 最小连接池数量
-      minIdle: 10
-      # 最大连接池数量
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      # 配置一个连接在池中最大生存的时间，单位是毫秒
-      maxEvictableIdleTimeMillis: 900000
-      # 配置检测连接是否有效
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      webStatFilter:
-        enabled: true
-      statViewServlet:
-        enabled: true
-        # 设置白名单，不填则允许所有访问
-        allow:
-        url-pattern: /druid/*
-      filter:
-        stat:
-          enabled: true
-          # 慢SQL记录
-          log-slow-sql: true
-          slow-sql-millis: 1000
-          merge-sql: true
-        wall:
-          config:
-            multi-statement-allow: true
-  # redis 配置
-  redis:
-    # 连接超时时间
-    timeout: 50s
-    lettuce:
-      pool:
-        # 连接池中的最小空闲连接
-        min-idle: 0
-        # 连接池中的最大空闲连接
-        max-idle: 8
-        # 连接池的最大数据库连接数
-        max-active: 8
-        # #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: -1ms
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+  jackson:
+    # 日期格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      # 格式化输出
+      indent_output: false
+      # 忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      # 允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
 
-# token配置
-token:
-  # 令牌自定义标识
-  header: Authorization
-  # 令牌密钥
-  secret: abcdefghijkomnopqrstuvwxyx
-  # 令牌有效期（默认30分钟）
-  expireTime: 30
-# mybatis-plus 配置
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # token有效期 设为一天 (必定过期) 单位: 秒
+  timeout: 86400
+  # 多端不同 token 有效期 可查看 LoginHelper.loginByDevice 方法自定义
+  # token最低活跃时间 (指定时间无操作就过期) 单位: 秒
+  active-timeout: 1800
+  # 允许动态设置 token 有效期
+  dynamic-active-timeout: true
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # 是否尝试从header里读取token
+  is-read-header: true
+  # 是否尝试从cookie里读取token
+  is-read-cookie: false
+  # token前缀
+  token-prefix: "Bearer"
+  # jwt秘钥
+  jwt-secret-key: abcdefghijklmnopqrstuvwxyz
+
+# security配置
+security:
+  # 排除路径
+  excludes:
+    # 静态资源
+    - /*.html
+    - /**/*.html
+    - /**/*.css
+    - /**/*.js
+    # 公共路径
+    - /favicon.ico
+    - /error
+    # swagger 文档配置
+    - /*/api-docs
+    - /*/api-docs/**
+    # actuator 监控配置
+    - /actuator
+    - /actuator/**
+
+# MyBatisPlus配置
+# https://baomidou.com/config/
 mybatis-plus:
-  # 搜索指定包别名
-  typeAliasesPackage: com.cyl.**.domain, com.ruoyi.common.core.domain.entity,  com.ruoyi.**.domain
-  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  # 不支持多包, 如有需要可在注解配置 或 提升扫包等级
+  # 例如 com.**.**.mapper
+  mapperPackage: com.ruoyi.**.mapper
+  # 对应的 XML 文件位置
   mapperLocations: classpath*:mapper/**/*Mapper.xml
-  # 加载全局的配置文件
-  configLocation: classpath:mybatis/mybatis-config.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.ruoyi.**.domain
+  # 启动时是否检查 MyBatis XML 文件的存在，默认不检查
+  checkConfigLocation: false
+  configuration:
+    # 自动驼峰命名规则（camel case）映射
+    mapUnderscoreToCamelCase: true
+    # MyBatis 自动映射策略
+    # NONE：不启用 PARTIAL：只对非嵌套 resultMap 自动映射 FULL：对所有 resultMap 自动映射
+    autoMappingBehavior: FULL
+    # MyBatis 自动映射时未知列或未知属性处理策
+    # NONE：不做处理 WARNING：打印相关警告 FAILING：抛出异常和详细信息
+    autoMappingUnknownColumnBehavior: NONE
+    # 更详细的日志输出 会有性能损耗 org.apache.ibatis.logging.stdout.StdOutImpl
+    # 关闭日志记录 (可单纯使用 p6spy 分析) org.apache.ibatis.logging.nologging.NoLoggingImpl
+    # 默认日志输出 org.apache.ibatis.logging.slf4j.Slf4jImpl
+    logImpl: org.apache.ibatis.logging.nologging.NoLoggingImpl
   global-config:
-    db-config:
-      id-type: auto
-      update-strategy: ignored
-pagehelper:
-  helperDialect: mysql
-  supportMethodsArguments: true
-  params: count=countSql
+    # 是否打印 Logo banner
+    banner: true
+    dbConfig:
+      # 主键类型
+      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
+      idType: ASSIGN_ID
+      # 逻辑已删除值
+      logicDeleteValue: 2
+      # 逻辑未删除值
+      logicNotDeleteValue: 0
+      # 字段验证策略之 insert,在 insert 的时候的字段验证策略
+      # IGNORED 忽略 NOT_NULL 非NULL NOT_EMPTY 非空 DEFAULT 默认 NEVER 不加入 SQL
+      insertStrategy: NOT_NULL
+      # 字段验证策略之 update,在 update 的时候的字段验证策略
+      updateStrategy: NOT_NULL
+      # 字段验证策略之 select,在 select 的时候的字段验证策略既 wrapper 根据内部 entity 生成的 where 条件
+      where-strategy: NOT_NULL
 
-# Swagger配置
-swagger:
-  # 是否开启swagger
-  enabled: true
-  # 请求前缀
-  pathMapping: /dev-api
+# 数据加密
+mybatis-encryptor:
+  # 是否开启加密
+  enable: false
+  # 默认加密算法
+  algorithm: BASE64
+  # 编码方式 BASE64/HEX。默认BASE64
+  encode: BASE64
+  # 安全秘钥 对称算法的秘钥 如：AES，SM4
+  password:
+  # 公私钥 非对称算法的公私钥 如：SM2，RSA
+  publicKey:
+  privateKey:
+
+springdoc:
+  api-docs:
+    # 是否开启接口文档
+    enabled: true
+#  swagger-ui:
+#    # 持久化认证数据
+#    persistAuthorization: true
+  info:
+    # 标题
+    title: '标题：${ruoyi.name}后台管理系统_接口文档'
+    # 描述
+    description: '描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...'
+    # 版本
+    version: '版本号: ${revision}'
+    # 作者信息
+    contact:
+      name: Lion Li
+      email: crazylionli@163.com
+      url: https://gitee.com/dromara/RuoYi-Vue-Plus
+  components:
+    # 鉴权方式配置
+    security-schemes:
+      apiKey:
+        type: APIKEY
+        in: HEADER
+        name: ${sa-token.token-name}
+  #这里定义了两个分组，可定义多个，也可以不定义
+  group-configs:
+    - group: 1.演示模块
+      packages-to-scan: com.ruoyi.demo
+    - group: 2.系统模块
+      packages-to-scan: com.ruoyi.web
+    - group: 3.代码生成模块
+      packages-to-scan: com.ruoyi.generator
 
 # 防止XSS攻击
 xss:
@@ -153,90 +239,31 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
-extra:
-  wx:
-    appid: wxappid
-    secret: wxsecret
-    redirect: ""
-scheduling:
-  enabled: true
-gen:
-  # 作者
-  author: zcc
-  # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
-  packageName: com.cyl.wms
-  # 自动去除表前缀，默认是false
-  autoRemovePre: true
-  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: wms_
-  # 一级权限名
-  rootPermission: wms
-  # 模板根路径
-  templateRootPath: vm
-  # 路径
-  path:
-    # 后端根目录
-    backPath: D:\java_project\wms\wms-ruoyi
-    # 后端 service 模块名
-    serviceModule: wms
-    # 后端 api 模块名, 默认与 service 一致
-    apiModule: wms
-    # 前端根目录
-    frontPath: D:\java_project\wms\ruoyi-wms-vue2
-    # 前端 api 目录
-    frontApiPath: src/api/wms
-    # 前端 view 目录
-    frontViewPath: src/views/wms
-    # sql 目录
-    sql: sql
-  # 环境变量
-  env:
-    # 审计 的 基类（创建者，创建时间，更新者，更新时间）
-    baseAudit: com.ruoyi.common.core.domain.BaseAudit
-    # 树 的 基类
-    baseTree: com.ruoyi.common.core.domain.TreeEntity
-  # 对于新增的模板，如果没有默认值，在这里进行配置
-  fileMap:
-    "api.js.vm": "${frontPath}/${frontApiPath}/${className}.js"
-    "controller.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/controller/${ClassName}Controller.java"
-    "service.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/service/${ClassName}Service.java"
-    "mapper.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/mapper/${ClassName}Mapper.java"
-    "convert.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/convert/${ClassName}Convert.java"
-    "example.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/example/${ClassName}Example.java"
-    "query.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/query/${ClassName}Query.java"
-    "dto.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/dto/${ClassName}DTO.java"
-    "vo.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/vo/${ClassName}VO.java"
-    "domain.java.vm": "${backPath}/${apiModule}/${MAIN_JAVA}/${packageName}/domain/${ClassName}.java"
-    "mapper.xml.vm": "${backPath}/${serviceModule}/${MAIN_RESOURCES}/mapper/${ClassName}Mapper.xml"
-    "sql.vm": "${backPath}/sql/${className}.sql"
-    "h2.sql.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/db/${tableName}-h2.sql"
-    "add.vue.vm": "${frontPath}/${frontViewPath}/Add${ClassName}.vue"
-    "index.vue.vm": "${frontPath}/${frontViewPath}/${className}/index.vue"
-    "index-tree.vue.vm": "${frontPath}/${frontViewPath}/index.vue"
-    "sub-domain.java.vm": "${frontPath}/${frontViewPath}/Sub${ClassName}.vue"
-  templates:
-    - vm/js/api.js.vm
-    - vm/java/controller.java.vm
-    - vm/java/service.java.vm
-    - vm/java/mapper.java.vm
-    - vm/java/convert.java.vm
-    - vm/java/query.java.vm
-    - vm/java/dto.java.vm
-    - vm/java/vo.java.vm
-    - vm/java/domain.java.vm
-    - vm/xml/mapper.xml.vm
-    - vm/sql/sql.vm
-  testTemplates:
-  #    - vm/sql/h2.sql.vm
-  crudTemplates:
-    #    - vm/vue/add.vue.vm
-    - vm/vue/index.vue.vm
-  treeTemplates:
-  #    - vm/vue/index-tree.vue.vm
-  subTemplates:
-  #    - vm/vue/index.vue.vm
-  #    - vm/java/sub-domain.java.vm
-  type2component:
-    "String": "a-input("
-    "LocalDate": "a-date-picker("
-    "LocalDateTime": "a-date-picker(format=\"YYYY-MM-DD HH:mm\""
+
+# 全局线程池相关配置
+thread-pool:
+  # 是否开启线程池
+  enabled: false
+  # 队列最大长度
+  queueCapacity: 128
+  # 线程池维护线程所允许的空闲时间
+  keepAliveSeconds: 300
+
+--- # 分布式锁 lock4j 全局配置
+lock4j:
+  # 获取分布式锁超时时间，默认为 3000 毫秒
+  acquire-timeout: 3000
+  # 分布式锁的超时时间，默认为 30 秒
+  expire: 30000
+
+--- # Actuator 监控端点的配置项
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+    logfile:
+      external-file: ./logs/sys-console.log

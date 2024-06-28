@@ -25,11 +25,13 @@ target/
 *.iml
 *.ipr
 
+### JRebel ###
+rebel.xml
+
 ### NetBeans ###
 nbproject/private/
 build/*
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 
@@ -42,7 +44,6 @@ nbdist/
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml
-/sql/local.sql
-*local*
-/ruoyi-admin/src/main/resources/application-dev.yml
-/ruoyi-admin/src/main/resources/application-prod.yml
+application-local.yml
+
+.flattened-pom.xml

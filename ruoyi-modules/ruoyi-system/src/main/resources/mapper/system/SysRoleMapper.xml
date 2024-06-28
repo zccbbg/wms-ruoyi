@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRoleMapper">
+
+    <resultMap type="com.ruoyi.system.domain.entity.SysRole" id="SysRoleResult">
+    </resultMap>
+
+    <sql id="selectRoleVo">
+        select distinct r.role_id,
+                        r.role_name,
+                        r.role_key,
+                        r.role_sort,
+                        r.data_scope,
+                        r.menu_check_strictly,
+                        r.dept_check_strictly,
+                        r.status,
+                        r.del_flag,
+                        r.create_time,
+                        r.remark
+        from sys_role r
+                 left join sys_user_role sur on sur.role_id = r.role_id
+                 left join sys_user u on u.user_id = sur.user_id
+                 left join sys_user us on us.user_name = r.create_by
+                 left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectPageRoleList" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        ${ew.getCustomSqlSegment}
+    </select>
+
+    <select id="selectRoleList" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        ${ew.getCustomSqlSegment}
+    </select>
+
+    <select id="selectRolePermissionByUserId" parameterType="Long" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = '0' and sur.user_id = #{userId}
+    </select>
+
+    <select id="selectRoleListByUserId" parameterType="Long" resultType="Long">
+        select r.role_id
+        from sys_role r
+                 left join sys_user_role sur on sur.role_id = r.role_id
+                 left join sys_user u on u.user_id = sur.user_id
+        where u.user_id = #{userId}
+    </select>
+
+    <select id="selectRolesByUserName" parameterType="String" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = '0' and u.user_name = #{userName}
+    </select>
+
+</mapper>

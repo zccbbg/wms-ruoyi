@@ -1,0 +1,2 @@
+com.ruoyi.common.security.handler.AllUrlHandler
+com.ruoyi.common.security.config.SecurityConfig
