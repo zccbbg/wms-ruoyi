@@ -1,6 +1,6 @@
-package com.rouyi.common.mybatis.enums;
+package com.ruoyi.common.mybatis.enums;
 
-import com.rouyi.common.mybatis.helper.DataPermissionHelper;
+import com.ruoyi.common.mybatis.helper.DataPermissionHelper;
 import com.ruoyi.common.core.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

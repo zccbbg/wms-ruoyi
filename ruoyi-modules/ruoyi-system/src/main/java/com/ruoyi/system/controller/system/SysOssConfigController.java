@@ -1,8 +1,8 @@
 package com.ruoyi.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.rouyi.common.mybatis.core.page.PageQuery;
-import com.rouyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;

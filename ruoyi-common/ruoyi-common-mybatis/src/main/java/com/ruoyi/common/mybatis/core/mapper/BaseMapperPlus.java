@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.core.mapper;
+package com.ruoyi.common.mybatis.core.mapper;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;

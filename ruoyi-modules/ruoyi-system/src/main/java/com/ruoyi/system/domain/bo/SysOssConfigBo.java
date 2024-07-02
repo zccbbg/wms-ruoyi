@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.bo;
 
-import com.rouyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.system.domain.entity.SysOssConfig;

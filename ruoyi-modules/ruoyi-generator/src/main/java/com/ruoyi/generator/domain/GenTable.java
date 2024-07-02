@@ -2,7 +2,7 @@ package com.ruoyi.generator.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.ruoyi.generator.constant.GenConstants;
-import com.rouyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.core.utils.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -203,4 +203,10 @@ public class GenTable extends BaseEntity {
         }
         return StringUtils.equalsAnyIgnoreCase(javaField, GenConstants.BASE_ENTITY);
     }
+
+    /**
+     * 数据源名称
+     */
+    @NotBlank(message = "数据源名称不能为空")
+    private String dataName;
 }

@@ -1,11 +1,11 @@
-package com.rouyi.common.mybatis.handler;
+package com.ruoyi.common.mybatis.handler;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ruoyi.common.core.domain.bo.LoginUser;
 import com.ruoyi.common.core.exception.ServiceException;
-import com.rouyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;

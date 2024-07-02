@@ -1,7 +1,7 @@
 package com.ruoyi.system.service;
 
-import com.rouyi.common.mybatis.core.page.PageQuery;
-import com.rouyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.system.domain.bo.SysOssBo;
 import com.ruoyi.system.domain.vo.SysOssVo;
 import org.springframework.web.multipart.MultipartFile;

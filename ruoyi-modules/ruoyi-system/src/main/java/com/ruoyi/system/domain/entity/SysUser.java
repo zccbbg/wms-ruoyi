@@ -3,7 +3,7 @@ package com.ruoyi.system.domain.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rouyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.xss.Xss;
 import com.ruoyi.common.sensitive.annotation.Sensitive;

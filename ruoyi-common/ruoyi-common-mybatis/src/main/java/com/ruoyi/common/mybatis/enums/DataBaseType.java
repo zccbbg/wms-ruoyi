@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.enums;
+package com.ruoyi.common.mybatis.enums;
 
 import com.ruoyi.common.core.utils.StringUtils;
 import lombok.AllArgsConstructor;

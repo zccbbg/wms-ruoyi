@@ -1,7 +1,7 @@
 package com.ruoyi.demo.service;
 
-import com.rouyi.common.mybatis.core.page.PageQuery;
-import com.rouyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.demo.domain.entity.TestDemo;
 import com.ruoyi.demo.domain.bo.TestDemoBo;
 import com.ruoyi.demo.domain.vo.TestDemoVo;

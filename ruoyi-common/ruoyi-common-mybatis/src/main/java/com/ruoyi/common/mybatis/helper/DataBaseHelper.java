@@ -1,10 +1,10 @@
-package com.rouyi.common.mybatis.helper;
+package com.ruoyi.common.mybatis.helper;
 
 import cn.hutool.core.convert.Convert;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.SpringUtils;
-import com.rouyi.common.mybatis.enums.DataBaseType;
+import com.ruoyi.common.mybatis.enums.DataBaseType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

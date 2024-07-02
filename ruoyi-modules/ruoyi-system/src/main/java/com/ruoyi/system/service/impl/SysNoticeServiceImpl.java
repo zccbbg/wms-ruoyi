@@ -2,8 +2,8 @@ package com.ruoyi.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rouyi.common.mybatis.core.page.PageQuery;
-import com.rouyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.system.domain.entity.SysNotice;
 import com.ruoyi.system.mapper.SysNoticeMapper;

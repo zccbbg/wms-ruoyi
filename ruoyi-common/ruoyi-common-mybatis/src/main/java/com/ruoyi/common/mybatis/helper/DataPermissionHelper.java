@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.helper;
+package com.ruoyi.common.mybatis.helper;
 
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.context.model.SaStorage;

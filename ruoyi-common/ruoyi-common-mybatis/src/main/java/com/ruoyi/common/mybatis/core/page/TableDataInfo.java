@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.core.page;
+package com.ruoyi.common.mybatis.core.page;
 
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.metadata.IPage;

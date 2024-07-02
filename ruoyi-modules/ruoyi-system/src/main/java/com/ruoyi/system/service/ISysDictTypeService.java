@@ -1,9 +1,9 @@
 package com.ruoyi.system.service;
 
-import com.rouyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.system.domain.entity.SysDictData;
 import com.ruoyi.system.domain.entity.SysDictType;
-import com.rouyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 
 import java.util.List;
 

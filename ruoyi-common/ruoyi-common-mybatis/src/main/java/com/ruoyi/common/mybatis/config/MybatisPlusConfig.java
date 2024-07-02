@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.config;
+package com.ruoyi.common.mybatis.config;
 
 import cn.hutool.core.net.NetUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
@@ -8,11 +8,11 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.rouyi.common.mybatis.handler.InjectionMetaObjectHandler;
-import com.rouyi.common.mybatis.handler.MybatisExceptionHandler;
+import com.ruoyi.common.mybatis.handler.InjectionMetaObjectHandler;
+import com.ruoyi.common.mybatis.handler.MybatisExceptionHandler;
 import com.ruoyi.common.core.factory.YmlPropertySourceFactory;
 import com.ruoyi.common.core.utils.SpringUtils;
-import com.rouyi.common.mybatis.interceptor.PlusDataPermissionInterceptor;
+import com.ruoyi.common.mybatis.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.Bean;

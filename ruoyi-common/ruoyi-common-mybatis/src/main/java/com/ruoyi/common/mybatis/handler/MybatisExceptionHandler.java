@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.handler;
+package com.ruoyi.common.mybatis.handler;
 
 import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;

@@ -13,7 +13,7 @@ import com.ruoyi.system.domain.entity.SysRole;
 import com.ruoyi.system.domain.entity.SysUser;
 import com.ruoyi.common.core.service.DeptService;
 import com.ruoyi.common.core.exception.ServiceException;
-import com.rouyi.common.mybatis.helper.DataBaseHelper;
+import com.ruoyi.common.mybatis.helper.DataBaseHelper;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.TreeBuildUtils;

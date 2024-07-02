@@ -1,10 +1,12 @@
-package com.rouyi.common.mybatis.handler;
+package com.ruoyi.common.mybatis.handler;
 
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.rouyi.common.mybatis.annotation.DataColumn;
-import com.rouyi.common.mybatis.annotation.DataPermission;
+import com.ruoyi.common.mybatis.annotation.DataColumn;
+import com.ruoyi.common.mybatis.annotation.DataPermission;
+import com.ruoyi.common.mybatis.enums.DataScopeType;
+import com.ruoyi.common.mybatis.helper.DataPermissionHelper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
@@ -18,8 +20,6 @@ import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StreamUtils;
 import com.ruoyi.common.core.utils.StringUtils;
-import com.rouyi.common.mybatis.enums.DataScopeType;
-import com.rouyi.common.mybatis.helper.DataPermissionHelper;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;

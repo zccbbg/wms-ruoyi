@@ -1,4 +1,4 @@
-package com.rouyi.common.mybatis.annotation;
+package com.ruoyi.common.mybatis.annotation;
 
 import java.lang.annotation.*;
 
