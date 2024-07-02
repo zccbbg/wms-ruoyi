@@ -190,6 +190,7 @@ public class GenTableServiceImpl implements IGenTableService {
                 }
             }
         } catch (Exception e) {
+            log.error("导入失败：" , e);
             throw new ServiceException("导入失败：" + e.getMessage());
         }
     }

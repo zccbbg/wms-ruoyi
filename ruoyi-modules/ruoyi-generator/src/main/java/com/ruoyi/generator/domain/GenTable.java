@@ -203,10 +203,4 @@ public class GenTable extends BaseEntity {
         }
         return StringUtils.equalsAnyIgnoreCase(javaField, GenConstants.BASE_ENTITY);
     }
-
-    /**
-     * 数据源名称
-     */
-    @NotBlank(message = "数据源名称不能为空")
-    private String dataName;
 }
