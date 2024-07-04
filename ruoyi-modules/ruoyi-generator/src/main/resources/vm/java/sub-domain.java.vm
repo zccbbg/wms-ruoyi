@@ -1,4 +1,4 @@
-package ${packageName}.domain;
+package ${packageName}.domain.entity;
 
 #foreach ($import in $subImportList)
 import ${import};

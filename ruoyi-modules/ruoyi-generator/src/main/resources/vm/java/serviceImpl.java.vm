@@ -1,9 +1,10 @@
-package ${packageName}.service.impl;
+package ${packageName}.service;
 
 import com.ruoyi.common.core.utils.MapstructUtils;
     #if($table.crud || $table.sub)
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 #end
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,9 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ${packageName}.domain.bo.${ClassName}Bo;
 import ${packageName}.domain.vo.${ClassName}Vo;
-import ${packageName}.domain.${ClassName};
+import ${packageName}.domain.entity.${ClassName};
 import ${packageName}.mapper.${ClassName}Mapper;
-import ${packageName}.service.I${ClassName}Service;
 
 import java.util.List;
 import java.util.Map;
@@ -28,14 +28,13 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class ${ClassName}ServiceImpl implements I${ClassName}Service {
+public class ${ClassName}Service {
 
     private final ${ClassName}Mapper baseMapper;
 
     /**
      * 查询${functionName}
      */
-    @Override
     public ${ClassName}Vo queryById(${pkColumn.javaType} ${pkColumn.javaField}){
         return baseMapper.selectVoById(${pkColumn.javaField});
     }
@@ -44,7 +43,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service {
     /**
      * 查询${functionName}列表
      */
-    @Override
     public TableDataInfo<${ClassName}Vo> queryPageList(${ClassName}Bo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<${ClassName}> lqw = buildQueryWrapper(bo);
         Page<${ClassName}Vo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -55,7 +53,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service {
     /**
      * 查询${functionName}列表
      */
-    @Override
     public List<${ClassName}Vo> queryList(${ClassName}Bo bo) {
         LambdaQueryWrapper<${ClassName}> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
@@ -91,7 +88,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service {
     /**
      * 新增${functionName}
      */
-    @Override
     public Boolean insertByBo(${ClassName}Bo bo) {
         ${ClassName} add = MapstructUtils.convert(bo, ${ClassName}.class);
         validEntityBeforeSave(add);
@@ -106,7 +102,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service {
     /**
      * 修改${functionName}
      */
-    @Override
     public Boolean updateByBo(${ClassName}Bo bo) {
         ${ClassName} update = MapstructUtils.convert(bo, ${ClassName}.class);
         validEntityBeforeSave(update);
@@ -123,7 +118,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service {
     /**
      * 批量删除${functionName}
      */
-    @Override
     public Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
