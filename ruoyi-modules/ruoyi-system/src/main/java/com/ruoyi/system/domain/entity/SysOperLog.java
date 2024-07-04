@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
+import com.ruoyi.common.log.event.OperLogEvent;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,6 +25,7 @@ import java.util.Map;
 @Data
 @TableName("sys_oper_log")
 @ExcelIgnoreUnannotated
+@AutoMapper(target = OperLogEvent.class)
 public class SysOperLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
