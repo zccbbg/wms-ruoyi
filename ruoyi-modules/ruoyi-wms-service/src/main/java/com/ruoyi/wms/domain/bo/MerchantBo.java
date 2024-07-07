@@ -23,12 +23,6 @@ import io.github.linpeilie.annotations.AutoMapper;
 public class MerchantBo extends BaseEntity {
 
     /**
-     *
-     */
-    @NotNull(message = "不能为空", groups = { AddGroup.class })
-    private Long id;
-
-    /**
      * 编号
      */
     @NotBlank(message = "编号不能为空", groups = { AddGroup.class, EditGroup.class })

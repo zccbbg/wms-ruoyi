@@ -67,11 +67,7 @@ public class MerchantService {
      */
     public Boolean insertByBo(MerchantBo bo) {
         Merchant add = MapstructUtils.convert(bo, Merchant.class);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+        return baseMapper.insert(add) > 0;
     }
 
     /**
