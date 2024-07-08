@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 往来单位视图对象 wms_merchant
  *
  * @author zcc
- * @date 2024-07-05
+ * @date 2024-07-07
  */
 @Data
 @ExcelIgnoreUnannotated
@@ -22,6 +22,12 @@ import java.io.Serializable;
 public class MerchantVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     *
+     */
+    @ExcelProperty(value = "id")
+    private Long id;
 
     /**
      * 编号
