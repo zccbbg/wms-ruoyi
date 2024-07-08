@@ -11,6 +11,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -26,8 +27,8 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         try {
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                Date current = ObjectUtil.isNotNull(baseEntity.getCreateTime())
-                    ? baseEntity.getCreateTime() : new Date();
+                LocalDateTime current = ObjectUtil.isNotNull(baseEntity.getCreateTime())
+                    ? baseEntity.getCreateTime() : LocalDateTime.now();;
                 baseEntity.setCreateTime(current);
                 baseEntity.setUpdateTime(current);
                 if (ObjectUtil.isNull(baseEntity.getCreateBy())) {
@@ -48,9 +49,8 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     public void updateFill(MetaObject metaObject) {
         try {
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                Date current = new Date();
                 // 更新时间填充(不管为不为空)
-                baseEntity.setUpdateTime(current);
+                baseEntity.setUpdateTime(LocalDateTime.now());
                 String username = getLoginUsername();
                 // 当前已登录 更新人填充(不管为不为空)
                 if (StringUtils.isNotBlank(username)) {
