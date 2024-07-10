@@ -14,15 +14,11 @@ public enum UserStatus {
     /**
      * 正常
      */
-    OK("0", "正常"),
+    OK("1", "正常"),
     /**
      * 停用
      */
-    DISABLE("1", "停用"),
-    /**
-     * 删除
-     */
-    DELETED("2", "删除");
+    DISABLE("0", "停用");
 
     private final String code;
     private final String info;
