@@ -78,12 +78,12 @@ public class SysMenu extends BaseEntity {
     private String menuType;
 
     /**
-     * 显示状态（0显示 1隐藏）
+     * 显示状态（1显示 0隐藏）
      */
     private String visible;
 
     /**
-     * 菜单状态（0正常 1停用）
+     * 菜单状态（1正常 0停用）
      */
     private String status;
 
