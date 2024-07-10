@@ -10,7 +10,7 @@ public interface UserConstants {
     /**
      * 未被删除用户
      */
-    String USER_NOT_DELETED = "0";
+    String NOT_DELETED = "0";
 
     /**
      * 角色正常状态
