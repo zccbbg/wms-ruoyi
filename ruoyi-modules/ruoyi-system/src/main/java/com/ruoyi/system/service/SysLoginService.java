@@ -8,9 +8,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.core.constant.CacheConstants;
 import com.ruoyi.common.core.constant.Constants;
-import com.ruoyi.common.core.domain.vo.RoleVO;
 import com.ruoyi.common.core.domain.bo.LoginUser;
 import com.ruoyi.common.core.domain.bo.XcxLoginUser;
+import com.ruoyi.common.core.domain.vo.RoleVO;
 import com.ruoyi.common.core.enums.DeviceType;
 import com.ruoyi.common.core.enums.LoginType;
 import com.ruoyi.common.core.enums.UserStatus;
@@ -22,7 +22,10 @@ import com.ruoyi.common.log.event.LogininforEvent;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.config.properties.CaptchaProperties;
+import com.ruoyi.system.domain.entity.SysDept;
+import com.ruoyi.system.domain.entity.SysRole;
 import com.ruoyi.system.domain.entity.SysUser;
+import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,8 @@ public class SysLoginService {
     private final SysUserMapper userMapper;
     private final CaptchaProperties captchaProperties;
     private final SysPermissionService permissionService;
+    private final ISysRoleService roleService;
+    private final ISysDeptService deptService;
 
     @Value("${user.password.maxRetryCount}")
     private Integer maxRetryCount;
@@ -69,7 +74,7 @@ public class SysLoginService {
             validateCaptcha(username, code, uuid);
         }
         // 框架登录不限制从什么表查询 只要最终构建出 LoginUser 即可
-        SysUser user = loadUserByUsername(username);
+        SysUserVo user = loadUserByUsername(username);
         checkLogin(LoginType.PASSWORD, username, () -> !BCrypt.checkpw(password, user.getPassword()));
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         LoginUser loginUser = buildLoginUser(user);
@@ -83,7 +88,7 @@ public class SysLoginService {
 
     public String smsLogin(String phonenumber, String smsCode) {
         // 通过手机号查找用户
-        SysUser user = loadUserByPhonenumber(phonenumber);
+        SysUserVo user = loadUserByPhonenumber(phonenumber);
 
         checkLogin(LoginType.SMS, user.getUserName(), () -> !validateSmsCode(phonenumber, smsCode));
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
@@ -98,7 +103,7 @@ public class SysLoginService {
 
     public String emailLogin(String email, String emailCode) {
         // 通过手邮箱查找用户
-        SysUser user = loadUserByEmail(email);
+        SysUserVo user = loadUserByEmail(email);
 
         checkLogin(LoginType.EMAIL, user.getUserName(), () -> !validateEmailCode(email, emailCode));
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
@@ -211,7 +216,7 @@ public class SysLoginService {
         }
     }
 
-    private SysUser loadUserByUsername(String username) {
+    private SysUserVo loadUserByUsername(String username) {
         SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserName, SysUser::getStatus)
             .eq(SysUser::getUserName, username));
@@ -225,7 +230,7 @@ public class SysLoginService {
         return userMapper.selectUserByUserName(username);
     }
 
-    private SysUser loadUserByPhonenumber(String phonenumber) {
+    private SysUserVo loadUserByPhonenumber(String phonenumber) {
         SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getPhonenumber, SysUser::getStatus)
             .eq(SysUser::getPhonenumber, phonenumber));
@@ -239,7 +244,7 @@ public class SysLoginService {
         return userMapper.selectUserByPhonenumber(phonenumber);
     }
 
-    private SysUser loadUserByEmail(String email) {
+    private SysUserVo loadUserByEmail(String email) {
         SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getPhonenumber, SysUser::getStatus)
             .eq(SysUser::getEmail, email));
@@ -270,17 +275,23 @@ public class SysLoginService {
     /**
      * 构建登录用户
      */
-    private LoginUser buildLoginUser(SysUser user) {
+    private LoginUser buildLoginUser(SysUserVo user) {
         LoginUser loginUser = new LoginUser();
         loginUser.setUserId(user.getUserId());
         loginUser.setDeptId(user.getDeptId());
         loginUser.setUsername(user.getUserName());
         loginUser.setUserType(user.getUserType());
-        loginUser.setMenuPermission(permissionService.getMenuPermission(user));
-        loginUser.setRolePermission(permissionService.getRolePermission(user));
-        loginUser.setDeptName(ObjectUtil.isNull(user.getDept()) ? "" : user.getDept().getDeptName());
-        List<RoleVO> roles = BeanUtil.copyToList(user.getRoles(), RoleVO.class);
-        loginUser.setRoles(roles);
+        loginUser.setMenuPermission(permissionService.getMenuPermission(user.getUserId()));
+        loginUser.setRolePermission(permissionService.getRolePermission(user.getUserId()));
+
+        SysDept dept = null;
+        if (ObjectUtil.isNotNull(user.getDeptId())) {
+            dept = deptService.selectDeptById(user.getDeptId());
+        }
+        loginUser.setDeptName(ObjectUtil.isNull(dept) ? "" : dept.getDeptName());
+        List<SysRole> roles = roleService.selectRolesByUserId(user.getUserId());
+        loginUser.setRoles(BeanUtil.copyToList(roles, RoleVO.class));
+
         return loginUser;
     }
 

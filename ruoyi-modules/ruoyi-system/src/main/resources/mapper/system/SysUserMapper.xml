@@ -4,10 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysUserMapper">
 
-    <resultMap type="com.ruoyi.system.domain.entity.SysUser" id="SysUserResult">
+    <resultMap type="com.ruoyi.system.domain.vo.SysUserVo" id="SysUserResult">
         <id property="userId" column="user_id"/>
-        <association property="dept" column="dept_id" resultMap="deptResult"/>
-        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.system.domain.vo.SysUserExportVo" id="SysUserExportResult">
+        <id property="userId" column="user_id"/>
     </resultMap>
 
     <resultMap id="deptResult" type="com.ruoyi.system.domain.entity.SysDept">
@@ -60,17 +62,15 @@
 
     <select id="selectPageUserList" resultMap="SysUserResult">
         select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
-            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
+            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark
         from sys_user u
-            left join sys_dept d on u.dept_id = d.dept_id
         ${ew.getCustomSqlSegment}
     </select>
 
     <select id="selectUserList" resultMap="SysUserResult">
         select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
-            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
+            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark
         from sys_user u
-            left join sys_dept d on u.dept_id = d.dept_id
         ${ew.getCustomSqlSegment}
     </select>
 
@@ -112,5 +112,18 @@
         where u.del_flag = '0' and u.user_id = #{userId}
     </select>
 
+    <select id="countUserById" resultType="Long">
+        select count(*) from sys_user where del_flag = '0' and user_id = #{userId}
+    </select>
+
+    <select id="selectUserExportList" resultMap="SysUserExportResult">
+        select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex,
+        u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+        d.dept_name, d.leader, u1.user_name as leaderName
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
+        left join sys_user u1 on u1.user_id = d.leader
+        ${ew.getCustomSqlSegment}
+    </select>
 
 </mapper>

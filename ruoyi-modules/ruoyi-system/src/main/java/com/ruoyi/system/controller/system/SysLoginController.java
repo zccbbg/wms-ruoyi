@@ -3,17 +3,18 @@ package com.ruoyi.system.controller.system;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.ruoyi.common.core.constant.Constants;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.system.domain.entity.SysMenu;
-import com.ruoyi.system.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.bo.EmailLoginBody;
 import com.ruoyi.common.core.domain.bo.LoginBody;
 import com.ruoyi.common.core.domain.bo.LoginUser;
 import com.ruoyi.common.core.domain.bo.SmsLoginBody;
 import com.ruoyi.common.satoken.utils.LoginHelper;
+import com.ruoyi.system.domain.entity.SysMenu;
 import com.ruoyi.system.domain.vo.RouterVo;
+import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.service.ISysMenuService;
-import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.SysLoginService;
+import com.ruoyi.system.service.SysUserService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class SysLoginController {
 
     private final SysLoginService loginService;
     private final ISysMenuService menuService;
-    private final ISysUserService userService;
+    private final SysUserService userService;
 
     /**
      * 登录方法
@@ -115,7 +115,7 @@ public class SysLoginController {
     @GetMapping("getInfo")
     public R<Map<String, Object>> getInfo() {
         LoginUser loginUser = LoginHelper.getLoginUser();
-        SysUser user = userService.selectUserById(loginUser.getUserId());
+        SysUserVo user = userService.selectUserById(loginUser.getUserId());
         return R.ok(Map.of(
                 "user", user,
                 "roles", loginUser.getRolePermission(),

@@ -68,7 +68,7 @@ CREATE TABLE `wms_item_category`  (
   `type_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '物料类型名称',
   `order_num` int(11) NULL DEFAULT 0 COMMENT '显示顺序',
   `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '物料类型状态（0正常 1停用）',
-  `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+  `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
   `create_by` varchar(64) NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime(3) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) NULL DEFAULT NULL COMMENT '更新者',

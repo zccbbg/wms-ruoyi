@@ -15,7 +15,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.log.event.LogininforEvent;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.web.config.properties.CaptchaProperties;
-import com.ruoyi.system.domain.entity.SysUser;
+import com.ruoyi.system.domain.bo.SysUserBo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysRegisterService {
 
-    private final ISysUserService userService;
+    private final SysUserService userService;
     private final CaptchaProperties captchaProperties;
 
     /**
@@ -45,7 +45,7 @@ public class SysRegisterService {
         if (captchaEnabled) {
             validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
         }
-        SysUser sysUser = new SysUser();
+        SysUserBo sysUser = new SysUserBo();
         sysUser.setUserName(username);
         sysUser.setNickName(username);
         sysUser.setPassword(BCrypt.hashpw(password));

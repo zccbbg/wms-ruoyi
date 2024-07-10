@@ -1,21 +1,22 @@
 package com.ruoyi.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.SysDept;
 import com.ruoyi.system.domain.entity.SysRole;
-import com.ruoyi.system.domain.entity.SysUser;
 import com.ruoyi.system.domain.entity.SysUserRole;
+import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysRoleService;
-import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.SysPermissionService;
+import com.ruoyi.system.service.SysUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class SysRoleController extends BaseController {
 
     private final ISysRoleService roleService;
-    private final ISysUserService userService;
+    private final SysUserService userService;
     private final ISysDeptService deptService;
     private final SysPermissionService permissionService;
 
@@ -161,7 +162,7 @@ public class SysRoleController extends BaseController {
      */
     @SaCheckPermission("system:role:list")
     @GetMapping("/authUser/allocatedList")
-    public TableDataInfo<SysUser> allocatedList(SysUser user, PageQuery pageQuery) {
+    public TableDataInfo<SysUserVo> allocatedList(SysUserBo user, PageQuery pageQuery) {
         return userService.selectAllocatedList(user, pageQuery);
     }
 
@@ -170,7 +171,7 @@ public class SysRoleController extends BaseController {
      */
     @SaCheckPermission("system:role:list")
     @GetMapping("/authUser/unallocatedList")
-    public TableDataInfo<SysUser> unallocatedList(SysUser user, PageQuery pageQuery) {
+    public TableDataInfo<SysUserVo> unallocatedList(SysUserBo user, PageQuery pageQuery) {
         return userService.selectUnallocatedList(user, pageQuery);
     }
 

@@ -61,4 +61,5 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRole> {
      */
     List<SysRole> selectRolesByUserName(String userName);
 
+    List<SysRole> selectRolesByUserId(Long userId);
 }
