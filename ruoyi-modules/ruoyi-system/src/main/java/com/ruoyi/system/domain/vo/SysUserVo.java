@@ -2,16 +2,17 @@ package com.ruoyi.system.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ruoyi.common.sensitive.annotation.Sensitive;
+import com.ruoyi.common.sensitive.core.SensitiveStrategy;
 import com.ruoyi.common.translation.annotation.Translation;
 import com.ruoyi.common.translation.constant.TransConstant;
 import com.ruoyi.system.domain.entity.SysRole;
 import com.ruoyi.system.domain.entity.SysUser;
 import io.github.linpeilie.annotations.AutoMapper;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -49,13 +50,13 @@ public class SysUserVo implements Serializable {
     /**
      * 用户邮箱
      */
-    @Email(message = "邮箱格式不正确")
-    @Size(min = 0, max = 50, message = "邮箱长度不能超过{max}个字符")
+    @Sensitive(strategy = SensitiveStrategy.EMAIL)
     private String email;
 
     /**
      * 手机号码
      */
+    @Sensitive(strategy = SensitiveStrategy.PHONE)
     private String phonenumber;
 
     /**
@@ -125,4 +126,9 @@ public class SysUserVo implements Serializable {
      * 数据权限 当前角色ID
      */
     private Long roleId;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 }
