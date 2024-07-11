@@ -16,7 +16,7 @@ import java.util.Set;
 @Service
 public class SysPermissionService {
 
-    private final ISysRoleService roleService;
+    private final SysRoleService roleService;
     private final ISysMenuService menuService;
 
     /**

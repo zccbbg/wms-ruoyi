@@ -23,8 +23,8 @@ import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.config.properties.CaptchaProperties;
 import com.ruoyi.system.domain.entity.SysDept;
-import com.ruoyi.system.domain.entity.SysRole;
 import com.ruoyi.system.domain.entity.SysUser;
+import com.ruoyi.system.domain.vo.SysRoleVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class SysLoginService {
     private final SysUserMapper userMapper;
     private final CaptchaProperties captchaProperties;
     private final SysPermissionService permissionService;
-    private final ISysRoleService roleService;
+    private final SysRoleService roleService;
     private final ISysDeptService deptService;
 
     @Value("${user.password.maxRetryCount}")
@@ -289,7 +289,7 @@ public class SysLoginService {
             dept = deptService.selectDeptById(user.getDeptId());
         }
         loginUser.setDeptName(ObjectUtil.isNull(dept) ? "" : dept.getDeptName());
-        List<SysRole> roles = roleService.selectRolesByUserId(user.getUserId());
+        List<SysRoleVo> roles = roleService.selectRolesByUserId(user.getUserId());
         loginUser.setRoles(BeanUtil.copyToList(roles, RoleVO.class));
 
         return loginUser;

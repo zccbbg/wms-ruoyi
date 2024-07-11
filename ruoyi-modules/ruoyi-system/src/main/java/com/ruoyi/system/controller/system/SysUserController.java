@@ -17,17 +17,19 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.system.domain.bo.SysRoleBo;
 import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.SysDept;
 import com.ruoyi.system.domain.entity.SysPost;
 import com.ruoyi.system.domain.entity.SysRole;
+import com.ruoyi.system.domain.vo.SysRoleVo;
 import com.ruoyi.system.domain.vo.SysUserExportVo;
 import com.ruoyi.system.domain.vo.SysUserImportVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.listener.SysUserImportListener;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.ISysRoleService;
+import com.ruoyi.system.service.SysRoleService;
 import com.ruoyi.system.service.SysUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +57,7 @@ import java.util.Map;
 public class SysUserController extends BaseController {
 
     private final SysUserService userService;
-    private final ISysRoleService roleService;
+    private final SysRoleService roleService;
     private final ISysPostService postService;
     private final ISysDeptService deptService;
 
@@ -111,11 +113,11 @@ public class SysUserController extends BaseController {
     public R<Map<String, Object>> getInfo(@PathVariable(value = "userId", required = false) Long userId) {
         userService.checkUserDataScope(userId);
         Map<String, Object> ajax = new HashMap<>();
-        SysRole role = new SysRole();
+        SysRoleBo role = new SysRoleBo();
         role.setStatus(UserConstants.ROLE_NORMAL);
         SysPost post = new SysPost();
         post.setStatus(UserConstants.POST_NORMAL);
-        List<SysRole> roles = roleService.selectRoleList(role);
+        List<SysRoleVo> roles = roleService.selectRoleList(role);
         ajax.put("roles", LoginHelper.isAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isAdmin()));
         ajax.put("posts", postService.selectPostList(post));
         if (ObjectUtil.isNotNull(userId)) {
@@ -218,7 +220,7 @@ public class SysUserController extends BaseController {
     @GetMapping("/authRole/{userId}")
     public R<Map<String, Object>> authRole(@PathVariable Long userId) {
         SysUserVo user = userService.selectUserById(userId);
-        List<SysRole> roles = roleService.selectRolesByUserId(userId);
+        List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);
         return R.ok(Map.of(
             "user", user,
             "roles", LoginHelper.isAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isAdmin())
