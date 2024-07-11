@@ -30,13 +30,13 @@ import java.util.Collection;
 @Service
 public class ${ClassName}Service {
 
-    private final ${ClassName}Mapper baseMapper;
+    private final ${ClassName}Mapper ${className}Mapper;
 
     /**
      * 查询${functionName}
      */
     public ${ClassName}Vo queryById(${pkColumn.javaType} ${pkColumn.javaField}){
-        return baseMapper.selectVoById(${pkColumn.javaField});
+        return ${className}Mapper.selectVoById(${pkColumn.javaField});
     }
 
 #if($table.crud || $table.sub)
@@ -45,7 +45,7 @@ public class ${ClassName}Service {
      */
     public TableDataInfo<${ClassName}Vo> queryPageList(${ClassName}Bo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<${ClassName}> lqw = buildQueryWrapper(bo);
-        Page<${ClassName}Vo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<${ClassName}Vo> result = ${className}Mapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 #end
@@ -55,7 +55,7 @@ public class ${ClassName}Service {
      */
     public List<${ClassName}Vo> queryList(${ClassName}Bo bo) {
         LambdaQueryWrapper<${ClassName}> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return ${className}Mapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<${ClassName}> buildQueryWrapper(${ClassName}Bo bo) {
@@ -90,7 +90,7 @@ public class ${ClassName}Service {
      */
     public Boolean insertByBo(${ClassName}Bo bo) {
         ${ClassName} add = MapstructUtils.convert(bo, ${ClassName}.class);
-        return baseMapper.insert(add) > 0;
+        return ${className}Mapper.insert(add) > 0;
 #set($pk=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
     }
 
@@ -99,13 +99,13 @@ public class ${ClassName}Service {
      */
     public Boolean updateByBo(${ClassName}Bo bo) {
         ${ClassName} update = MapstructUtils.convert(bo, ${ClassName}.class);
-        return baseMapper.updateById(update) > 0;
+        return ${className}Mapper.updateById(update) > 0;
     }
 
     /**
      * 批量删除${functionName}
      */
     public Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids) {
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return ${className}Mapper.deleteBatchIds(ids) > 0;
     }
 }
