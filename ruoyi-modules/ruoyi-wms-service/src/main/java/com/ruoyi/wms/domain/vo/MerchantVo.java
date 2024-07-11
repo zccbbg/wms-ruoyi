@@ -2,12 +2,11 @@ package com.ruoyi.wms.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import com.ruoyi.wms.domain.entity.Merchant;
-import lombok.Data;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +20,7 @@ import java.io.Serializable;
 @AutoMapper(target = Merchant.class)
 public class MerchantVo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

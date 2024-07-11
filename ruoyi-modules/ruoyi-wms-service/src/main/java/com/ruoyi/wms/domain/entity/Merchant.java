@@ -5,6 +5,8 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
+
 
 /**
  * 往来单位对象 wms_merchant
@@ -17,6 +19,7 @@ import lombok.EqualsAndHashCode;
 @TableName("wms_merchant")
 public class Merchant extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID=1L;
 
     /**
