@@ -62,37 +62,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     })
     Page<SysUserVo> selectUnallocatedList(@Param("page") Page<SysUser> page, @Param(Constants.WRAPPER) Wrapper<SysUser> queryWrapper);
 
-    /**
-     * 通过用户名查询用户
-     *
-     * @param userName 用户名
-     * @return 用户对象信息
-     */
-    SysUserVo selectUserByUserName(String userName);
-
-    /**
-     * 通过手机号查询用户
-     *
-     * @param phonenumber 手机号
-     * @return 用户对象信息
-     */
-    SysUserVo selectUserByPhonenumber(String phonenumber);
-
-    /**
-     * 通过邮箱查询用户
-     *
-     * @param email 邮箱
-     * @return 用户对象信息
-     */
-    SysUserVo selectUserByEmail(String email);
-
-    /**
-     * 通过用户ID查询用户
-     *
-     * @param userId 用户ID
-     * @return 用户对象信息
-     */
-    SysUserVo selectUserById(Long userId);
 
     Long countUserById(Long userId);
 
