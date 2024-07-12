@@ -445,4 +445,17 @@ public class SysRoleService {
             }
         });
     }
+
+    public List<SysRoleVo> selectRolesAuthByUserId(Long userId) {
+        List<SysRoleVo> userRoles = baseMapper.selectRolesByUserId(userId);
+        List<SysRoleVo> roles = baseMapper.selectVoList();
+        // 使用HashSet提高查找效率
+        Set<Long> userRoleIds = StreamUtils.toSet(userRoles, SysRoleVo::getRoleId);
+        for (SysRoleVo role : roles) {
+            if (userRoleIds.contains(role.getRoleId())) {
+                role.setFlag(true);
+            }
+        }
+        return roles;
+    }
 }

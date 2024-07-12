@@ -219,7 +219,7 @@ public class SysUserController extends BaseController {
     @GetMapping("/authRole/{userId}")
     public R<Map<String, Object>> authRole(@PathVariable Long userId) {
         SysUserVo user = userService.selectUserById(userId);
-        List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);
+        List<SysRoleVo> roles = roleService.selectRolesAuthByUserId(userId);
         return R.ok(Map.of(
             "user", user,
             "roles", LoginHelper.isAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isAdmin())
