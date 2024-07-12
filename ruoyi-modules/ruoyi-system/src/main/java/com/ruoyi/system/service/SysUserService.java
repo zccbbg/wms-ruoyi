@@ -132,7 +132,7 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserByUserName(String userName) {
-        return baseMapper.selectUserByUserName(userName);
+        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
     }
 
     /**
@@ -142,7 +142,7 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserByPhonenumber(String phonenumber) {
-        return baseMapper.selectUserByPhonenumber(phonenumber);
+        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
     }
 
     /**

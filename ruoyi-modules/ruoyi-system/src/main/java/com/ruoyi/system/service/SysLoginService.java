@@ -22,8 +22,6 @@ import com.ruoyi.common.log.event.LogininforEvent;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.config.properties.CaptchaProperties;
-import com.ruoyi.system.domain.bo.SysUserBo;
-import com.ruoyi.system.domain.entity.SysDept;
 import com.ruoyi.system.domain.entity.SysUser;
 import com.ruoyi.system.domain.vo.SysDeptVo;
 import com.ruoyi.system.domain.vo.SysRoleVo;
@@ -125,7 +123,7 @@ public class SysLoginService {
         String openid = "";
 
         // 框架登录不限制从什么表查询 只要最终构建出 LoginUser 即可
-        SysUser user = loadUserByOpenid(openid);
+        SysUserVo user = loadUserByOpenid(openid);
 
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         XcxLoginUser loginUser = new XcxLoginUser();
@@ -219,9 +217,7 @@ public class SysLoginService {
     }
 
     private SysUserVo loadUserByUsername(String username) {
-        SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserName, SysUser::getStatus)
-            .eq(SysUser::getUserName, username));
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, username));
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", username);
             throw new UserException("user.not.exists", username);
@@ -229,13 +225,11 @@ public class SysLoginService {
             log.info("登录用户：{} 已被停用.", username);
             throw new UserException("user.blocked", username);
         }
-        return userMapper.selectUserByUserName(username);
+        return user;
     }
 
     private SysUserVo loadUserByPhonenumber(String phonenumber) {
-        SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getPhonenumber, SysUser::getStatus)
-            .eq(SysUser::getPhonenumber, phonenumber));
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", phonenumber);
             throw new UserException("user.not.exists", phonenumber);
@@ -243,13 +237,11 @@ public class SysLoginService {
             log.info("登录用户：{} 已被停用.", phonenumber);
             throw new UserException("user.blocked", phonenumber);
         }
-        return userMapper.selectUserByPhonenumber(phonenumber);
+        return user;
     }
 
     private SysUserVo loadUserByEmail(String email) {
-        SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getPhonenumber, SysUser::getStatus)
-            .eq(SysUser::getEmail, email));
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, email));
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", email);
             throw new UserException("user.not.exists", email);
@@ -257,13 +249,13 @@ public class SysLoginService {
             log.info("登录用户：{} 已被停用.", email);
             throw new UserException("user.blocked", email);
         }
-        return userMapper.selectUserByEmail(email);
+        return user;
     }
 
-    private SysUser loadUserByOpenid(String openid) {
+    private SysUserVo loadUserByOpenid(String openid) {
         // 使用 openid 查询绑定用户 如未绑定用户 则根据业务自行处理 例如 创建默认用户
         // todo 自行实现 userService.selectUserByOpenid(openid);
-        SysUser user = new SysUser();
+        SysUserVo user = new SysUserVo();
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", openid);
             // todo 用户不存在 业务逻辑自行实现
