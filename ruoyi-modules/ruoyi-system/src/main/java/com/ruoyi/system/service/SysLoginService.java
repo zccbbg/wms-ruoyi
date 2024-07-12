@@ -22,8 +22,10 @@ import com.ruoyi.common.log.event.LogininforEvent;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.config.properties.CaptchaProperties;
+import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.SysDept;
 import com.ruoyi.system.domain.entity.SysUser;
+import com.ruoyi.system.domain.vo.SysDeptVo;
 import com.ruoyi.system.domain.vo.SysRoleVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -50,7 +52,7 @@ public class SysLoginService {
     private final CaptchaProperties captchaProperties;
     private final SysPermissionService permissionService;
     private final SysRoleService roleService;
-    private final ISysDeptService deptService;
+    private final SysDeptService deptService;
 
     @Value("${user.password.maxRetryCount}")
     private Integer maxRetryCount;
@@ -284,7 +286,7 @@ public class SysLoginService {
         loginUser.setMenuPermission(permissionService.getMenuPermission(user.getUserId()));
         loginUser.setRolePermission(permissionService.getRolePermission(user.getUserId()));
 
-        SysDept dept = null;
+        SysDeptVo dept = null;
         if (ObjectUtil.isNotNull(user.getDeptId())) {
             dept = deptService.selectDeptById(user.getDeptId());
         }

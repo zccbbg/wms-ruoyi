@@ -17,6 +17,7 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.system.domain.bo.SysDeptBo;
 import com.ruoyi.system.domain.bo.SysRoleBo;
 import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.SysDept;
@@ -27,10 +28,7 @@ import com.ruoyi.system.domain.vo.SysUserExportVo;
 import com.ruoyi.system.domain.vo.SysUserImportVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.listener.SysUserImportListener;
-import com.ruoyi.system.service.ISysDeptService;
-import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.SysRoleService;
-import com.ruoyi.system.service.SysUserService;
+import com.ruoyi.system.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +57,7 @@ public class SysUserController extends BaseController {
     private final SysUserService userService;
     private final SysRoleService roleService;
     private final ISysPostService postService;
-    private final ISysDeptService deptService;
+    private final SysDeptService deptService;
 
     /**
      * 获取用户列表
@@ -247,7 +245,7 @@ public class SysUserController extends BaseController {
      */
     @SaCheckPermission("system:user:list")
     @GetMapping("/deptTree")
-    public R<List<Tree<Long>>> deptTree(SysDept dept) {
+    public R<List<Tree<Long>>> deptTree(SysDeptBo dept) {
         return R.ok(deptService.selectDeptTreeList(dept));
     }
 

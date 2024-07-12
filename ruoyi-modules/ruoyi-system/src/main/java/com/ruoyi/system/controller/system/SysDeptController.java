@@ -6,10 +6,11 @@ import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.system.domain.entity.SysDept;
+import com.ruoyi.system.domain.bo.SysDeptBo;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.core.utils.StringUtils;
-import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.system.domain.vo.SysDeptVo;
+import com.ruoyi.system.service.SysDeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,15 +28,15 @@ import java.util.List;
 @RequestMapping("/system/dept")
 public class SysDeptController extends BaseController {
 
-    private final ISysDeptService deptService;
+    private final SysDeptService deptService;
 
     /**
      * 获取部门列表
      */
     @SaCheckPermission("system:dept:list")
     @GetMapping("/list")
-    public R<List<SysDept>> list(SysDept dept) {
-        List<SysDept> depts = deptService.selectDeptList(dept);
+    public R<List<SysDeptVo>> list(SysDeptBo dept) {
+        List<SysDeptVo> depts = deptService.selectDeptList(dept);
         return R.ok(depts);
     }
 
@@ -46,8 +47,8 @@ public class SysDeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:list")
     @GetMapping("/list/exclude/{deptId}")
-    public R<List<SysDept>> excludeChild(@PathVariable(value = "deptId", required = false) Long deptId) {
-        List<SysDept> depts = deptService.selectDeptList(new SysDept());
+    public R<List<SysDeptVo>> excludeChild(@PathVariable(value = "deptId", required = false) Long deptId) {
+        List<SysDeptVo> depts = deptService.selectDeptList(new SysDeptBo());
         depts.removeIf(d -> d.getDeptId().equals(deptId)
             || StringUtils.splitList(d.getAncestors()).contains(Convert.toStr(deptId)));
         return R.ok(depts);
@@ -60,7 +61,7 @@ public class SysDeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:query")
     @GetMapping(value = "/{deptId}")
-    public R<SysDept> getInfo(@PathVariable Long deptId) {
+    public R<SysDeptVo> getInfo(@PathVariable Long deptId) {
         deptService.checkDeptDataScope(deptId);
         return R.ok(deptService.selectDeptById(deptId));
     }
@@ -71,7 +72,7 @@ public class SysDeptController extends BaseController {
     @SaCheckPermission("system:dept:add")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysDept dept) {
+    public R<Void> add(@Validated @RequestBody SysDeptBo dept) {
         if (!deptService.checkDeptNameUnique(dept)) {
             return R.fail("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
         }
@@ -84,7 +85,7 @@ public class SysDeptController extends BaseController {
     @SaCheckPermission("system:dept:edit")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysDept dept) {
+    public R<Void> edit(@Validated @RequestBody SysDeptBo dept) {
         Long deptId = dept.getDeptId();
         deptService.checkDeptDataScope(deptId);
         if (!deptService.checkDeptNameUnique(dept)) {

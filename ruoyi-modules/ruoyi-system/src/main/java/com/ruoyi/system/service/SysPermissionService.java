@@ -1,6 +1,7 @@
 package com.ruoyi.system.service;
 
 import com.ruoyi.common.satoken.utils.LoginHelper;
+import com.ruoyi.system.domain.entity.SysUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class SysPermissionService {
 
     private final SysRoleService roleService;
     private final ISysMenuService menuService;
+    private final SysUserService userService;
 
     /**
      * 获取角色数据权限
