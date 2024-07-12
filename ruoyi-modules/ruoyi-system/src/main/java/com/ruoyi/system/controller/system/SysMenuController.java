@@ -9,8 +9,10 @@ import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.system.domain.bo.SysMenuBo;
 import com.ruoyi.system.domain.entity.SysMenu;
-import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.system.domain.vo.SysMenuVo;
+import com.ruoyi.system.service.SysMenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,15 +31,15 @@ import java.util.Map;
 @RequestMapping("/system/menu")
 public class SysMenuController extends BaseController {
 
-    private final ISysMenuService menuService;
+    private final SysMenuService menuService;
 
     /**
      * 获取菜单列表
      */
     @SaCheckPermission("system:menu:list")
     @GetMapping("/list")
-    public R<List<SysMenu>> list(SysMenu menu) {
-        List<SysMenu> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
+    public R<List<SysMenuVo>> list(SysMenuBo menu) {
+        List<SysMenuVo> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
         return R.ok(menus);
     }
 
@@ -48,7 +50,7 @@ public class SysMenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:query")
     @GetMapping(value = "/{menuId}")
-    public R<SysMenu> getInfo(@PathVariable Long menuId) {
+    public R<SysMenuVo> getInfo(@PathVariable Long menuId) {
         return R.ok(menuService.selectMenuById(menuId));
     }
 
@@ -56,8 +58,8 @@ public class SysMenuController extends BaseController {
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeselect")
-    public R<List<Tree<Long>>> treeselect(SysMenu menu) {
-        List<SysMenu> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
+    public R<List<Tree<Long>>> treeselect(SysMenuBo menu) {
+        List<SysMenuVo> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
         return R.ok(menuService.buildMenuTreeSelect(menus));
     }
 
@@ -68,7 +70,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public R<Map<String, Object>> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
-        List<SysMenu> menus = menuService.selectMenuList(LoginHelper.getUserId());
+        List<SysMenuVo> menus = menuService.selectMenuList(LoginHelper.getUserId());
         return R.ok(Map.of(
             "checkedKeys", menuService.selectMenuListByRoleId(roleId),
             "menus", menuService.buildMenuTreeSelect(menus)
@@ -80,7 +82,7 @@ public class SysMenuController extends BaseController {
     @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysMenu menu) {
+    public R<Void> add(@Validated @RequestBody SysMenuBo menu) {
         if (!menuService.checkMenuNameUnique(menu)) {
             return R.fail("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         } else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
@@ -95,7 +97,7 @@ public class SysMenuController extends BaseController {
     @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysMenu menu) {
+    public R<Void> edit(@Validated @RequestBody SysMenuBo menu) {
         if (!menuService.checkMenuNameUnique(menu)) {
             return R.fail("修改菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         } else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {

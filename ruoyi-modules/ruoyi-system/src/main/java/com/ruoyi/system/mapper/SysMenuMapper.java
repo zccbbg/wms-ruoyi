@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.system.domain.entity.SysMenu;
+import com.ruoyi.system.domain.vo.SysMenuVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  *
  * @author Lion Li
  */
-public interface SysMenuMapper extends BaseMapperPlus<SysMenu, SysMenu> {
+public interface SysMenuMapper extends BaseMapperPlus<SysMenu, SysMenuVo> {
 
     /**
      * 根据用户所有权限

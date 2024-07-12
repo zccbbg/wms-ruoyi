@@ -11,8 +11,8 @@ import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.system.domain.entity.SysMenu;
 import com.ruoyi.system.domain.vo.RouterVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
-import com.ruoyi.system.service.ISysMenuService;
 import com.ruoyi.system.service.SysLoginService;
+import com.ruoyi.system.service.SysMenuService;
 import com.ruoyi.system.service.SysUserService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ import java.util.Map;
 public class SysLoginController {
 
     private final SysLoginService loginService;
-    private final ISysMenuService menuService;
+    private final SysMenuService menuService;
     private final SysUserService userService;
 
     /**
