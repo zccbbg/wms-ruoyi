@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -66,6 +67,6 @@ public class SysPostVo implements Serializable {
      * 创建时间
      */
     @ExcelProperty(value = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }
