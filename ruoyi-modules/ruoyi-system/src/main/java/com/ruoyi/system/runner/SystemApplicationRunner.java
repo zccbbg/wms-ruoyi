@@ -1,9 +1,9 @@
 package com.ruoyi.system.runner;
 
 import com.ruoyi.common.core.config.RuoYiConfig;
-import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysDictTypeService;
 import com.ruoyi.system.service.ISysOssConfigService;
+import com.ruoyi.system.service.SysConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class SystemApplicationRunner implements ApplicationRunner {
 
     private final RuoYiConfig ruoyiConfig;
-    private final ISysConfigService configService;
+    private final SysConfigService configService;
     private final ISysDictTypeService dictTypeService;
     private final ISysOssConfigService ossConfigService;
 
