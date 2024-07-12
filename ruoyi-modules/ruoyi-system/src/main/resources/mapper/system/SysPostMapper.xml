@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysPostMapper">
 
-    <resultMap type="com.ruoyi.system.domain.entity.SysPost" id="SysPostResult">
+    <resultMap type="com.ruoyi.system.domain.vo.SysPostVo" id="SysPostResult">
     </resultMap>
 
     <select id="selectPostListByUserId" parameterType="Long" resultType="Long">
@@ -21,6 +21,17 @@
                  left join sys_user_post up on up.post_id = p.post_id
                  left join sys_user u on u.user_id = up.user_id
         where u.user_name = #{userName}
+    </select>
+
+    <select id="selectPagePostList" resultMap="SysPostResult">
+        select
+        <if test="ew.getSqlSelect != null">
+            ${ew.getSqlSelect}
+        </if>
+        <if test="ew.getSqlSelect == null">
+            *
+        </if>
+        from sys_post ${ew.getCustomSqlSegment}
     </select>
 
 </mapper>

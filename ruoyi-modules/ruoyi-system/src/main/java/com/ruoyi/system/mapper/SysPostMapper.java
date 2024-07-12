@@ -1,7 +1,14 @@
 package com.ruoyi.system.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.mybatis.annotation.DataColumn;
+import com.ruoyi.common.mybatis.annotation.DataPermission;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
 import com.ruoyi.system.domain.entity.SysPost;
+import com.ruoyi.system.domain.vo.SysPostVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,7 +17,7 @@ import java.util.List;
  *
  * @author Lion Li
  */
-public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPost> {
+public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPostVo> {
 
     /**
      * 根据用户ID获取岗位选择框列表
@@ -27,5 +34,11 @@ public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPost> {
      * @return 结果
      */
     List<SysPost> selectPostsByUserName(String userName);
+
+    @DataPermission({
+        @DataColumn(key = "deptName", value = "dept_id"),
+        @DataColumn(key = "userName", value = "create_by")
+    })
+    Page<SysPostVo> selectPagePostList(@Param("page") Page<SysPostVo> page, @Param(Constants.WRAPPER) Wrapper<SysPost> queryWrapper);
 
 }

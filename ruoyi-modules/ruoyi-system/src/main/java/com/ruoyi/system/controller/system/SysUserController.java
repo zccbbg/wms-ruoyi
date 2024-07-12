@@ -18,6 +18,7 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.system.domain.bo.SysDeptBo;
+import com.ruoyi.system.domain.bo.SysPostBo;
 import com.ruoyi.system.domain.bo.SysRoleBo;
 import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.SysDept;
@@ -56,7 +57,7 @@ public class SysUserController extends BaseController {
 
     private final SysUserService userService;
     private final SysRoleService roleService;
-    private final ISysPostService postService;
+    private final SysPostService postService;
     private final SysDeptService deptService;
 
     /**
@@ -113,7 +114,7 @@ public class SysUserController extends BaseController {
         Map<String, Object> ajax = new HashMap<>();
         SysRoleBo role = new SysRoleBo();
         role.setStatus(UserConstants.ROLE_NORMAL);
-        SysPost post = new SysPost();
+        SysPostBo post = new SysPostBo();
         post.setStatus(UserConstants.POST_NORMAL);
         List<SysRoleVo> roles = roleService.selectRoleList(role);
         ajax.put("roles", LoginHelper.isAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isAdmin()));
