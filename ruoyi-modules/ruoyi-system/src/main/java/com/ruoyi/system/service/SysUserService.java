@@ -152,13 +152,12 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserById(Long userId) {
-        return baseMapper.selectUserById(userId);
-//        SysUserVo user = baseMapper.selectVoById(userId);
-//        if (ObjectUtil.isNull(user)) {
-//            return user;
-//        }
-//        user.setRoles(roleMapper.selectRolesByUserId(user.getUserId()));
-//        return user;
+        SysUserVo user = baseMapper.selectVoById(userId);
+        if (ObjectUtil.isNull(user)) {
+            return user;
+        }
+        user.setRoles(roleMapper.selectRolesByUserId(user.getUserId()));
+        return user;
     }
 
     /**
