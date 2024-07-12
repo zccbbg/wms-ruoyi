@@ -110,7 +110,7 @@ public class SysUserVo implements Serializable {
     /**
      * 角色对象
      */
-    private List<SysRole> roles;
+    private List<SysRoleVo> roles;
 
     /**
      * 角色组

@@ -6,6 +6,7 @@
 
     <resultMap type="com.ruoyi.system.domain.vo.SysUserVo" id="SysUserResult">
         <id property="userId" column="user_id"/>
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.system.domain.vo.SysUserExportVo" id="SysUserExportResult">
@@ -18,7 +19,7 @@
         <id property="status" column="dept_status"/>
     </resultMap>
 
-    <resultMap id="RoleResult" type="com.ruoyi.system.domain.entity.SysRole">
+    <resultMap id="RoleResult" type="com.ruoyi.system.domain.vo.SysRoleVo">
         <id property="roleId" column="role_id"/>
         <id property="status" column="role_status"/>
     </resultMap>

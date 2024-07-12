@@ -153,6 +153,12 @@ public class SysUserService implements UserService {
      */
     public SysUserVo selectUserById(Long userId) {
         return baseMapper.selectUserById(userId);
+//        SysUserVo user = baseMapper.selectVoById(userId);
+//        if (ObjectUtil.isNull(user)) {
+//            return user;
+//        }
+//        user.setRoles(roleMapper.selectRolesByUserId(user.getUserId()));
+//        return user;
     }
 
     /**
