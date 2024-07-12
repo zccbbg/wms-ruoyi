@@ -8,8 +8,9 @@ import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.system.domain.entity.SysConfig;
-import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.domain.bo.SysConfigBo;
+import com.ruoyi.system.domain.vo.SysConfigVo;
+import com.ruoyi.system.service.SysConfigService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,14 +29,14 @@ import java.util.List;
 @RequestMapping("/system/config")
 public class SysConfigController extends BaseController {
 
-    private final ISysConfigService configService;
+    private final SysConfigService configService;
 
     /**
      * 获取参数配置列表
      */
     @SaCheckPermission("system:config:list")
     @GetMapping("/list")
-    public TableDataInfo<SysConfig> list(SysConfig config, PageQuery pageQuery) {
+    public TableDataInfo<SysConfigVo> list(SysConfigBo config, PageQuery pageQuery) {
         return configService.selectPageConfigList(config, pageQuery);
     }
 
@@ -45,9 +46,9 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
     @SaCheckPermission("system:config:export")
     @PostMapping("/export")
-    public void export(SysConfig config, HttpServletResponse response) {
-        List<SysConfig> list = configService.selectConfigList(config);
-        ExcelUtil.exportExcel(list, "参数数据", SysConfig.class, response);
+    public void export(SysConfigBo config, HttpServletResponse response) {
+        List<SysConfigVo> list = configService.selectConfigList(config);
+        ExcelUtil.exportExcel(list, "参数数据", SysConfigVo.class, response);
     }
 
     /**
@@ -57,7 +58,7 @@ public class SysConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:query")
     @GetMapping(value = "/{configId}")
-    public R<SysConfig> getInfo(@PathVariable Long configId) {
+    public R<SysConfigVo> getInfo(@PathVariable Long configId) {
         return R.ok(configService.selectConfigById(configId));
     }
 
@@ -77,7 +78,7 @@ public class SysConfigController extends BaseController {
     @SaCheckPermission("system:config:add")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysConfig config) {
+    public R<Void> add(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
             return R.fail("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
@@ -91,7 +92,7 @@ public class SysConfigController extends BaseController {
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysConfig config) {
+    public R<Void> edit(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
             return R.fail("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
@@ -105,7 +106,7 @@ public class SysConfigController extends BaseController {
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping("/updateByKey")
-    public R<Void> updateByKey(@RequestBody SysConfig config) {
+    public R<Void> updateByKey(@RequestBody SysConfigBo config) {
         configService.updateConfig(config);
         return R.ok();
     }

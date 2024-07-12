@@ -4,7 +4,7 @@ import cn.dev33.satoken.annotation.SaIgnore;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.domain.bo.RegisterBody;
-import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.SysConfigService;
 import com.ruoyi.system.service.SysRegisterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SysRegisterController extends BaseController {
 
     private final SysRegisterService registerService;
-    private final ISysConfigService configService;
+    private final SysConfigService configService;
 
     /**
      * 用户注册
