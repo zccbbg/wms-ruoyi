@@ -8,8 +8,10 @@ import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
+import com.ruoyi.system.domain.bo.SysOperLogBo;
 import com.ruoyi.system.domain.entity.SysOperLog;
-import com.ruoyi.system.service.ISysOperLogService;
+import com.ruoyi.system.domain.vo.SysOperLogVo;
+import com.ruoyi.system.service.SysOperLogService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,14 +30,14 @@ import java.util.List;
 @RequestMapping("/monitor/operlog")
 public class SysOperlogController extends BaseController {
 
-    private final ISysOperLogService operLogService;
+    private final SysOperLogService operLogService;
 
     /**
      * 获取操作日志记录列表
      */
     @SaCheckPermission("monitor:operlog:list")
     @GetMapping("/list")
-    public TableDataInfo<SysOperLog> list(SysOperLog operLog, PageQuery pageQuery) {
+    public TableDataInfo<SysOperLogVo> list(SysOperLogBo operLog, PageQuery pageQuery) {
         return operLogService.selectPageOperLogList(operLog, pageQuery);
     }
 
@@ -45,9 +47,9 @@ public class SysOperlogController extends BaseController {
     @Log(title = "操作日志", businessType = BusinessType.EXPORT)
     @SaCheckPermission("monitor:operlog:export")
     @PostMapping("/export")
-    public void export(SysOperLog operLog, HttpServletResponse response) {
-        List<SysOperLog> list = operLogService.selectOperLogList(operLog);
-        ExcelUtil.exportExcel(list, "操作日志", SysOperLog.class, response);
+    public void export(SysOperLogBo operLog, HttpServletResponse response) {
+        List<SysOperLogVo> list = operLogService.selectOperLogList(operLog);
+        ExcelUtil.exportExcel(list, "操作日志", SysOperLogVo.class, response);
     }
 
     /**

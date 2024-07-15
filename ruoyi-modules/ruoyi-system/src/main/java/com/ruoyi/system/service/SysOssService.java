@@ -1,4 +1,4 @@
-package com.ruoyi.system.service.impl;
+package com.ruoyi.system.service;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.IoUtil;
@@ -24,7 +24,6 @@ import com.ruoyi.system.domain.entity.SysOss;
 import com.ruoyi.system.domain.bo.SysOssBo;
 import com.ruoyi.system.domain.vo.SysOssVo;
 import com.ruoyi.system.mapper.SysOssMapper;
-import com.ruoyi.system.service.ISysOssService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,11 +46,10 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class SysOssServiceImpl implements ISysOssService, OssService {
+public class SysOssService implements OssService {
 
     private final SysOssMapper baseMapper;
 
-    @Override
     public TableDataInfo<SysOssVo> queryPageList(SysOssBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<SysOss> lqw = buildQueryWrapper(bo);
         Page<SysOssVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -60,7 +58,6 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         return TableDataInfo.build(result);
     }
 
-    @Override
     public List<SysOssVo> listByIds(Collection<Long> ossIds) {
         List<SysOssVo> list = new ArrayList<>();
         for (Long id : ossIds) {
@@ -76,7 +73,6 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         return list;
     }
 
-    @Override
     public String selectUrlByIds(String ossIds) {
         List<String> list = new ArrayList<>();
         for (Long id : StringUtils.splitTo(ossIds, Convert::toLong)) {
@@ -108,12 +104,10 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
     }
 
     @Cacheable(cacheNames = CacheNames.SYS_OSS, key = "#ossId")
-    @Override
     public SysOssVo getById(Long ossId) {
         return baseMapper.selectVoById(ossId);
     }
 
-    @Override
     public void download(Long ossId, HttpServletResponse response) throws IOException {
         SysOssVo sysOss = SpringUtils.getAopProxy(this).getById(ossId);
         if (ObjectUtil.isNull(sysOss)) {
@@ -131,7 +125,6 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         }
     }
 
-    @Override
     public SysOssVo upload(MultipartFile file) {
         String originalfileName = file.getOriginalFilename();
         String suffix = StringUtils.substring(originalfileName, originalfileName.lastIndexOf("."), originalfileName.length());
@@ -146,7 +139,6 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         return buildResultEntity(originalfileName, suffix, storage.getConfigKey(), uploadResult);
     }
 
-    @Override
     public SysOssVo upload(File file) {
         String originalfileName = file.getName();
         String suffix = StringUtils.substring(originalfileName, originalfileName.lastIndexOf("."), originalfileName.length());
@@ -168,7 +160,6 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         return this.matchingUrl(sysOssVo);
     }
 
-    @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if (isValid) {
             // 做一些业务上的校验,判断是否需要校验

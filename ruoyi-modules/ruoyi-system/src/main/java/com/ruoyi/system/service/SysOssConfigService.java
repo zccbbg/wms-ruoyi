@@ -1,4 +1,4 @@
-package com.ruoyi.system.service.impl;
+package com.ruoyi.system.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -20,7 +20,6 @@ import com.ruoyi.system.domain.entity.SysOssConfig;
 import com.ruoyi.system.domain.bo.SysOssConfigBo;
 import com.ruoyi.system.domain.vo.SysOssConfigVo;
 import com.ruoyi.system.mapper.SysOssConfigMapper;
-import com.ruoyi.system.service.ISysOssConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,14 +38,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SysOssConfigServiceImpl implements ISysOssConfigService {
+public class SysOssConfigService {
 
     private final SysOssConfigMapper baseMapper;
 
     /**
      * 项目启动时，初始化参数到缓存，加载配置类
      */
-    @Override
     public void init() {
         List<SysOssConfig> list = baseMapper.selectList();
         // 加载OSS初始化配置
@@ -59,12 +57,10 @@ public class SysOssConfigServiceImpl implements ISysOssConfigService {
         }
     }
 
-    @Override
     public SysOssConfigVo queryById(Long ossConfigId) {
         return baseMapper.selectVoById(ossConfigId);
     }
 
-    @Override
     public TableDataInfo<SysOssConfigVo> queryPageList(SysOssConfigBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<SysOssConfig> lqw = buildQueryWrapper(bo);
         Page<SysOssConfigVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -80,7 +76,6 @@ public class SysOssConfigServiceImpl implements ISysOssConfigService {
         return lqw;
     }
 
-    @Override
     public Boolean insertByBo(SysOssConfigBo bo) {
         SysOssConfig config = MapstructUtils.convert(bo, SysOssConfig.class);
         validEntityBeforeSave(config);
@@ -91,7 +86,6 @@ public class SysOssConfigServiceImpl implements ISysOssConfigService {
         return flag;
     }
 
-    @Override
     public Boolean updateByBo(SysOssConfigBo bo) {
         SysOssConfig config = MapstructUtils.convert(bo, SysOssConfig.class);
         validEntityBeforeSave(config);
@@ -117,7 +111,6 @@ public class SysOssConfigServiceImpl implements ISysOssConfigService {
         }
     }
 
-    @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if (isValid) {
             if (CollUtil.containsAny(ids, OssConstant.SYSTEM_DATA_IDS)) {
@@ -154,7 +147,6 @@ public class SysOssConfigServiceImpl implements ISysOssConfigService {
     /**
      * 启用禁用状态
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateOssConfigStatus(SysOssConfigBo bo) {
         SysOssConfig sysOssConfig = MapstructUtils.convert(bo, SysOssConfig.class);

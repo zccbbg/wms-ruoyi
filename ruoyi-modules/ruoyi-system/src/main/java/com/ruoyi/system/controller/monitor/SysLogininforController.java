@@ -10,8 +10,10 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import com.ruoyi.common.excel.utils.ExcelUtil;
+import com.ruoyi.system.domain.bo.SysLogininforBo;
 import com.ruoyi.system.domain.entity.SysLogininfor;
-import com.ruoyi.system.service.ISysLogininforService;
+import com.ruoyi.system.domain.vo.SysLogininforVo;
+import com.ruoyi.system.service.SysLogininforService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -30,15 +32,15 @@ import java.util.List;
 @RequestMapping("/monitor/logininfor")
 public class SysLogininforController extends BaseController {
 
-    private final ISysLogininforService logininforService;
+    private final SysLogininforService sysLogininforService;
 
     /**
      * 获取系统访问记录列表
      */
     @SaCheckPermission("monitor:logininfor:list")
     @GetMapping("/list")
-    public TableDataInfo<SysLogininfor> list(SysLogininfor logininfor, PageQuery pageQuery) {
-        return logininforService.selectPageLogininforList(logininfor, pageQuery);
+    public TableDataInfo<SysLogininforVo> list(SysLogininforBo logininfor, PageQuery pageQuery) {
+        return sysLogininforService.selectPageLogininforList(logininfor, pageQuery);
     }
 
     /**
@@ -47,8 +49,8 @@ public class SysLogininforController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.EXPORT)
     @SaCheckPermission("monitor:logininfor:export")
     @PostMapping("/export")
-    public void export(SysLogininfor logininfor, HttpServletResponse response) {
-        List<SysLogininfor> list = logininforService.selectLogininforList(logininfor);
+    public void export(SysLogininforBo logininfor, HttpServletResponse response) {
+        List<SysLogininfor> list = sysLogininforService.selectLogininforList(logininfor);
         ExcelUtil.exportExcel(list, "登录日志", SysLogininfor.class, response);
     }
 
@@ -60,7 +62,7 @@ public class SysLogininforController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{infoIds}")
     public R<Void> remove(@PathVariable Long[] infoIds) {
-        return toAjax(logininforService.deleteLogininforByIds(infoIds));
+        return toAjax(sysLogininforService.deleteLogininforByIds(infoIds));
     }
 
     /**
@@ -70,7 +72,7 @@ public class SysLogininforController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clean")
     public R<Void> clean() {
-        logininforService.cleanLogininfor();
+        sysLogininforService.cleanLogininfor();
         return R.ok();
     }
 

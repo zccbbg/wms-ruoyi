@@ -1,45 +1,46 @@
-package com.ruoyi.system.domain.entity;
+package com.ruoyi.system.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.common.log.event.OperLogEvent;
+import com.ruoyi.system.domain.entity.SysOperLog;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
- * 操作日志记录表 oper_log
+ * 操作日志记录视图对象 sys_oper_log
  *
- * @author Lion Li
+ * @author Michelle.Chung
+ * @date 2023-02-07
  */
-
 @Data
-@TableName("sys_oper_log")
 @ExcelIgnoreUnannotated
-@AutoMapper(target = OperLogEvent.class)
-public class SysOperLog implements Serializable {
+@AutoMapper(target = SysOperLog.class)
+public class SysOperLogVo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * 日志主键
      */
     @ExcelProperty(value = "日志主键")
-    @TableId(value = "oper_id")
     private Long operId;
 
     /**
-     * 操作模块
+     * 租户编号
+     */
+    private String tenantId;
+
+    /**
+     * 模块标题
      */
     @ExcelProperty(value = "操作模块")
     private String title;
@@ -54,11 +55,10 @@ public class SysOperLog implements Serializable {
     /**
      * 业务类型数组
      */
-    @TableField(exist = false)
     private Integer[] businessTypes;
 
     /**
-     * 请求方法
+     * 方法名称
      */
     @ExcelProperty(value = "请求方法")
     private String method;
@@ -89,13 +89,13 @@ public class SysOperLog implements Serializable {
     private String deptName;
 
     /**
-     * 请求url
+     * 请求URL
      */
     @ExcelProperty(value = "请求地址")
     private String operUrl;
 
     /**
-     * 操作地址
+     * 主机地址
      */
     @ExcelProperty(value = "操作地址")
     private String operIp;
@@ -138,9 +138,8 @@ public class SysOperLog implements Serializable {
     private LocalDateTime operTime;
 
     /**
-     * 请求参数
+     * 消耗时间
      */
-    @TableField(exist = false)
-    private Map<String, Object> params = new HashMap<>();
-
+    @ExcelProperty(value = "消耗时间")
+    private Long costTime;
 }
