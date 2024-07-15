@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
 #foreach($column in $columns)
 #if($column.query)
 #set($dictType=$column.dictType)
@@ -78,26 +78,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['${moduleName}:${businessName}:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['${moduleName}:${businessName}:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="Download"
@@ -105,11 +85,9 @@
           v-hasPermi="['${moduleName}:${businessName}:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-loading="loading" :data="${businessName}List">
 #foreach($column in $columns)
 #set($javaField=$column.javaField)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
@@ -356,13 +334,10 @@ const ${subclassName}List = ref([]);
 const open = ref(false);
 const buttonLoading = ref(false);
 const loading = ref(true);
-const showSearch = ref(true);
 const ids = ref([]);
 #if($table.sub)
 const checked${subClassName} = ref([]);
 #end
-const single = ref(true);
-const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 #foreach ($column in $columns)
@@ -466,13 +441,6 @@ function resetQuery() {
 #end
   proxy.resetForm("queryRef");
   handleQuery();
-}
-
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.${pkColumn.javaField});
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
 }
 
 /** 新增按钮操作 */
