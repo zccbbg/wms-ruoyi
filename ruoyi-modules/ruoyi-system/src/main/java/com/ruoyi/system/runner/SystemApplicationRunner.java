@@ -1,8 +1,8 @@
 package com.ruoyi.system.runner;
 
 import com.ruoyi.common.core.config.RuoYiConfig;
-import com.ruoyi.system.service.ISysDictTypeService;
 import com.ruoyi.system.service.SysConfigService;
+import com.ruoyi.system.service.SysDictTypeService;
 import com.ruoyi.system.service.SysOssConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class SystemApplicationRunner implements ApplicationRunner {
 
     private final RuoYiConfig ruoyiConfig;
     private final SysConfigService configService;
-    private final ISysDictTypeService dictTypeService;
+    private final SysDictTypeService dictTypeService;
     private final SysOssConfigService ossConfigService;
 
     @Override
