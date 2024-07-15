@@ -14,8 +14,8 @@ import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.bo.SysUserProfileBo;
 import com.ruoyi.system.domain.vo.SysOssVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
-import com.ruoyi.system.service.ISysOssService;
 import com.ruoyi.system.service.SysUserService;
+import com.ruoyi.system.service.SysOssService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +37,7 @@ import java.util.Map;
 public class SysProfileController extends BaseController {
 
     private final SysUserService userService;
-    private final ISysOssService iSysOssService;
+    private final SysOssService sysOssService;
 
     /**
      * 个人信息
@@ -114,7 +114,7 @@ public class SysProfileController extends BaseController {
             if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
                 return R.fail("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
             }
-            SysOssVo oss = iSysOssService.upload(avatarfile);
+            SysOssVo oss = sysOssService.upload(avatarfile);
             String avatar = oss.getUrl();
             if (userService.updateUserAvatar(LoginHelper.getUsername(), avatar)) {
                 return R.ok(Map.of("imgUrl", avatar));
