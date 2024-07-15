@@ -1,4 +1,4 @@
-package com.ruoyi.system.service.impl;
+package com.ruoyi.system.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
@@ -9,7 +9,6 @@ import com.ruoyi.system.domain.entity.SysDept;
 import com.ruoyi.system.domain.entity.SysRoleDept;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.SysRoleDeptMapper;
-import com.ruoyi.system.service.ISysDataScopeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +24,11 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Service("sdss")
-public class SysDataScopeServiceImpl implements ISysDataScopeService {
+public class SysDataScopeService {
 
     private final SysRoleDeptMapper roleDeptMapper;
     private final SysDeptMapper deptMapper;
 
-    @Override
     public String getRoleCustom(Long roleId) {
         List<SysRoleDept> list = roleDeptMapper.selectList(
             new LambdaQueryWrapper<SysRoleDept>()
@@ -42,7 +40,6 @@ public class SysDataScopeServiceImpl implements ISysDataScopeService {
         return null;
     }
 
-    @Override
     public String getDeptAndChild(Long deptId) {
         List<SysDept> deptList = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
             .select(SysDept::getDeptId)
