@@ -2,8 +2,8 @@ package com.ruoyi.system.runner;
 
 import com.ruoyi.common.core.config.RuoYiConfig;
 import com.ruoyi.system.service.ISysDictTypeService;
-import com.ruoyi.system.service.ISysOssConfigService;
 import com.ruoyi.system.service.SysConfigService;
+import com.ruoyi.system.service.SysOssConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -23,7 +23,7 @@ public class SystemApplicationRunner implements ApplicationRunner {
     private final RuoYiConfig ruoyiConfig;
     private final SysConfigService configService;
     private final ISysDictTypeService dictTypeService;
-    private final ISysOssConfigService ossConfigService;
+    private final SysOssConfigService ossConfigService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
