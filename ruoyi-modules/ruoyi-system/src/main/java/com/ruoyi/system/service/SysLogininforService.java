@@ -1,9 +1,10 @@
-package com.ruoyi.system.service.impl;
+package com.ruoyi.system.service;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.core.constant.Constants;
@@ -11,9 +12,10 @@ import com.ruoyi.common.core.utils.ServletUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.ip.AddressUtils;
 import com.ruoyi.common.log.event.LogininforEvent;
+import com.ruoyi.system.domain.bo.SysLogininforBo;
 import com.ruoyi.system.domain.entity.SysLogininfor;
+import com.ruoyi.system.domain.vo.SysLogininforVo;
 import com.ruoyi.system.mapper.SysLogininforMapper;
-import com.ruoyi.system.service.ISysLogininforService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +23,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class SysLogininforServiceImpl implements ISysLogininforService {
+public class SysLogininforService {
 
     private final SysLogininforMapper baseMapper;
 
@@ -64,7 +66,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
         // 获取客户端浏览器
         String browser = userAgent.getBrowser().getName();
         // 封装对象
-        SysLogininfor logininfor = new SysLogininfor();
+        SysLogininforBo logininfor = new SysLogininforBo();
         logininfor.setUserName(logininforEvent.getUsername());
         logininfor.setIpaddr(ip);
         logininfor.setLoginLocation(address);
@@ -88,8 +90,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
         return "[" + msg.toString() + "]";
     }
 
-    @Override
-    public TableDataInfo<SysLogininfor> selectPageLogininforList(SysLogininfor logininfor, PageQuery pageQuery) {
+    public TableDataInfo<SysLogininforVo> selectPageLogininforList(SysLogininforBo logininfor, PageQuery pageQuery) {
         Map<String, Object> params = logininfor.getParams();
         LambdaQueryWrapper<SysLogininfor> lqw = new LambdaQueryWrapper<SysLogininfor>()
             .like(StringUtils.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
@@ -101,18 +102,18 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
             pageQuery.setOrderByColumn("info_id");
             pageQuery.setIsAsc("desc");
         }
-        Page<SysLogininfor> page = baseMapper.selectPage(pageQuery.build(), lqw);
+        Page<SysLogininforVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
     /**
      * 新增系统登录日志
      *
-     * @param logininfor 访问日志对象
+     * @param bo 访问日志对象
      */
-    @Override
-    public void insertLogininfor(SysLogininfor logininfor) {
-        logininfor.setLoginTime(new Date());
+    public void insertLogininfor(SysLogininforBo bo) {
+        SysLogininfor logininfor = MapstructUtils.convert(bo, SysLogininfor.class);
+        logininfor.setLoginTime(LocalDateTime.now());
         baseMapper.insert(logininfor);
     }
 
@@ -122,8 +123,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      * @param logininfor 访问日志对象
      * @return 登录记录集合
      */
-    @Override
-    public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor) {
+    public List<SysLogininfor> selectLogininforList(SysLogininforBo logininfor) {
         Map<String, Object> params = logininfor.getParams();
         return baseMapper.selectList(new LambdaQueryWrapper<SysLogininfor>()
             .like(StringUtils.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
@@ -140,7 +140,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      * @param infoIds 需要删除的登录日志ID
      * @return 结果
      */
-    @Override
     public int deleteLogininforByIds(Long[] infoIds) {
         return baseMapper.deleteBatchIds(Arrays.asList(infoIds));
     }
@@ -148,7 +147,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
     /**
      * 清空系统登录日志
      */
-    @Override
     public void cleanLogininfor() {
         baseMapper.delete(new LambdaQueryWrapper<>());
     }

@@ -1,38 +1,44 @@
-package com.ruoyi.system.domain.entity;
+package com.ruoyi.system.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
+import com.ruoyi.system.domain.entity.SysLogininfor;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
- * 系统访问记录表 sys_logininfor
+ * 系统访问记录视图对象 sys_logininfor
  *
- * @author Lion Li
+ * @author Michelle.Chung
+ * @date 2023-02-07
  */
-
 @Data
-@TableName("sys_logininfor")
 @ExcelIgnoreUnannotated
-public class SysLogininfor implements Serializable {
+@AutoMapper(target = SysLogininfor.class)
+public class SysLogininforVo implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
+     * 访问ID
      */
     @ExcelProperty(value = "序号")
-    @TableId(value = "info_id")
     private Long infoId;
+
+    /**
+     * 租户编号
+     */
+    private String tenantId;
 
     /**
      * 用户账号
@@ -41,7 +47,14 @@ public class SysLogininfor implements Serializable {
     private String userName;
 
     /**
-     * 登录状态 0成功 1失败
+     * 设备类型
+     */
+    @ExcelProperty(value = "设备类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "sys_device_type")
+    private String deviceType;
+
+    /**
+     * 登录状态（0失败 1成功）
      */
     @ExcelProperty(value = "登录状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_common_status")
@@ -71,6 +84,7 @@ public class SysLogininfor implements Serializable {
     @ExcelProperty(value = "操作系统")
     private String os;
 
+
     /**
      * 提示消息
      */
@@ -81,12 +95,8 @@ public class SysLogininfor implements Serializable {
      * 访问时间
      */
     @ExcelProperty(value = "访问时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime loginTime;
 
-    /**
-     * 请求参数
-     */
-    @TableField(exist = false)
-    private Map<String, Object> params = new HashMap<>();
 
 }
