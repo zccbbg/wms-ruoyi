@@ -62,7 +62,6 @@
 #end
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -87,7 +86,7 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="${businessName}List">
+    <el-table v-loading="loading" :data="${businessName}List" border>
 #foreach($column in $columns)
 #set($javaField=$column.javaField)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
@@ -97,7 +96,7 @@
 #set($comment=$column.columnComment)
 #end
 #if($column.pk)
-      <el-table-column label="${comment}" align="center" prop="${javaField}" v-if="${column.list}"/>
+      <el-table-column label="${comment}" prop="${javaField}" v-if="${column.list}"/>
 #elseif($column.list && $column.htmlType == "datetime")
       <el-table-column label="${comment}" align="center" prop="${javaField}" width="180">
         <template #default="scope">
@@ -121,10 +120,10 @@
         </template>
       </el-table-column>
 #elseif($column.list && "" != $javaField)
-      <el-table-column label="${comment}" align="center" prop="${javaField}" />
+      <el-table-column label="${comment}" prop="${javaField}" />
 #end
 #end
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
           <template #default="scope">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${moduleName}:${businessName}:edit']">修改</el-button>
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${moduleName}:${businessName}:remove']">删除</el-button>
@@ -253,8 +252,7 @@
             <el-button type="danger" icon="Delete" @click="handleDelete${subClassName}">删除</el-button>
           </el-col>
         </el-row>
-        <el-table :data="${subclassName}List" :row-class-name="row${subClassName}Index" @selection-change="handle${subClassName}SelectionChange" ref="${subclassName}">
-          <el-table-column type="selection" width="50" align="center" />
+        <el-table :data="${subclassName}List" :row-class-name="row${subClassName}Index" ref="${subclassName}" border>
           <el-table-column label="序号" align="center" prop="index" width="50"/>
 #foreach($column in $subTable.columns)
 #set($javaField=$column.javaField)
@@ -431,18 +429,6 @@ function handleQuery() {
   getList();
 }
 
-/** 重置按钮操作 */
-function resetQuery() {
-#foreach ($column in $columns)
-#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
-#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
-  daterange${AttrName}.value = [];
-#end
-#end
-  proxy.resetForm("queryRef");
-  handleQuery();
-}
-
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
@@ -550,11 +536,6 @@ function handleDelete${subClassName}() {
       return checked${subClassName}s.indexOf(item.index) == -1
     });
   }
-}
-
-/** 复选框选中数据 */
-function handle${subClassName}SelectionChange(selection) {
-  checked${subClassName}.value = selection.map(item => item.index)
 }
 
 #end
