@@ -1,4 +1,4 @@
-package com.ruoyi.system.service.impl;
+package com.ruoyi.system.service;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @version 3.6.0
  */
 @Service
-public class SysSensitiveServiceImpl implements SensitiveService {
+public class SysSensitiveService implements SensitiveService {
 
     /**
      * 是否脱敏
