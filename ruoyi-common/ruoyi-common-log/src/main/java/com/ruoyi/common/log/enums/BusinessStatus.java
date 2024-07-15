@@ -9,10 +9,10 @@ public enum BusinessStatus {
     /**
      * 成功
      */
-    SUCCESS,
+    FAIL,
 
     /**
      * 失败
      */
-    FAIL,
+    SUCCESS,
 }
