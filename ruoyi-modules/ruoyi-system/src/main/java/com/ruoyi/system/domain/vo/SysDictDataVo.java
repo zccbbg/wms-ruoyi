@@ -1,36 +1,36 @@
-package com.ruoyi.system.domain.entity;
+package com.ruoyi.system.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.system.domain.entity.SysDictData;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
- * 字典数据表 sys_dict_data
+ * 字典数据视图对象 sys_dict_data
  *
- * @author Lion Li
+ * @author Michelle.Chung
  */
-
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("sys_dict_data")
 @ExcelIgnoreUnannotated
-public class SysDictData extends BaseEntity {
+@AutoMapper(target = SysDictData.class)
+public class SysDictDataVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 字典编码
      */
     @ExcelProperty(value = "字典编码")
-    @TableId(value = "dict_code")
     private Long dictCode;
 
     /**
@@ -43,34 +43,27 @@ public class SysDictData extends BaseEntity {
      * 字典标签
      */
     @ExcelProperty(value = "字典标签")
-    @NotBlank(message = "字典标签不能为空")
-    @Size(min = 0, max = 100, message = "字典标签长度不能超过{max}个字符")
     private String dictLabel;
 
     /**
      * 字典键值
      */
     @ExcelProperty(value = "字典键值")
-    @NotBlank(message = "字典键值不能为空")
-    @Size(min = 0, max = 100, message = "字典键值长度不能超过{max}个字符")
     private String dictValue;
 
     /**
      * 字典类型
      */
     @ExcelProperty(value = "字典类型")
-    @NotBlank(message = "字典类型不能为空")
-    @Size(min = 0, max = 100, message = "字典类型长度不能超过{max}个字符")
     private String dictType;
 
     /**
      * 样式属性（其他样式扩展）
      */
-    @Size(min = 0, max = 100, message = "样式属性长度不能超过{max}个字符")
     private String cssClass;
 
     /**
-     * 表格字典样式
+     * 表格回显样式
      */
     private String listClass;
 
@@ -91,10 +84,13 @@ public class SysDictData extends BaseEntity {
     /**
      * 备注
      */
+    @ExcelProperty(value = "备注")
     private String remark;
 
-    public boolean getDefault() {
-        return UserConstants.YES.equals(this.isDefault);
-    }
+    /**
+     * 创建时间
+     */
+    @ExcelProperty(value = "创建时间")
+    private LocalDateTime createTime;
 
 }
