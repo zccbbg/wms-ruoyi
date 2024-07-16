@@ -33,7 +33,7 @@ public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPostVo> {
      * @param userName 用户名
      * @return 结果
      */
-    List<SysPost> selectPostsByUserName(String userName);
+    List<SysPostVo> selectPostsByUserName(String userName);
 
     @DataPermission({
         @DataColumn(key = "deptName", value = "dept_id"),
