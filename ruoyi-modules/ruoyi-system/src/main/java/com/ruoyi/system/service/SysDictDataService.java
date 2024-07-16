@@ -59,21 +59,6 @@ public class SysDictDataService {
     }
 
     /**
-     * 根据字典类型和字典键值查询字典数据信息
-     *
-     * @param dictType  字典类型
-     * @param dictValue 字典键值
-     * @return 字典标签
-     */
-    public String selectDictLabel(String dictType, String dictValue) {
-        return baseMapper.selectOne(new LambdaQueryWrapper<SysDictData>()
-                .select(SysDictData::getDictLabel)
-                .eq(SysDictData::getDictType, dictType)
-                .eq(SysDictData::getDictValue, dictValue))
-            .getDictLabel();
-    }
-
-    /**
      * 根据字典数据ID查询信息
      *
      * @param dictCode 字典数据ID

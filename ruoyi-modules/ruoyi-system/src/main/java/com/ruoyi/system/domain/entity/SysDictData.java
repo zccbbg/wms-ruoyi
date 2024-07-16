@@ -1,18 +1,16 @@
 package com.ruoyi.system.domain.entity;
 
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.core.constant.UserConstants;
+import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 字典数据表 sys_dict_data
@@ -23,7 +21,6 @@ import jakarta.validation.constraints.Size;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_dict_data")
-@ExcelIgnoreUnannotated
 public class SysDictData extends BaseEntity {
 
     /**

@@ -138,11 +138,11 @@ public class SysDictTypeService implements DictService {
      * 加载字典缓存数据
      */
     public void loadingDictCache() {
-        List<SysDictData> dictDataList = dictDataMapper.selectList(
+        List<SysDictDataVo> dictDataList = dictDataMapper.selectVoList(
             new LambdaQueryWrapper<SysDictData>().eq(SysDictData::getStatus, UserConstants.DICT_NORMAL));
-        Map<String, List<SysDictData>> dictDataMap = StreamUtils.groupByKey(dictDataList, SysDictData::getDictType);
+        Map<String, List<SysDictDataVo>> dictDataMap = StreamUtils.groupByKey(dictDataList, SysDictDataVo::getDictType);
         dictDataMap.forEach((k, v) -> {
-            List<SysDictData> dictList = StreamUtils.sorted(v, Comparator.comparing(SysDictData::getDictSort));
+            List<SysDictDataVo> dictList = StreamUtils.sorted(v, Comparator.comparing(SysDictDataVo::getDictSort));
             CacheUtils.put(CacheNames.SYS_DICT, k, dictList);
         });
     }
@@ -222,7 +222,6 @@ public class SysDictTypeService implements DictService {
      * @param separator 分隔符
      * @return 字典标签
      */
-    @SuppressWarnings("unchecked cast")
     @Override
     public String getDictLabel(String dictType, String dictValue, String separator) {
         List<SysDictDataVo> datas = SpringUtils.getAopProxy(this).selectDictDataByType(dictType);
@@ -244,7 +243,6 @@ public class SysDictTypeService implements DictService {
      * @param separator 分隔符
      * @return 字典值
      */
-    @SuppressWarnings("unchecked cast")
     @Override
     public String getDictValue(String dictType, String dictLabel, String separator) {
         List<SysDictDataVo> datas = SpringUtils.getAopProxy(this).selectDictDataByType(dictType);
