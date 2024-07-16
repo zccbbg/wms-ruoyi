@@ -2,6 +2,8 @@ package com.ruoyi.system.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.ruoyi.common.excel.annotation.ExcelDictFormat;
+import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import com.ruoyi.system.domain.entity.SysDictType;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -48,6 +50,14 @@ public class SysDictTypeVo implements Serializable {
      */
     @ExcelProperty(value = "备注")
     private String remark;
+
+    /**
+     * 状态
+     */
+    @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "sys_normal_disable")
+    private String status;
+
 
     /**
      * 创建时间
