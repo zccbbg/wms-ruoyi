@@ -63,6 +63,9 @@
   #end
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+#if($columns.size()>2)
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+#end
         </el-form-item>
       </el-form>
     </el-card>
@@ -434,6 +437,20 @@ function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
 }
+
+#if($columns.size()>2)
+/** 重置按钮操作 */
+function resetQuery() {
+  #foreach ($column in $columns)
+    #if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
+      #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+      daterange${AttrName}.value = [];
+    #end
+  #end
+  proxy.resetForm("queryRef");
+  handleQuery();
+}
+#end
 
 /** 新增按钮操作 */
 function handleAdd() {

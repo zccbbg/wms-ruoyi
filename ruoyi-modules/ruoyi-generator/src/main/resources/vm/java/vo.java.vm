@@ -3,6 +3,7 @@ package ${packageName}.domain.vo;
 #foreach ($import in $importList)
 import ${import};
 #end
+import ${packageName}.domain.entity.${ClassName};
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;

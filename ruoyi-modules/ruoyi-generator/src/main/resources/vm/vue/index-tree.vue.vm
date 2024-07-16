@@ -63,7 +63,9 @@
 #end
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+#if($columns.size()>2)
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+#end
       </el-form-item>
     </el-form>
 
@@ -381,6 +383,7 @@ function handleQuery() {
   getList();
 }
 
+#if($columns.size()>2)
 /** 重置按钮操作 */
 function resetQuery() {
 #foreach ($column in $columns)
@@ -392,6 +395,7 @@ function resetQuery() {
   proxy.resetForm("queryRef");
   handleQuery();
 }
+#end
 
 /** 新增按钮操作 */
 function handleAdd(row) {
