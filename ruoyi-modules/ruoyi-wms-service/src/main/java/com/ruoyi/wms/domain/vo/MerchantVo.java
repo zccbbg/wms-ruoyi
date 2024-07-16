@@ -2,6 +2,8 @@ package com.ruoyi.wms.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.ruoyi.common.excel.annotation.ExcelDictFormat;
+import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import com.ruoyi.wms.domain.entity.Merchant;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -13,7 +15,7 @@ import java.io.Serializable;
  * 往来单位视图对象 wms_merchant
  *
  * @author zcc
- * @date 2024-07-07
+ * @date 2024-07-16
  */
 @Data
 @ExcelIgnoreUnannotated
@@ -24,7 +26,7 @@ public class MerchantVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * id
      */
     @ExcelProperty(value = "id")
     private Long id;
@@ -42,16 +44,29 @@ public class MerchantVo implements Serializable {
     private String merchantName;
 
     /**
-     * 地址
+     * 联系人
      */
-    @ExcelProperty(value = "地址")
-    private String address;
+    @ExcelProperty(value = "联系人")
+    private String contactPerson;
 
     /**
      * 级别
      */
     @ExcelProperty(value = "级别")
     private String merchantLevel;
+
+    /**
+     * 企业类型
+     */
+    @ExcelProperty(value = "企业类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "merchant_type")
+    private Integer merchantType;
+
+    /**
+     * 备注
+     */
+    @ExcelProperty(value = "备注")
+    private String remark;
 
 
 }

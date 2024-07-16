@@ -1,18 +1,19 @@
 package com.ruoyi.wms.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 
-
 /**
  * 往来单位对象 wms_merchant
  *
  * @author zcc
- * @date 2024-07-05
+ * @date 2024-07-16
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -23,7 +24,7 @@ public class Merchant extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     /**
-     *
+     * id
      */
     @TableId(value = "id")
     private Long id;
@@ -63,6 +64,10 @@ public class Merchant extends BaseEntity {
      * 级别
      */
     private String merchantLevel;
+    /**
+     * 企业类型
+     */
+    private Integer merchantType;
     /**
      * Email
      */

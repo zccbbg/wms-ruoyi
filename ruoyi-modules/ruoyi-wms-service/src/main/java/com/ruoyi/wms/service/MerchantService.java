@@ -22,19 +22,19 @@ import java.util.Collection;
  * 往来单位Service业务层处理
  *
  * @author zcc
- * @date 2024-07-05
+ * @date 2024-07-16
  */
 @RequiredArgsConstructor
 @Service
 public class MerchantService {
 
-    private final MerchantMapper baseMapper;
+    private final MerchantMapper merchantMapper;
 
     /**
      * 查询往来单位
      */
     public MerchantVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return merchantMapper.selectVoById(id);
     }
 
     /**
@@ -42,7 +42,7 @@ public class MerchantService {
      */
     public TableDataInfo<MerchantVo> queryPageList(MerchantBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Merchant> lqw = buildQueryWrapper(bo);
-        Page<MerchantVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<MerchantVo> result = merchantMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -51,7 +51,7 @@ public class MerchantService {
      */
     public List<MerchantVo> queryList(MerchantBo bo) {
         LambdaQueryWrapper<Merchant> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return merchantMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<Merchant> buildQueryWrapper(MerchantBo bo) {
@@ -59,6 +59,7 @@ public class MerchantService {
         LambdaQueryWrapper<Merchant> lqw = Wrappers.lambdaQuery();
         lqw.eq(StringUtils.isNotBlank(bo.getMerchantNo()), Merchant::getMerchantNo, bo.getMerchantNo());
         lqw.like(StringUtils.isNotBlank(bo.getMerchantName()), Merchant::getMerchantName, bo.getMerchantName());
+        lqw.eq(bo.getMerchantType() != null, Merchant::getMerchantType, bo.getMerchantType());
         return lqw;
     }
 
@@ -67,7 +68,7 @@ public class MerchantService {
      */
     public Boolean insertByBo(MerchantBo bo) {
         Merchant add = MapstructUtils.convert(bo, Merchant.class);
-        return baseMapper.insert(add) > 0;
+        return merchantMapper.insert(add) > 0;
     }
 
     /**
@@ -75,13 +76,13 @@ public class MerchantService {
      */
     public Boolean updateByBo(MerchantBo bo) {
         Merchant update = MapstructUtils.convert(bo, Merchant.class);
-        return baseMapper.updateById(update) > 0;
+        return merchantMapper.updateById(update) > 0;
     }
 
     /**
      * 批量删除往来单位
      */
     public Boolean deleteWithValidByIds(Collection<Long> ids) {
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return merchantMapper.deleteBatchIds(ids) > 0;
     }
 }
