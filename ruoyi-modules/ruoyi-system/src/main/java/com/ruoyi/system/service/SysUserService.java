@@ -22,6 +22,7 @@ import com.ruoyi.common.mybatis.helper.DataBaseHelper;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.entity.*;
+import com.ruoyi.system.domain.vo.SysPostVo;
 import com.ruoyi.system.domain.vo.SysRoleVo;
 import com.ruoyi.system.domain.vo.SysUserExportVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
@@ -181,11 +182,11 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public String selectUserPostGroup(String userName) {
-        List<SysPost> list = postMapper.selectPostsByUserName(userName);
+        List<SysPostVo> list = postMapper.selectPostsByUserName(userName);
         if (CollUtil.isEmpty(list)) {
             return StringUtils.EMPTY;
         }
-        return StreamUtils.join(list, SysPost::getPostName);
+        return StreamUtils.join(list, SysPostVo::getPostName);
     }
 
     /**
