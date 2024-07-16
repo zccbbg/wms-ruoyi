@@ -37,6 +37,14 @@ public class Merchant extends BaseEntity {
      */
     private String merchantName;
     /**
+     * 企业类型
+     */
+    private Integer merchantType;
+    /**
+     * 级别
+     */
+    private String merchantLevel;
+    /**
      * 开户行
      */
     private String bankName;
@@ -60,14 +68,6 @@ public class Merchant extends BaseEntity {
      * 联系人
      */
     private String contactPerson;
-    /**
-     * 级别
-     */
-    private String merchantLevel;
-    /**
-     * 企业类型
-     */
-    private Integer merchantType;
     /**
      * Email
      */

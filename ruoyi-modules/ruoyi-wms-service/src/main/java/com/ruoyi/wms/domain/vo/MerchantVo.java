@@ -1,15 +1,15 @@
 package com.ruoyi.wms.domain.vo;
 
+import com.ruoyi.wms.domain.entity.Merchant;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.wms.domain.entity.Merchant;
-import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import io.github.linpeilie.annotations.AutoMapper;
 
-import java.io.Serial;
 import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * 往来单位视图对象 wms_merchant
@@ -44,10 +44,11 @@ public class MerchantVo implements Serializable {
     private String merchantName;
 
     /**
-     * 联系人
+     * 企业类型
      */
-    @ExcelProperty(value = "联系人")
-    private String contactPerson;
+    @ExcelProperty(value = "企业类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "merchant_type")
+    private Integer merchantType;
 
     /**
      * 级别
@@ -56,11 +57,10 @@ public class MerchantVo implements Serializable {
     private String merchantLevel;
 
     /**
-     * 企业类型
+     * 联系人
      */
-    @ExcelProperty(value = "企业类型", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(dictType = "merchant_type")
-    private Integer merchantType;
+    @ExcelProperty(value = "联系人")
+    private String contactPerson;
 
     /**
      * 备注
