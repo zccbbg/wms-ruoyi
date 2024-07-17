@@ -165,6 +165,9 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
             return;
         }
         List<Warehouse> updateList = MapstructUtils.convert(tree, Warehouse.class);
+        for (int i = 0; i < updateList.size(); i++) {
+            updateList.get(i).setOrderNum((long) i);
+        }
         saveOrUpdateBatch(updateList);
     }
 }
