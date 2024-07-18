@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: RuoYi-Vue-Plus-Service
+  name: ruoyi-fast-service
   # 版本
   version: ${revision}
   # 版权年份
@@ -212,9 +212,9 @@ springdoc:
     version: '版本号: ${revision}'
     # 作者信息
     contact:
-      name: Lion Li
-      email: crazylionli@163.com
-      url: https://gitee.com/dromara/RuoYi-Vue-Plus
+      name: zcc
+      email: zccbbg@qq.com
+      url: https://gitee.com/zccbbg/ruoyi-fast-service
   components:
     # 鉴权方式配置
     security-schemes:
