@@ -95,6 +95,6 @@ public class ItemSkuController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(itemSkuService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(itemSkuService.deleteByIds(List.of(ids)));
     }
 }

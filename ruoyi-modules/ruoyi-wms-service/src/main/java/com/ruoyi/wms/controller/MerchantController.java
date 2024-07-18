@@ -101,6 +101,6 @@ public class MerchantController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(merchantService.deleteWithValidByIds(List.of(ids)));
+        return toAjax(merchantService.deleteByIds(List.of(ids)));
     }
 }

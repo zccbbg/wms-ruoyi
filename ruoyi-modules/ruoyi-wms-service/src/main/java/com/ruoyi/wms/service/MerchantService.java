@@ -82,7 +82,7 @@ public class MerchantService {
     /**
      * 批量删除往来单位
      */
-    public Boolean deleteWithValidByIds(Collection<Long> ids) {
+    public Boolean deleteByIds(Collection<Long> ids) {
         return merchantMapper.deleteBatchIds(ids) > 0;
     }
 }

@@ -145,12 +145,7 @@ public class ItemSkuService {
 
     public Boolean insertByBo(ItemSkuBo bo) {
         ItemSku add = MapstructUtils.convert(bo, ItemSku.class);
-        validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+        return baseMapper.insert(add) > 0;
     }
 
     /**
@@ -159,25 +154,15 @@ public class ItemSkuService {
 
     public Boolean updateByBo(ItemSkuBo bo) {
         ItemSku update = MapstructUtils.convert(bo, ItemSku.class);
-        validEntityBeforeSave(update);
         return baseMapper.updateById(update) > 0;
     }
 
-    /**
-     * 保存前的数据校验
-     */
-    private void validEntityBeforeSave(ItemSku entity) {
-        //TODO 做一些数据校验,如唯一约束
-    }
 
     /**
      * 批量删除sku信息
      */
 
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if (isValid) {
-            //TODO 做一些业务上的校验,判断是否需要校验
-        }
+    public Boolean deleteByIds(Collection<Long> ids) {
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 
