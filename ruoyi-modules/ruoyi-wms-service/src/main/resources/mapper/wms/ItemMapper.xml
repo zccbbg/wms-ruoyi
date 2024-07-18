@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wms.mapper.ItemMapper">
+
+    <sql id="selectItem">
+        select id,item_no,item_name,item_category,unit,del_flag,remark,create_by,create_time,update_by,update_time from wms_item
+    </sql>
+
+    <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.entity.Item">
+        <include refid="selectItem"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

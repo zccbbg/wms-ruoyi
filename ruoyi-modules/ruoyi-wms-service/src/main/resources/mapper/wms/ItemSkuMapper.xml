@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wms.mapper.ItemSkuMapper">
+
+    <sql id="selectItemSku">
+        select id,sku_name,item_id,out_sku_id,in_price,out_price,quantity,del_flag,create_time,create_by,update_time,update_by from wms_item_sku
+    </sql>
+    <update id="batchUpdate">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update wms_item_sku
+            set sku_name=#{item.skuName},item_id=#{item.itemId},out_sku_id=#{item.outSkuId},in_price=#{item.inPrice}
+              ,out_price=#{item.outPrice},quantity=#{item.quantity}
+            where id=#{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.entity.ItemSku">
+        <include refid="selectItemSku"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="selectByBo" resultType="com.ruoyi.wms.domain.vo.ItemSkuVo">
+        select
+        a.id,
+        a.sku_name,
+        a.item_id,
+        a.out_sku_id,
+        a.in_price,
+        a.out_price,
+        a.quantity,
+        a.del_flag,
+        a.create_by,
+        a.create_time,
+        a.update_by,
+        a.update_time,
+        b.item_name,
+        b.item_no,
+        c.category_name itemCategoryName,
+        c.id itemCategoryId
+        from wms_item_sku a
+        inner join wms_item b on a.item_id=b.id
+        inner join wms_item_category c on b.item_category=c.id
+        where a.del_flag=0 and b.del_flag=0
+        <if test="bo.itemName != null and bo.itemName != ''">
+            and b.item_name like concat('%', #{bo.itemName}, '%')
+        </if>
+        <if test="bo.itemNo != null and bo.itemNo != ''">
+            and b.item_no like concat('%', #{bo.itemNo}, '%')
+        </if>
+        <if test="bo.skuName != null and bo.skuName != ''">
+            and a.sku_name like concat('%', #{bo.skuName}, '%')
+        </if>
+        <if test="bo.outSkuId != null and bo.outSkuId != ''">
+            and a.out_sku_id like concat('%', #{bo.outSkuId}, '%')
+        </if>
+        <if test="bo.itemCategory != null and bo.itemCategory != ''">
+            and (c.id=#{bo.itemCategory} or c.parent_id=#{bo.itemCategory})
+        </if>
+        order by c.id desc,a.item_id desc
+    </select>
+</mapper>
