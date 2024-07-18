@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.wms.mapper.ItemMapper">
 
     <sql id="selectItem">
-        select id,item_no,item_name,item_category,unit,del_flag,remark,create_by,create_time,update_by,update_time from wms_item
+        select * from wms_item
     </sql>
 
     <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.entity.Item">
