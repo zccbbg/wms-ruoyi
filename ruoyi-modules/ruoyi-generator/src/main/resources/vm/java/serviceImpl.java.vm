@@ -105,7 +105,7 @@ public class ${ClassName}Service {
     /**
      * 批量删除${functionName}
      */
-    public Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids) {
+    public Boolean deleteByIds(Collection<${pkColumn.javaType}> ids) {
         return ${className}Mapper.deleteBatchIds(ids) > 0;
     }
 }
