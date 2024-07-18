@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.wms.mapper.ItemSkuMapper">
 
     <sql id="selectItemSku">
-        select id,sku_name,item_id,out_sku_id,in_price,out_price,quantity,del_flag,create_time,create_by,update_time,update_by from wms_item_sku
+        select * from wms_item_sku
     </sql>
     <update id="batchUpdate">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
