@@ -106,6 +106,7 @@ public class ItemCategoryController extends BaseController {
 
     @PostMapping("/update/orderNum")
     public R<Void> updateOrderNum(@RequestBody List<ItemTypeTreeSelectVo> tree) {
-        return toAjax(itemCategoryService.updateOrderNum(tree));
+        itemCategoryService.updateOrderNum(tree);
+        return R.ok();
     }
 }

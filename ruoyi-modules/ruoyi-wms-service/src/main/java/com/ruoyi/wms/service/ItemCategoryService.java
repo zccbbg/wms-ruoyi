@@ -213,7 +213,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         return getChildList(list, t).size() > 0;
     }
 
-    public int updateOrderNum(List<ItemTypeTreeSelectVo> tree) {
+    public void updateOrderNum(List<ItemTypeTreeSelectVo> tree) {
         List<ItemCategory> updateList = new ArrayList<>();
         for (int i = 0; i < tree.size(); i++) {
             ItemCategory itemType = new ItemCategory();
@@ -221,6 +221,6 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
             itemType.setOrderNum((long) i);
             updateList.add(itemType);
         }
-        return baseMapper.updateOrderNum(updateList);
+        saveOrUpdateBatch(updateList);
     }
 }

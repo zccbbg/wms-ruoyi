@@ -8,5 +8,4 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ItemCategoryMapper extends BaseMapperPlus<ItemCategory, ItemCategoryVo> {
-    int updateOrderNum(@Param("list") List<ItemCategory> list);
 }
