@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.wms.mapper.AreaMapper">
 
     <sql id="selectAreaVo">
-        select id,tenant_id,area_no,area_name,warehouse_id,remark,del_flag,create_by,create_time,update_by,update_time from wms_area
+        select * from wms_area
     </sql>
 
 
