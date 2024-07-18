@@ -11,6 +11,7 @@ import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.StreamUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,6 +39,12 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
         return R.fail(HttpStatus.HTTP_BAD_METHOD, e.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public R<Void> handleDataTooLongException(DataIntegrityViolationException e, HttpServletRequest request) {
+        log.error(e.getMessage(), e);
+        return R.fail("文件名或填写内容过长");
     }
 
     /**
