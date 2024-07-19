@@ -58,22 +58,28 @@ public class ItemSkuVo implements Serializable {
     private String outSkuId;
 
     /**
-     * 入库价格
+     * 长(cm)
      */
-    @ExcelProperty(value = "入库价格")
-    private BigDecimal inPrice;
+    @ExcelProperty(value = "长(cm)")
+    private BigDecimal length;
 
     /**
-     * 出库价格
+     * 宽(cm)
      */
-    @ExcelProperty(value = "出库价格")
-    private BigDecimal outPrice;
+    @ExcelProperty(value = "宽(cm)")
+    private BigDecimal width;
 
     /**
-     * 库存预警
+     * 高(cm)
      */
-    @ExcelProperty(value = "库存预警")
-    private BigDecimal quantity;
+    @ExcelProperty(value = "=高(cm)")
+    private BigDecimal height;
+
+    /**
+     * 重量(kg)
+     */
+    @ExcelProperty(value = "重量(kg)")
+    private BigDecimal weight;
 
     /**
      * 所属分类名称

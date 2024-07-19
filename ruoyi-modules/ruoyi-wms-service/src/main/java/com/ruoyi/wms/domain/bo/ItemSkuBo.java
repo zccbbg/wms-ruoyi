@@ -41,19 +41,24 @@ public class ItemSkuBo extends BaseEntity {
     private String outSkuId;
 
     /**
-     * 入库价格
+     * 长(cm)
      */
-    private BigDecimal inPrice;
+    private BigDecimal length;
 
     /**
-     * 出库价格
+     * 宽(cm)
      */
-    private BigDecimal outPrice;
+    private BigDecimal width;
 
     /**
-     * 库存预警
+     * 高(cm)
      */
-    private BigDecimal quantity;
+    private BigDecimal height;
+
+    /**
+     * 重量(kg)
+     */
+    private BigDecimal weight;
 
     /**
      * 商品名称

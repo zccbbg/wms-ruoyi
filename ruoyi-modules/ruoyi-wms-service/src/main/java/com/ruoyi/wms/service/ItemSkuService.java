@@ -133,9 +133,6 @@ public class ItemSkuService {
         lqw.like(StrUtil.isNotBlank(bo.getSkuName()), ItemSku::getSkuName, bo.getSkuName());
         lqw.eq(bo.getItemId() != null, ItemSku::getItemId, bo.getItemId());
         lqw.eq(StrUtil.isNotBlank(bo.getOutSkuId()), ItemSku::getOutSkuId, bo.getOutSkuId());
-        lqw.eq(bo.getInPrice() != null, ItemSku::getInPrice, bo.getInPrice());
-        lqw.eq(bo.getOutPrice() != null, ItemSku::getOutPrice, bo.getOutPrice());
-        lqw.eq(bo.getQuantity() != null, ItemSku::getQuantity, bo.getQuantity());
         return lqw;
     }
 
