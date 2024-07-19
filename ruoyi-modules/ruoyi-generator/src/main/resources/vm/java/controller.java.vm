@@ -86,7 +86,8 @@ public class ${ClassName}Controller extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ${ClassName}Bo bo) {
-        return toAjax(${className}Service.insertByBo(bo));
+        ${className}Service.insertByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -97,7 +98,8 @@ public class ${ClassName}Controller extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ${ClassName}Bo bo) {
-        return toAjax(${className}Service.updateByBo(bo));
+        ${className}Service.updateByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -110,6 +112,7 @@ public class ${ClassName}Controller extends BaseController {
     @DeleteMapping("/{${pkColumn.javaField}s}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
-        return toAjax(${className}Service.deleteByIds(List.of(${pkColumn.javaField}s)));
+        ${className}Service.deleteByIds(List.of(${pkColumn.javaField}s));
+        return R.ok();
     }
 }

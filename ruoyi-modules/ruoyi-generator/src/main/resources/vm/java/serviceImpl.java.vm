@@ -88,24 +88,23 @@ public class ${ClassName}Service {
     /**
      * 新增${functionName}
      */
-    public Boolean insertByBo(${ClassName}Bo bo) {
+    public void insertByBo(${ClassName}Bo bo) {
         ${ClassName} add = MapstructUtils.convert(bo, ${ClassName}.class);
-        return ${className}Mapper.insert(add) > 0;
-#set($pk=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        ${className}Mapper.insert(add);
     }
 
     /**
      * 修改${functionName}
      */
-    public Boolean updateByBo(${ClassName}Bo bo) {
+    public void updateByBo(${ClassName}Bo bo) {
         ${ClassName} update = MapstructUtils.convert(bo, ${ClassName}.class);
-        return ${className}Mapper.updateById(update) > 0;
+        ${className}Mapper.updateById(update);
     }
 
     /**
      * 批量删除${functionName}
      */
-    public Boolean deleteByIds(Collection<${pkColumn.javaType}> ids) {
-        return ${className}Mapper.deleteBatchIds(ids) > 0;
+    public void deleteByIds(Collection<${pkColumn.javaType}> ids) {
+        ${className}Mapper.deleteBatchIds(ids);
     }
 }
