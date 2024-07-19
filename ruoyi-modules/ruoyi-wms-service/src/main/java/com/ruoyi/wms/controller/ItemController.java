@@ -70,21 +70,12 @@ public class ItemController extends BaseController {
     /**
      * 新增物料
      */
-//    @Log(title = "物料", businessType = BusinessType.INSERT)
-//    @RepeatSubmit()
-//    @PostMapping("/byBo")
-//    public R<Void> addByBo(@Validated(AddGroup.class) @RequestBody ItemBo bo) {
-//        return toAjax(itemService.insertByBo(bo));
-//    }
-
-    /**
-     * 新增物料
-     */
     @Log(title = "物料", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ItemBo form) {
-        return toAjax(itemService.insertByForm(form));
+        itemService.insertByForm(form);
+        return R.ok();
     }
     /**
      * 修改物料
@@ -93,17 +84,9 @@ public class ItemController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ItemBo form) {
-        return toAjax(itemService.updateByForm(form));
+        itemService.updateByForm(form);
+        return R.ok();
     }
-    /**
-     * 修改物料
-     */
-//    @Log(title = "物料", businessType = BusinessType.UPDATE)
-//    @RepeatSubmit()
-//    @PutMapping("/byBo")
-//    public R<Void> editByBo(@Validated(EditGroup.class) @RequestBody ItemBo bo) {
-//        return toAjax(itemService.updateByBo(bo));
-//    }
 
     /**
      * 删除物料
@@ -114,6 +97,7 @@ public class ItemController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(itemService.deleteWithValidByIds(List.of(ids), true));
+        itemService.deleteWithValidByIds(List.of(ids));
+        return R.ok();
     }
 }

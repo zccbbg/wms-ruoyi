@@ -1,6 +1,7 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -14,7 +15,6 @@ import com.ruoyi.wms.domain.entity.Item;
 import com.ruoyi.wms.domain.entity.ItemCategory;
 import com.ruoyi.wms.domain.entity.ItemSku;
 import com.ruoyi.wms.domain.vo.ItemCategoryVo;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemCategoryMapper;
 import com.ruoyi.wms.mapper.ItemMapper;
@@ -106,7 +106,6 @@ public class ItemService {
     }
 
     private LambdaQueryWrapper<Item> buildQueryWrapper(ItemBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<Item> lqw = Wrappers.lambdaQuery();
         lqw.eq(StrUtil.isNotBlank(bo.getItemNo()), Item::getItemNo, bo.getItemNo());
         // 主键集合
@@ -114,7 +113,7 @@ public class ItemService {
         lqw.like(StrUtil.isNotBlank(bo.getItemName()), Item::getItemName, bo.getItemName());
         if (!StrUtil.isBlank(bo.getItemCategory())){
             Long parentId = Long.valueOf(bo.getItemCategory());
-            List<Long> subIdList = this.buildSubItemTypeIdList(parentId);
+            List<Long> subIdList = this.buildSubItemCategoryIdList(parentId);
             subIdList.add(Long.valueOf(bo.getItemCategory()));
             lqw.in(Item::getItemCategory, subIdList);
         }
@@ -122,7 +121,7 @@ public class ItemService {
         return lqw;
     }
 
-    private List<Long> buildSubItemTypeIdList(Long parentId) {
+    private List<Long> buildSubItemCategoryIdList(Long parentId) {
         LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
         itemTypeWrapper.eq(ItemCategory::getParentId, parentId);
         return itemCategoryMapper.selectList(itemTypeWrapper).stream().map(ItemCategory::getId).collect(Collectors.toList());
@@ -130,113 +129,67 @@ public class ItemService {
 
     /**
      * 新增物料
-     */
-
-//    public Boolean insertByBo(ItemBo bo) {
-//        Item add = MapstructUtils.convert(bo, Item.class);
-//        validEntityBeforeSave(add);
-//        boolean flag = baseMapper.insert(add) > 0;
-//        if (flag) {
-//            bo.setId(add.getId());
-//        }
-//        return flag;
-//    }
-
-    /**
-     * 新增物料
      *
      * @param bo
      */
-
-
     @Transactional
-    public boolean insertByForm(ItemBo bo) {
-        log.info("新增物料:{}", bo.getSku());
+    public void insertByForm(ItemBo bo) {
         validEntityBeforeSave(bo);
         Item item = MapstructUtils.convert(bo, Item.class);
-        boolean flag = baseMapper.insert(item) > 0;
-        if (flag) {
-            bo.setId(item.getId());
-            flag = itemSkuService.saveSku(bo.getId(), bo.getSku());
-        }
-        return flag;
+        baseMapper.insert(item);
+        itemSkuService.saveSku(item.getId(), bo.getSku());
     }
-
-
-
-    /**
-     * 修改物料
-     */
-
-//    public Boolean updateByBo(ItemBo bo) {
-//        Item update = MapstructUtils.convert(bo, Item.class);
-//        validEntityBeforeSave(update);
-//        return baseMapper.updateById(update) > 0;
-//    }
 
     /**
      * 修改物料
      *
      * @param bo
      */
-
-    public Boolean updateByForm(ItemBo bo) {
+    @Transactional
+    public void updateByForm(ItemBo bo) {
         validEntityBeforeSave(bo);
-        log.info("新增物料:{}", bo.getSku());
-        boolean flag = baseMapper.updateById(MapstructUtils.convert(bo, Item.class)) > 0;
-        if (flag) {
-             flag = itemSkuService.saveSku(bo.getId(), bo.getSku());
-        }
-        return flag;
+        baseMapper.updateById(MapstructUtils.convert(bo, Item.class));
+        itemSkuService.saveSku(bo.getId(), bo.getSku());
     }
 
     /**
      * 保存前的数据校验
      */
     private void validEntityBeforeSave(ItemBo entity) {
-        if (!validateItemName(entity)) {
-            throw new RuntimeException("商品名称重复");
-        }
-        if (!validateItemNo(entity)) {
-            throw new RuntimeException("商品编号重复");
-        }
-        if (!validateItemSku(entity.getSku())) {
-            throw new RuntimeException("商品规格重复");
-        }
+        validateItemName(entity);
+        validateItemNo(entity);
+        validateItemSku(entity.getSku());
     }
 
-    private boolean validateItemName(ItemBo item) {
+    private void validateItemName(ItemBo item) {
         LambdaQueryWrapper<Item> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Item::getItemName, item.getItemName());
         queryWrapper.ne(item.getId() != null, Item::getId, item.getId());
-        return baseMapper.selectCount(queryWrapper) == 0;
+        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "商品名称重复");
     }
-    private boolean validateItemNo(ItemBo form) {
+    private void validateItemNo(ItemBo form) {
         if (StrUtil.isBlank(form.getItemNo())) {
-            return true;
+            return;
         }
         LambdaQueryWrapper<Item> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Item::getItemNo, form.getItemNo());
         queryWrapper.ne(form.getId() != null, Item::getId, form.getId());
-        return baseMapper.selectCount(queryWrapper) == 0;
+        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "商品编号重复");
     }
 
-    private boolean validateItemSku(List<ItemSkuBo> skuVoList) {
-         return skuVoList.stream().map(ItemSkuBo::getSkuName).distinct().count() == skuVoList.size();
+    private void validateItemSku(List<ItemSkuBo> skuVoList) {
+         Assert.isTrue(skuVoList.stream().map(ItemSkuBo::getSkuName).distinct().count() == skuVoList.size(), "商品规格重复");
     }
 
     /**
      * 批量删除物料
      */
-
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        boolean flag =  baseMapper.deleteBatchIds(ids) > 0;
-        if (flag) {
-            LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
-            wrapper.in(ItemSku::getItemId, ids);
-            List<Long> skuIds = itemSkuMapper.selectList(wrapper).stream().map(ItemSku::getId).toList();
-            flag = itemSkuService.batchUpdateDelFlag(skuIds) > 0;
-        }
-        return flag;
+    @Transactional
+    public void deleteWithValidByIds(Collection<Long> ids) {
+        baseMapper.deleteBatchIds(ids);
+        LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ItemSku::getItemId, ids);
+        List<Long> skuIds = itemSkuMapper.selectList(wrapper).stream().map(ItemSku::getId).toList();
+        itemSkuService.batchUpdateDelFlag(skuIds);
     }
 }

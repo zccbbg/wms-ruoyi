@@ -47,6 +47,12 @@ public class GlobalExceptionHandler {
         return R.fail("文件名或填写内容过长");
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public R<Void> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        log.error(e.getMessage(), e);
+        return R.fail(e.getMessage());
+    }
+
     /**
      * 业务异常
      */
