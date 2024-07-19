@@ -7,14 +7,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectItemSku">
         select * from wms_item_sku
     </sql>
-    <update id="batchUpdate">
-        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-            update wms_item_sku
-            set sku_name=#{item.skuName},item_id=#{item.itemId},out_sku_id=#{item.outSkuId},in_price=#{item.inPrice}
-              ,out_price=#{item.outPrice},quantity=#{item.quantity}
-            where id=#{item.id}
-        </foreach>
-    </update>
 
     <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.entity.ItemSku">
         <include refid="selectItemSku"/>
@@ -30,12 +22,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.item_id,
         a.out_sku_id,
         a.del_flag,
+        a.length,
+        a.width,
+        a.height,
+        a.height,
+        a.weight,
         a.create_by,
         a.create_time,
         a.update_by,
         a.update_time,
         b.item_name,
         b.item_no,
+        b.item_brand,
         c.category_name itemCategoryName,
         c.id itemCategoryId
         from wms_item_sku a

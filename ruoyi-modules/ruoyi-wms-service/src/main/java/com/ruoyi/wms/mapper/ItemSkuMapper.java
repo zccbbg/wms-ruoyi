@@ -19,7 +19,5 @@ public interface ItemSkuMapper extends BaseMapperPlus<ItemSku, ItemSkuVo> {
      */
     List<ItemSku> selectByIdsIgnoreDelFlag(@Param("list") Collection<Long> itemIds);
 
-    int batchUpdate(@Param("list") Collection<ItemSku> list);
-
     IPage<ItemSkuVo> selectByBo(IPage<ItemSkuVo> page, @Param("bo") ItemSkuBo bo);
 }
