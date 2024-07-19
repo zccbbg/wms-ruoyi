@@ -50,6 +50,12 @@ public class ItemVo implements Serializable {
     private String unit;
 
     /**
+     * 品牌
+     */
+    @ExcelProperty(value = "品牌")
+    private String itemBrand;
+
+    /**
      * 备注
      */
     @ExcelProperty(value = "备注")

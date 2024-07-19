@@ -44,6 +44,12 @@ public class Item extends BaseEntity {
     private String unit;
 
     /**
+     * 品牌
+     */
+    private String itemBrand;
+
+
+    /**
      * 删除标识
      */
     @TableLogic

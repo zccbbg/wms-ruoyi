@@ -51,6 +51,11 @@ public class ItemBo extends BaseEntity {
      */
     private String unit;
 
+    /**
+     * 品牌
+     */
+    private String itemBrand;
+
 
     /**
      * 备注
