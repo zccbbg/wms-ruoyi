@@ -18,16 +18,22 @@ import com.ruoyi.wms.mapper.AreaMapper;
 import com.ruoyi.wms.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 仓库Service业务层处理
+ *
+ * @author zcc
+ * @date 2024-07-16
+ */
 @RequiredArgsConstructor
 @Service
 public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     private final WarehouseMapper warehouseMapper;
-    private final AreaService areaService;
     private final AreaMapper areaMapper;
 
     /**
@@ -132,6 +138,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
         return warehouseMapper.selectByIdsIgnoreDelFlag(ids);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void updateOrderNum(List<WarehouseBo> tree) {
         if (CollUtil.isEmpty(tree)) {
             return;
