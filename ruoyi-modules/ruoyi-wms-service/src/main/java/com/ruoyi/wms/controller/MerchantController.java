@@ -77,7 +77,8 @@ public class MerchantController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody MerchantBo bo) {
-        return toAjax(merchantService.insertByBo(bo));
+        merchantService.insertByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -88,7 +89,8 @@ public class MerchantController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody MerchantBo bo) {
-        return toAjax(merchantService.updateByBo(bo));
+        merchantService.updateByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -101,6 +103,7 @@ public class MerchantController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(merchantService.deleteByIds(List.of(ids)));
+        merchantService.deleteByIds(List.of(ids));
+        return R.ok();
     }
 }

@@ -66,23 +66,23 @@ public class MerchantService {
     /**
      * 新增往来单位
      */
-    public Boolean insertByBo(MerchantBo bo) {
+    public void insertByBo(MerchantBo bo) {
         Merchant add = MapstructUtils.convert(bo, Merchant.class);
-        return merchantMapper.insert(add) > 0;
+        merchantMapper.insert(add);
     }
 
     /**
      * 修改往来单位
      */
-    public Boolean updateByBo(MerchantBo bo) {
+    public void updateByBo(MerchantBo bo) {
         Merchant update = MapstructUtils.convert(bo, Merchant.class);
-        return merchantMapper.updateById(update) > 0;
+        merchantMapper.updateById(update);
     }
 
     /**
      * 批量删除往来单位
      */
-    public Boolean deleteByIds(Collection<Long> ids) {
-        return merchantMapper.deleteBatchIds(ids) > 0;
+    public void deleteByIds(Collection<Long> ids) {
+        merchantMapper.deleteBatchIds(ids);
     }
 }
