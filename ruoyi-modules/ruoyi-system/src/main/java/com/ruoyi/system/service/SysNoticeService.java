@@ -1,6 +1,5 @@
 package com.ruoyi.system.service;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,9 +9,7 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.system.domain.bo.SysNoticeBo;
 import com.ruoyi.system.domain.entity.SysNotice;
-import com.ruoyi.system.domain.entity.SysUser;
 import com.ruoyi.system.domain.vo.SysNoticeVo;
-import com.ruoyi.system.domain.vo.SysUserVo;
 import com.ruoyi.system.mapper.SysNoticeMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +27,12 @@ import java.util.List;
 @Service
 public class SysNoticeService {
 
-    private final SysNoticeMapper baseMapper;
+    private final SysNoticeMapper noticeMapper;
     private final SysUserMapper userMapper;
 
     public TableDataInfo<SysNoticeVo> selectPageNoticeList(SysNoticeBo notice, PageQuery pageQuery) {
         LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
-        Page<SysNoticeVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysNoticeVo> page = noticeMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
@@ -46,7 +43,7 @@ public class SysNoticeService {
      * @return 公告信息
      */
     public SysNoticeVo selectNoticeById(Long noticeId) {
-        return baseMapper.selectVoById(noticeId);
+        return noticeMapper.selectVoById(noticeId);
     }
 
     /**
@@ -57,7 +54,7 @@ public class SysNoticeService {
      */
     public List<SysNoticeVo> selectNoticeList(SysNoticeBo notice) {
         LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
-        return baseMapper.selectVoList(lqw);
+        return noticeMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<SysNotice> buildQueryWrapper(SysNoticeBo bo) {
@@ -77,7 +74,7 @@ public class SysNoticeService {
      */
     public int insertNotice(SysNoticeBo bo) {
         SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
-        return baseMapper.insert(notice);
+        return noticeMapper.insert(notice);
     }
 
     /**
@@ -88,7 +85,7 @@ public class SysNoticeService {
      */
     public int updateNotice(SysNoticeBo bo) {
         SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
-        return baseMapper.updateById(notice);
+        return noticeMapper.updateById(notice);
     }
 
     /**
@@ -98,7 +95,7 @@ public class SysNoticeService {
      * @return 结果
      */
     public int deleteNoticeById(Long noticeId) {
-        return baseMapper.deleteById(noticeId);
+        return noticeMapper.deleteById(noticeId);
     }
 
     /**
@@ -108,6 +105,6 @@ public class SysNoticeService {
      * @return 结果
      */
     public int deleteNoticeByIds(Long[] noticeIds) {
-        return baseMapper.deleteBatchIds(Arrays.asList(noticeIds));
+        return noticeMapper.deleteBatchIds(Arrays.asList(noticeIds));
     }
 }

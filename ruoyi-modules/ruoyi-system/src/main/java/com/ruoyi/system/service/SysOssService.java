@@ -48,11 +48,11 @@ import java.util.Map;
 @Service
 public class SysOssService implements OssService {
 
-    private final SysOssMapper baseMapper;
+    private final SysOssMapper ossMapper;
 
     public TableDataInfo<SysOssVo> queryPageList(SysOssBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<SysOss> lqw = buildQueryWrapper(bo);
-        Page<SysOssVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysOssVo> result = ossMapper.selectVoPage(pageQuery.build(), lqw);
         List<SysOssVo> filterResult = StreamUtils.toList(result.getRecords(), this::matchingUrl);
         result.setRecords(filterResult);
         return TableDataInfo.build(result);
@@ -105,7 +105,7 @@ public class SysOssService implements OssService {
 
     @Cacheable(cacheNames = CacheNames.SYS_OSS, key = "#ossId")
     public SysOssVo getById(Long ossId) {
-        return baseMapper.selectVoById(ossId);
+        return ossMapper.selectVoById(ossId);
     }
 
     public void download(Long ossId, HttpServletResponse response) throws IOException {
@@ -155,7 +155,7 @@ public class SysOssService implements OssService {
         oss.setFileName(uploadResult.getFilename());
         oss.setOriginalName(originalfileName);
         oss.setService(configKey);
-        baseMapper.insert(oss);
+        ossMapper.insert(oss);
         SysOssVo sysOssVo = MapstructUtils.convert(oss, SysOssVo.class);
         return this.matchingUrl(sysOssVo);
     }
@@ -164,12 +164,12 @@ public class SysOssService implements OssService {
         if (isValid) {
             // 做一些业务上的校验,判断是否需要校验
         }
-        List<SysOss> list = baseMapper.selectBatchIds(ids);
+        List<SysOss> list = ossMapper.selectBatchIds(ids);
         for (SysOss sysOss : list) {
             OssClient storage = OssFactory.instance(sysOss.getService());
             storage.delete(sysOss.getUrl());
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return ossMapper.deleteBatchIds(ids) > 0;
     }
 
     /**

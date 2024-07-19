@@ -33,7 +33,7 @@ import static cn.hutool.core.lang.Validator.isNotNull;
 @Service
 public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCategory> {
 
-    private final ItemCategoryMapper baseMapper;
+    private final ItemCategoryMapper itemCategoryMapper;
     private final ItemMapper itemMapper;
 
     /**
@@ -41,7 +41,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
      */
 
     public ItemCategoryVo queryById(Long id) {
-        return baseMapper.selectVoById(id);
+        return itemCategoryMapper.selectVoById(id);
     }
 
     /**
@@ -50,7 +50,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
 
     public TableDataInfo<ItemCategoryVo> queryPageList(ItemCategoryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<ItemCategory> lqw = buildQueryWrapper(bo);
-        Page<ItemCategoryVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<ItemCategoryVo> result = itemCategoryMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -61,7 +61,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
     public List<ItemCategoryVo> queryList(ItemCategoryBo bo) {
         LambdaQueryWrapper<ItemCategory> lqw = buildQueryWrapper(bo);
         lqw.orderByAsc(ItemCategory::getOrderNum);
-        return baseMapper.selectVoList(lqw);
+        return itemCategoryMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<ItemCategory> buildQueryWrapper(ItemCategoryBo bo) {
@@ -90,9 +90,9 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         //查当前级别排序最大值
         wrapper.orderByDesc(ItemCategory::getOrderNum);
         wrapper.last("limit 1");
-        ItemCategory itemType = baseMapper.selectOne(wrapper);
+        ItemCategory itemType = itemCategoryMapper.selectOne(wrapper);
         add.setOrderNum(itemType == null ? 0L : itemType.getOrderNum() + 1);
-        baseMapper.insert(add);
+        itemCategoryMapper.insert(add);
     }
 
     /**
@@ -102,14 +102,14 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
     public void updateByBo(ItemCategoryBo bo) {
         validateItemTypeName(bo);
         ItemCategory update = MapstructUtils.convert(bo, ItemCategory.class);
-        baseMapper.updateById(update);
+        itemCategoryMapper.updateById(update);
     }
 
     private void validateItemTypeName(ItemCategoryBo bo) {
         LambdaQueryWrapper<ItemCategory> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(ItemCategory::getCategoryName, bo.getCategoryName());
         queryWrapper.ne(bo.getId() != null, ItemCategory::getId, bo.getId());
-        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "分类名重复");
+        Assert.isTrue(itemCategoryMapper.selectCount(queryWrapper) == 0, "分类名重复");
     }
 
     /**
@@ -121,11 +121,11 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         //因为分类只有两级，直接查一下子分类，根据分类id把分类和商品全删了就行
         LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
         itemTypeWrapper.in(ItemCategory::getParentId, ids);
-        List<Long> subIdList = baseMapper.selectList(itemTypeWrapper).stream().map(ItemCategory::getId).collect(Collectors.toList());
+        List<Long> subIdList = itemCategoryMapper.selectList(itemTypeWrapper).stream().map(ItemCategory::getId).collect(Collectors.toList());
         if (!CollUtil.isEmpty(subIdList)) {
             ids.addAll(subIdList);
         }
-        int rows = baseMapper.deleteBatchIds(ids);
+        int rows = itemCategoryMapper.deleteBatchIds(ids);
         if (rows < 1) {
             throw new RuntimeException("删除分类失败");
         }

@@ -38,7 +38,7 @@ import java.util.Map;
 @Service
 public class SysLogininforService {
 
-    private final SysLogininforMapper baseMapper;
+    private final SysLogininforMapper logininforMapper;
 
     /**
      * 记录登录信息
@@ -102,7 +102,7 @@ public class SysLogininforService {
             pageQuery.setOrderByColumn("info_id");
             pageQuery.setIsAsc("desc");
         }
-        Page<SysLogininforVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysLogininforVo> page = logininforMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
@@ -114,7 +114,7 @@ public class SysLogininforService {
     public void insertLogininfor(SysLogininforBo bo) {
         SysLogininfor logininfor = MapstructUtils.convert(bo, SysLogininfor.class);
         logininfor.setLoginTime(LocalDateTime.now());
-        baseMapper.insert(logininfor);
+        logininforMapper.insert(logininfor);
     }
 
     /**
@@ -125,7 +125,7 @@ public class SysLogininforService {
      */
     public List<SysLogininfor> selectLogininforList(SysLogininforBo logininfor) {
         Map<String, Object> params = logininfor.getParams();
-        return baseMapper.selectList(new LambdaQueryWrapper<SysLogininfor>()
+        return logininforMapper.selectList(new LambdaQueryWrapper<SysLogininfor>()
             .like(StringUtils.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
             .eq(StringUtils.isNotBlank(logininfor.getStatus()), SysLogininfor::getStatus, logininfor.getStatus())
             .like(StringUtils.isNotBlank(logininfor.getUserName()), SysLogininfor::getUserName, logininfor.getUserName())
@@ -141,13 +141,13 @@ public class SysLogininforService {
      * @return 结果
      */
     public int deleteLogininforByIds(Long[] infoIds) {
-        return baseMapper.deleteBatchIds(Arrays.asList(infoIds));
+        return logininforMapper.deleteBatchIds(Arrays.asList(infoIds));
     }
 
     /**
      * 清空系统登录日志
      */
     public void cleanLogininfor() {
-        baseMapper.delete(new LambdaQueryWrapper<>());
+        logininforMapper.delete(new LambdaQueryWrapper<>());
     }
 }

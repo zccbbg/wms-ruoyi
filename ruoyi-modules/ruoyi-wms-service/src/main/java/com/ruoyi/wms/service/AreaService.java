@@ -24,14 +24,14 @@ import java.util.Map;
 @Service
 public class AreaService {
 
-    private final AreaMapper baseMapper;
+    private final AreaMapper areaMapper;
 
     /**
      * 查询库区
      */
 
     public AreaVo queryById(Long id) {
-        return baseMapper.selectVoById(id);
+        return areaMapper.selectVoById(id);
     }
 
     /**
@@ -40,7 +40,7 @@ public class AreaService {
 
     public TableDataInfo<AreaVo> queryPageList(AreaBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Area> lqw = buildQueryWrapper(bo);
-        Page<AreaVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<AreaVo> result = areaMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -50,7 +50,7 @@ public class AreaService {
 
     public List<AreaVo> queryList(AreaBo bo) {
         LambdaQueryWrapper<Area> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return areaMapper.selectVoList(lqw);
     }
 
     /**
@@ -62,7 +62,7 @@ public class AreaService {
     public Long countByWarehouseId(Long id) {
         LambdaQueryWrapper<Area> lqw = Wrappers.lambdaQuery();
         lqw.eq(Area::getWarehouseId, id);
-        return baseMapper.selectCount(lqw);
+        return areaMapper.selectCount(lqw);
     }
 
     private LambdaQueryWrapper<Area> buildQueryWrapper(AreaBo bo) {
@@ -81,7 +81,7 @@ public class AreaService {
     public void insertByBo(AreaBo bo) {
         validateAreaNameAndNo(bo);
         Area add = MapstructUtils.convert(bo, Area.class);
-        baseMapper.insert(add);
+        areaMapper.insert(add);
     }
 
     /**
@@ -91,7 +91,7 @@ public class AreaService {
     public void updateByBo(AreaBo bo) {
         validateAreaNameAndNo(bo);
         Area update = MapstructUtils.convert(bo, Area.class);
-        baseMapper.updateById(update);
+        areaMapper.updateById(update);
     }
 
     private void validateAreaNameAndNo(AreaBo area) {
@@ -99,14 +99,14 @@ public class AreaService {
         queryWrapper.eq(Area::getWarehouseId, area.getWarehouseId());
         queryWrapper.eq(Area::getAreaName, area.getAreaName());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
-        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "库区名称重复");
+        Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区名称重复");
         if (StrUtil.isBlank(area.getAreaNo())) {
             return;
         }
         queryWrapper.clear();
         queryWrapper.eq(Area::getAreaNo, area.getAreaNo());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
-        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "库区编号重复");
+        Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区编号重复");
     }
 
     /**
@@ -114,13 +114,13 @@ public class AreaService {
      */
 
     public void deleteWithValidByIds(Collection<Long> ids) {
-        baseMapper.deleteBatchIds(ids);
+        areaMapper.deleteBatchIds(ids);
     }
 
     public List<AreaVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             return CollUtil.newArrayList();
         }
-        return baseMapper.queryByIdsIgnoreDelFlag(ids);
+        return areaMapper.queryByIdsIgnoreDelFlag(ids);
     }
 }

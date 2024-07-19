@@ -30,11 +30,11 @@ import java.util.List;
 @Service
 public class SysPostService {
 
-    private final SysPostMapper baseMapper;
+    private final SysPostMapper postMapper;
     private final SysUserPostMapper userPostMapper;
 
     public TableDataInfo<SysPostVo> selectPagePostList(SysPostBo post, PageQuery pageQuery) {
-        Page<SysPostVo> page = baseMapper.selectPagePostList(pageQuery.build(), buildQueryWrapper(post));
+        Page<SysPostVo> page = postMapper.selectPagePostList(pageQuery.build(), buildQueryWrapper(post));
         return TableDataInfo.build(page);
     }
 
@@ -60,7 +60,7 @@ public class SysPostService {
      * @return 岗位信息集合
      */
     public List<SysPostVo> selectPostList(SysPostBo post) {
-        return baseMapper.selectVoList(buildQueryWrapper(post));
+        return postMapper.selectVoList(buildQueryWrapper(post));
     }
 
     /**
@@ -69,7 +69,7 @@ public class SysPostService {
      * @return 岗位列表
      */
     public List<SysPostVo> selectPostAll() {
-        return baseMapper.selectVoList(new QueryWrapper<>());
+        return postMapper.selectVoList(new QueryWrapper<>());
     }
 
     /**
@@ -79,7 +79,7 @@ public class SysPostService {
      * @return 角色对象信息
      */
     public SysPostVo selectPostById(Long postId) {
-        return baseMapper.selectVoById(postId);
+        return postMapper.selectVoById(postId);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SysPostService {
      * @return 选中岗位ID列表
      */
     public List<Long> selectPostListByUserId(Long userId) {
-        return baseMapper.selectPostListByUserId(userId);
+        return postMapper.selectPostListByUserId(userId);
     }
 
     /**
@@ -99,7 +99,7 @@ public class SysPostService {
      * @return 结果
      */
     public boolean checkPostNameUnique(SysPostBo post) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysPost>()
+        boolean exist = postMapper.exists(new LambdaQueryWrapper<SysPost>()
             .eq(SysPost::getPostName, post.getPostName())
             .ne(ObjectUtil.isNotNull(post.getPostId()), SysPost::getPostId, post.getPostId()));
         return !exist;
@@ -112,7 +112,7 @@ public class SysPostService {
      * @return 结果
      */
     public boolean checkPostCodeUnique(SysPostBo post) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysPost>()
+        boolean exist = postMapper.exists(new LambdaQueryWrapper<SysPost>()
             .eq(SysPost::getPostCode, post.getPostCode())
             .ne(ObjectUtil.isNotNull(post.getPostId()), SysPost::getPostId, post.getPostId()));
         return !exist;
@@ -135,7 +135,7 @@ public class SysPostService {
      * @return 结果
      */
     public int deletePostById(Long postId) {
-        return baseMapper.deleteById(postId);
+        return postMapper.deleteById(postId);
     }
 
     /**
@@ -146,12 +146,12 @@ public class SysPostService {
      */
     public int deletePostByIds(Long[] postIds) {
         for (Long postId : postIds) {
-            SysPost post = baseMapper.selectById(postId);
+            SysPost post = postMapper.selectById(postId);
             if (countUserPostById(postId) > 0) {
                 throw new ServiceException(String.format("%1$s已分配，不能删除!", post.getPostName()));
             }
         }
-        return baseMapper.deleteBatchIds(Arrays.asList(postIds));
+        return postMapper.deleteBatchIds(Arrays.asList(postIds));
     }
 
     /**
@@ -162,7 +162,7 @@ public class SysPostService {
      */
     public int insertPost(SysPostBo bo) {
         SysPost post = MapstructUtils.convert(bo, SysPost.class);
-        return baseMapper.insert(post);
+        return postMapper.insert(post);
     }
 
     /**
@@ -173,6 +173,6 @@ public class SysPostService {
      */
     public int updatePost(SysPostBo bo) {
         SysPost post = MapstructUtils.convert(bo, SysPost.class);
-        return baseMapper.updateById(post);
+        return postMapper.updateById(post);
     }
 }

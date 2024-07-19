@@ -30,11 +30,11 @@ import java.util.List;
 @Service
 public class SysDictDataService {
 
-    private final SysDictDataMapper baseMapper;
+    private final SysDictDataMapper dictDataMapper;
 
     public TableDataInfo<SysDictDataVo> selectPageDictDataList(SysDictDataBo dictData, PageQuery pageQuery) {
         LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
-        Page<SysDictDataVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysDictDataVo> page = dictDataMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
@@ -46,7 +46,7 @@ public class SysDictDataService {
      */
     public List<SysDictDataVo> selectDictDataList(SysDictDataBo dictData) {
         LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
-        return baseMapper.selectVoList(lqw);
+        return dictDataMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<SysDictData> buildQueryWrapper(SysDictDataBo bo) {
@@ -65,7 +65,7 @@ public class SysDictDataService {
      * @return 字典数据
      */
     public SysDictDataVo selectDictDataById(Long dictCode) {
-        return baseMapper.selectVoById(dictCode);
+        return dictDataMapper.selectVoById(dictCode);
     }
 
     /**
@@ -75,8 +75,8 @@ public class SysDictDataService {
      */
     public void deleteDictDataByIds(Long[] dictCodes) {
         for (Long dictCode : dictCodes) {
-            SysDictData data = baseMapper.selectById(dictCode);
-            baseMapper.deleteById(dictCode);
+            SysDictData data = dictDataMapper.selectById(dictCode);
+            dictDataMapper.deleteById(dictCode);
             CacheUtils.evict(CacheNames.SYS_DICT, data.getDictType());
         }
     }
@@ -90,9 +90,9 @@ public class SysDictDataService {
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
     public List<SysDictDataVo> insertDictData(SysDictDataBo bo) {
         SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
-        int row = baseMapper.insert(data);
+        int row = dictDataMapper.insert(data);
         if (row > 0) {
-            return baseMapper.selectDictDataByType(data.getDictType());
+            return dictDataMapper.selectDictDataByType(data.getDictType());
         }
         throw new ServiceException("操作失败");
     }
@@ -106,16 +106,16 @@ public class SysDictDataService {
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
     public List<SysDictDataVo> updateDictData(SysDictDataBo bo) {
         SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
-        int row = baseMapper.updateById(data);
+        int row = dictDataMapper.updateById(data);
         if (row > 0) {
-            return baseMapper.selectDictDataByType(data.getDictType());
+            return dictDataMapper.selectDictDataByType(data.getDictType());
         }
         throw new ServiceException("操作失败");
     }
 
     public boolean checkDictDataUnique(SysDictDataBo dict) {
         Long dictCode = ObjectUtil.isNull(dict.getDictCode()) ? -1L : dict.getDictCode();
-        SysDictData entity = baseMapper.selectOne(new LambdaQueryWrapper<SysDictData>()
+        SysDictData entity = dictDataMapper.selectOne(new LambdaQueryWrapper<SysDictData>()
             .eq(SysDictData::getDictType, dict.getDictType()).eq(SysDictData::getDictValue, dict.getDictValue()));
         if (ObjectUtil.isNotNull(entity) && !dictCode.equals(entity.getDictCode())) {
             return false;

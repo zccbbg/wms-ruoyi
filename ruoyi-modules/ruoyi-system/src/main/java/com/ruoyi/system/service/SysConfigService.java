@@ -37,11 +37,11 @@ import java.util.Map;
 @Service
 public class SysConfigService implements ConfigService {
 
-    private final SysConfigMapper baseMapper;
+    private final SysConfigMapper configMapper;
 
     public TableDataInfo<SysConfigVo> selectPageConfigList(SysConfigBo config, PageQuery pageQuery) {
         LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
-        Page<SysConfigVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysConfigVo> page = configMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
@@ -53,7 +53,7 @@ public class SysConfigService implements ConfigService {
      */
     @DS("master")
     public SysConfigVo selectConfigById(Long configId) {
-        return baseMapper.selectVoById(configId);
+        return configMapper.selectVoById(configId);
     }
 
     /**
@@ -64,7 +64,7 @@ public class SysConfigService implements ConfigService {
      */
     @Cacheable(cacheNames = CacheNames.SYS_CONFIG, key = "#configKey")
     public String selectConfigByKey(String configKey) {
-        SysConfig retConfig = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
+        SysConfig retConfig = configMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
             .eq(SysConfig::getConfigKey, configKey));
         if (ObjectUtil.isNotNull(retConfig)) {
             return retConfig.getConfigValue();
@@ -80,7 +80,7 @@ public class SysConfigService implements ConfigService {
      */
     public List<SysConfigVo> selectConfigList(SysConfigBo config) {
         LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
-        return baseMapper.selectVoList(lqw);
+        return configMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<SysConfig> buildQueryWrapper(SysConfigBo bo) {
@@ -104,7 +104,7 @@ public class SysConfigService implements ConfigService {
     @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
     public String insertConfig(SysConfigBo bo) {
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
-        int row = baseMapper.insert(config);
+        int row = configMapper.insert(config);
         if (row > 0) {
             return config.getConfigValue();
         }
@@ -122,13 +122,13 @@ public class SysConfigService implements ConfigService {
         int row = 0;
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
         if (config.getConfigId() != null) {
-            SysConfig temp = baseMapper.selectById(config.getConfigId());
+            SysConfig temp = configMapper.selectById(config.getConfigId());
             if (!StringUtils.equals(temp.getConfigKey(), config.getConfigKey())) {
                 CacheUtils.evict(CacheNames.SYS_CONFIG, temp.getConfigKey());
             }
-            row = baseMapper.updateById(config);
+            row = configMapper.updateById(config);
         } else {
-            row = baseMapper.update(config, new LambdaQueryWrapper<SysConfig>()
+            row = configMapper.update(config, new LambdaQueryWrapper<SysConfig>()
                 .eq(SysConfig::getConfigKey, config.getConfigKey()));
         }
         if (row > 0) {
@@ -144,13 +144,13 @@ public class SysConfigService implements ConfigService {
      */
     public void deleteConfigByIds(Long[] configIds) {
         for (Long configId : configIds) {
-            SysConfig config = baseMapper.selectById(configId);
+            SysConfig config = configMapper.selectById(configId);
             if (StringUtils.equals(UserConstants.YES, config.getConfigType())) {
                 throw new ServiceException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
             }
             CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
         }
-        baseMapper.deleteBatchIds(Arrays.asList(configIds));
+        configMapper.deleteBatchIds(Arrays.asList(configIds));
     }
 
     /**
@@ -185,7 +185,7 @@ public class SysConfigService implements ConfigService {
      */
     public boolean checkConfigKeyUnique(SysConfigBo config) {
         long configId = ObjectUtil.isNull(config.getConfigId()) ? -1L : config.getConfigId();
-        SysConfig info = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getConfigKey, config.getConfigKey()));
+        SysConfig info = configMapper.selectOne(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getConfigKey, config.getConfigKey()));
         if (ObjectUtil.isNotNull(info) && info.getConfigId() != configId) {
             return false;
         }

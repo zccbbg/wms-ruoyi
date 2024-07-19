@@ -48,7 +48,7 @@ import java.util.Map;
 @Service
 public class SysUserService implements UserService {
 
-    private final SysUserMapper baseMapper;
+    private final SysUserMapper userMapper;
     private final SysDeptMapper deptMapper;
     private final SysRoleMapper roleMapper;
     private final SysPostMapper postMapper;
@@ -56,7 +56,7 @@ public class SysUserService implements UserService {
     private final SysUserPostMapper userPostMapper;
 
     public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
-        Page<SysUserVo> page = baseMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
+        Page<SysUserVo> page = userMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
         return TableDataInfo.build(page);
     }
 
@@ -67,7 +67,7 @@ public class SysUserService implements UserService {
      * @return 用户信息集合信息
      */
     public List<SysUserVo> selectUserList(SysUserBo user) {
-        return baseMapper.selectUserList(this.buildQueryWrapper(user));
+        return userMapper.selectUserList(this.buildQueryWrapper(user));
     }
 
     private Wrapper<SysUser> buildQueryWrapper(SysUserBo user) {
@@ -104,7 +104,7 @@ public class SysUserService implements UserService {
             .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
             .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber());
-        Page<SysUserVo> page = baseMapper.selectAllocatedList(pageQuery.build(), wrapper);
+        Page<SysUserVo> page = userMapper.selectAllocatedList(pageQuery.build(), wrapper);
         return TableDataInfo.build(page);
     }
 
@@ -122,7 +122,7 @@ public class SysUserService implements UserService {
             .notIn(CollUtil.isNotEmpty(userIds), "u.user_id", userIds)
             .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber());
-        Page<SysUserVo> page = baseMapper.selectUnallocatedList(pageQuery.build(), wrapper);
+        Page<SysUserVo> page = userMapper.selectUnallocatedList(pageQuery.build(), wrapper);
         return TableDataInfo.build(page);
     }
 
@@ -133,7 +133,7 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserByUserName(String userName) {
-        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
+        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
     }
 
     /**
@@ -143,7 +143,7 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserByPhonenumber(String phonenumber) {
-        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
+        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
     }
 
     /**
@@ -153,7 +153,7 @@ public class SysUserService implements UserService {
      * @return 用户对象信息
      */
     public SysUserVo selectUserById(Long userId) {
-        SysUserVo user = baseMapper.selectVoById(userId);
+        SysUserVo user = userMapper.selectVoById(userId);
         if (ObjectUtil.isNull(user)) {
             return user;
         }
@@ -196,7 +196,7 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public boolean checkUserNameUnique(SysUserBo user) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
+        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getUserName, user.getUserName())
             .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
         return !exist;
@@ -208,7 +208,7 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      */
     public boolean checkPhoneUnique(SysUserBo user) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
+        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getPhonenumber, user.getPhonenumber())
             .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
         return !exist;
@@ -220,7 +220,7 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      */
     public boolean checkEmailUnique(SysUserBo user) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
+        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getEmail, user.getEmail())
             .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
         return !exist;
@@ -249,7 +249,7 @@ public class SysUserService implements UserService {
         if (LoginHelper.isAdmin()) {
             return;
         }
-        if (baseMapper.countUserById(userId) == 0) {
+        if (userMapper.countUserById(userId) == 0) {
             throw new ServiceException("没有权限访问用户数据！");
         }
     }
@@ -264,7 +264,7 @@ public class SysUserService implements UserService {
     public int insertUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
-        int rows = baseMapper.insert(sysUser);
+        int rows = userMapper.insert(sysUser);
         user.setUserId(sysUser.getUserId());
         // 新增用户岗位关联
         insertUserPost(user);
@@ -283,7 +283,7 @@ public class SysUserService implements UserService {
         user.setCreateBy(user.getUserName());
         user.setUpdateBy(user.getUserName());
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        return baseMapper.insert(sysUser) > 0;
+        return userMapper.insert(sysUser) > 0;
     }
 
     /**
@@ -304,7 +304,7 @@ public class SysUserService implements UserService {
         // 新增用户与岗位管理
         insertUserPost(user);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        return baseMapper.updateById(sysUser);
+        return userMapper.updateById(sysUser);
     }
 
     /**
@@ -328,7 +328,7 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public int updateUserStatus(Long userId, String status) {
-        return baseMapper.update(null,
+        return userMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getStatus, status)
                 .eq(SysUser::getUserId, userId));
@@ -342,7 +342,7 @@ public class SysUserService implements UserService {
      */
     @CacheEvict(cacheNames = CacheNames.SYS_NICKNAME, key = "#user.userId")
     public int updateUserProfile(SysUserBo user) {
-        return baseMapper.update(null,
+        return userMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .set(ObjectUtil.isNotNull(user.getNickName()), SysUser::getNickName, user.getNickName())
                 .set(SysUser::getPhonenumber, user.getPhonenumber())
@@ -359,7 +359,7 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public boolean updateUserAvatar(String userName, String avatar) {
-        return baseMapper.update(null,
+        return userMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getAvatar, avatar)
                 .eq(SysUser::getUserName, userName)) > 0;
@@ -373,7 +373,7 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public int resetUserPwd(Long userId, String password) {
-        return baseMapper.update(null,
+        return userMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getPassword, password)
                 .eq(SysUser::getUserId, userId));
@@ -387,7 +387,7 @@ public class SysUserService implements UserService {
      * @return 结果
      */
     public int resetUserPwd(String userName, String password) {
-        return baseMapper.update(null,
+        return userMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getPassword, password)
                 .eq(SysUser::getUserName, userName));
@@ -452,7 +452,7 @@ public class SysUserService implements UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, userId));
-        return baseMapper.deleteById(userId);
+        return userMapper.deleteById(userId);
     }
 
     /**
@@ -472,17 +472,17 @@ public class SysUserService implements UserService {
         userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
         // 删除用户与岗位表
         userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getUserId, ids));
-        return baseMapper.deleteBatchIds(ids);
+        return userMapper.deleteBatchIds(ids);
     }
 
     @Cacheable(cacheNames = CacheNames.SYS_USER_NAME, key = "#userId")
     public String selectUserNameById(Long userId) {
-        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
+        SysUser sysUser = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserName).eq(SysUser::getUserId, userId));
         return ObjectUtil.isNull(sysUser) ? null : sysUser.getUserName();
     }
 
     public List<SysUserExportVo> selectUserExportList(SysUserBo user) {
-        return baseMapper.selectUserExportList(this.buildQueryWrapper(user));
+        return userMapper.selectUserExportList(this.buildQueryWrapper(user));
     }
 }

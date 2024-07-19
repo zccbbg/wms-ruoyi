@@ -32,7 +32,7 @@ import java.util.Map;
 @Service
 public class SysOperLogService {
 
-    private final SysOperLogMapper baseMapper;
+    private final SysOperLogMapper operLogMapper;
 
     /**
      * 操作日志记录
@@ -69,7 +69,7 @@ public class SysOperLogService {
             pageQuery.setOrderByColumn("oper_id");
             pageQuery.setIsAsc("desc");
         }
-        Page<SysOperLogVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysOperLogVo> page = operLogMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(page);
     }
 
@@ -81,7 +81,7 @@ public class SysOperLogService {
     public void insertOperlog(SysOperLogBo bo) {
         SysOperLog operLog = MapstructUtils.convert(bo, SysOperLog.class);
         operLog.setOperTime(LocalDateTime.now());
-        baseMapper.insert(operLog);
+        operLogMapper.insert(operLog);
     }
 
     /**
@@ -92,7 +92,7 @@ public class SysOperLogService {
      */
     public List<SysOperLogVo> selectOperLogList(SysOperLogBo operLog) {
         Map<String, Object> params = operLog.getParams();
-        return baseMapper.selectVoList(new LambdaQueryWrapper<SysOperLog>()
+        return operLogMapper.selectVoList(new LambdaQueryWrapper<SysOperLog>()
             .like(StringUtils.isNotBlank(operLog.getOperIp()), SysOperLog::getOperIp, operLog.getOperIp())
             .like(StringUtils.isNotBlank(operLog.getTitle()), SysOperLog::getTitle, operLog.getTitle())
             .eq(operLog.getBusinessType() != null && operLog.getBusinessType() > 0,
@@ -117,7 +117,7 @@ public class SysOperLogService {
      * @return 结果
      */
     public int deleteOperLogByIds(Long[] operIds) {
-        return baseMapper.deleteBatchIds(Arrays.asList(operIds));
+        return operLogMapper.deleteBatchIds(Arrays.asList(operIds));
     }
 
     /**
@@ -127,13 +127,13 @@ public class SysOperLogService {
      * @return 操作日志对象
      */
     public SysOperLogVo selectOperLogById(Long operId) {
-        return baseMapper.selectVoById(operId);
+        return operLogMapper.selectVoById(operId);
     }
 
     /**
      * 清空操作日志
      */
     public void cleanOperLog() {
-        baseMapper.delete(new LambdaQueryWrapper<>());
+        operLogMapper.delete(new LambdaQueryWrapper<>());
     }
 }

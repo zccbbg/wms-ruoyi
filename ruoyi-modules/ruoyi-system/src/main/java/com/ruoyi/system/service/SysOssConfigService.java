@@ -40,13 +40,13 @@ import java.util.List;
 @Service
 public class SysOssConfigService {
 
-    private final SysOssConfigMapper baseMapper;
+    private final SysOssConfigMapper ossConfigMapper;
 
     /**
      * 项目启动时，初始化参数到缓存，加载配置类
      */
     public void init() {
-        List<SysOssConfig> list = baseMapper.selectList();
+        List<SysOssConfig> list = ossConfigMapper.selectList();
         // 加载OSS初始化配置
         for (SysOssConfig config : list) {
             String configKey = config.getConfigKey();
@@ -58,12 +58,12 @@ public class SysOssConfigService {
     }
 
     public SysOssConfigVo queryById(Long ossConfigId) {
-        return baseMapper.selectVoById(ossConfigId);
+        return ossConfigMapper.selectVoById(ossConfigId);
     }
 
     public TableDataInfo<SysOssConfigVo> queryPageList(SysOssConfigBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<SysOssConfig> lqw = buildQueryWrapper(bo);
-        Page<SysOssConfigVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<SysOssConfigVo> result = ossConfigMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -79,7 +79,7 @@ public class SysOssConfigService {
     public Boolean insertByBo(SysOssConfigBo bo) {
         SysOssConfig config = MapstructUtils.convert(bo, SysOssConfig.class);
         validEntityBeforeSave(config);
-        boolean flag = baseMapper.insert(config) > 0;
+        boolean flag = ossConfigMapper.insert(config) > 0;
         if (flag) {
             CacheUtils.put(CacheNames.SYS_OSS_CONFIG, config.getConfigKey(), JsonUtils.toJsonString(config));
         }
@@ -95,7 +95,7 @@ public class SysOssConfigService {
         luw.set(ObjectUtil.isNull(config.getExt1()), SysOssConfig::getExt1, "");
         luw.set(ObjectUtil.isNull(config.getRemark()), SysOssConfig::getRemark, "");
         luw.eq(SysOssConfig::getOssConfigId, config.getOssConfigId());
-        boolean flag = baseMapper.update(config, luw) > 0;
+        boolean flag = ossConfigMapper.update(config, luw) > 0;
         if (flag) {
             CacheUtils.put(CacheNames.SYS_OSS_CONFIG, config.getConfigKey(), JsonUtils.toJsonString(config));
         }
@@ -119,10 +119,10 @@ public class SysOssConfigService {
         }
         List<SysOssConfig> list = CollUtil.newArrayList();
         for (Long configId : ids) {
-            SysOssConfig config = baseMapper.selectById(configId);
+            SysOssConfig config = ossConfigMapper.selectById(configId);
             list.add(config);
         }
-        boolean flag = baseMapper.deleteBatchIds(ids) > 0;
+        boolean flag = ossConfigMapper.deleteBatchIds(ids) > 0;
         if (flag) {
             list.forEach(sysOssConfig ->
                 CacheUtils.evict(CacheNames.SYS_OSS_CONFIG, sysOssConfig.getConfigKey()));
@@ -135,7 +135,7 @@ public class SysOssConfigService {
      */
     private boolean checkConfigKeyUnique(SysOssConfig sysOssConfig) {
         long ossConfigId = ObjectUtil.isNull(sysOssConfig.getOssConfigId()) ? -1L : sysOssConfig.getOssConfigId();
-        SysOssConfig info = baseMapper.selectOne(new LambdaQueryWrapper<SysOssConfig>()
+        SysOssConfig info = ossConfigMapper.selectOne(new LambdaQueryWrapper<SysOssConfig>()
             .select(SysOssConfig::getOssConfigId, SysOssConfig::getConfigKey)
             .eq(SysOssConfig::getConfigKey, sysOssConfig.getConfigKey()));
         if (ObjectUtil.isNotNull(info) && info.getOssConfigId() != ossConfigId) {
@@ -150,9 +150,9 @@ public class SysOssConfigService {
     @Transactional(rollbackFor = Exception.class)
     public int updateOssConfigStatus(SysOssConfigBo bo) {
         SysOssConfig sysOssConfig = MapstructUtils.convert(bo, SysOssConfig.class);
-        int row = baseMapper.update(null, new LambdaUpdateWrapper<SysOssConfig>()
+        int row = ossConfigMapper.update(null, new LambdaUpdateWrapper<SysOssConfig>()
             .set(SysOssConfig::getStatus, "0"));
-        row += baseMapper.updateById(sysOssConfig);
+        row += ossConfigMapper.updateById(sysOssConfig);
         if (row > 0) {
             RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, sysOssConfig.getConfigKey());
         }

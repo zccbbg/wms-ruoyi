@@ -1,11 +1,9 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,14 +20,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
-    private final WarehouseMapper baseMapper;
+    private final WarehouseMapper warehouseMapper;
     private final AreaService areaService;
     private final AreaMapper areaMapper;
 
@@ -38,7 +35,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      */
 
     public WarehouseVo queryById(Long id) {
-        return baseMapper.selectVoById(id);
+        return warehouseMapper.selectVoById(id);
     }
 
     /**
@@ -47,7 +44,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     public TableDataInfo<WarehouseVo> queryPageList(WarehouseBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Warehouse> lqw = buildQueryWrapper(bo);
-        Page<WarehouseVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<WarehouseVo> result = warehouseMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -57,7 +54,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     public List<WarehouseVo> queryList(WarehouseBo bo) {
         LambdaQueryWrapper<Warehouse> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return warehouseMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<Warehouse> buildQueryWrapper(WarehouseBo bo) {
@@ -77,14 +74,14 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
         validateWarehouseNameAndNo(bo);
         Warehouse add = MapstructUtils.convert(bo, Warehouse.class);
         add.setOrderNum(this.getNextOrderNum());
-        baseMapper.insert(add);
+        warehouseMapper.insert(add);
     }
 
     private Long getNextOrderNum() {
         LambdaQueryWrapper<Warehouse> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(Warehouse::getOrderNum);
         wrapper.last("limit 1");
-        Warehouse warehouse = baseMapper.selectOne(wrapper);
+        Warehouse warehouse = warehouseMapper.selectOne(wrapper);
         return warehouse == null ? 0L : warehouse.getOrderNum() + 1;
     }
 
@@ -95,13 +92,13 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
     public void updateByBo(WarehouseBo bo) {
         validateWarehouseNameAndNo(bo);
         Warehouse update = MapstructUtils.convert(bo, Warehouse.class);
-        baseMapper.updateById(update);
+        warehouseMapper.updateById(update);
     }
 
     private void validateWarehouseNameAndNo(WarehouseBo warehouse) {
         LambdaQueryWrapper<Warehouse> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Warehouse::getWarehouseName, warehouse.getWarehouseName()).or().eq(StrUtil.isNotBlank(warehouse.getWarehouseNo()), Warehouse::getWarehouseNo, warehouse.getWarehouseNo());
-        List<Warehouse> warehouseList = baseMapper.selectList(queryWrapper);
+        List<Warehouse> warehouseList = warehouseMapper.selectList(queryWrapper);
         boolean validateNameResult = warehouseList.stream().anyMatch(
             it -> Objects.equals(it.getWarehouseName(), warehouse.getWarehouseName()) && !Objects.equals(it.getId(), warehouse.getId()));
         Assert.isFalse(validateNameResult, "仓库名称重复");
@@ -116,7 +113,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     public void deleteWithValidByIds(Collection<Long> ids) {
         List<Long> areaIdList = this.getAreaIdInWarehouse(ids);
-        baseMapper.deleteBatchIds(ids);
+        warehouseMapper.deleteBatchIds(ids);
         if (CollUtil.isNotEmpty(areaIdList)) {
             areaMapper.deleteBatchIds(areaIdList);
         }
@@ -132,7 +129,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
         if (CollUtil.isEmpty(ids)) {
             return CollUtil.newArrayList();
         }
-        return baseMapper.selectByIdsIgnoreDelFlag(ids);
+        return warehouseMapper.selectByIdsIgnoreDelFlag(ids);
     }
 
     public void updateOrderNum(List<WarehouseBo> tree) {

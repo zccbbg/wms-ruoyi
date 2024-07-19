@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ItemService {
 
-    private final ItemMapper baseMapper;
+    private final ItemMapper itemMapper;
     private final ItemSkuService itemSkuService;
     private final ItemSkuMapper itemSkuMapper;
     private final ItemCategoryMapper itemCategoryMapper;
@@ -45,7 +45,7 @@ public class ItemService {
      */
 
     public ItemVo queryById(Long id) {
-        ItemVo item = baseMapper.selectVoById(id);
+        ItemVo item = itemMapper.selectVoById(id);
         item.setSku(itemSkuService.queryListByItemId(id));
         return item;
     }
@@ -62,7 +62,7 @@ public class ItemService {
         }
         LambdaQueryWrapper<Item> lambdaQueryWrapper = Wrappers.lambdaQuery();
         lambdaQueryWrapper.in(Item::getId, itemIds);
-        return baseMapper.selectVoList(lambdaQueryWrapper);
+        return itemMapper.selectVoList(lambdaQueryWrapper);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ItemService {
         if (CollUtil.isEmpty(ids)) {
             return CollUtil.newArrayList();
         }
-        return MapstructUtils.convert(baseMapper.selectByIdsIgnoreDelFlag(ids), ItemVo.class);
+        return MapstructUtils.convert(itemMapper.selectByIdsIgnoreDelFlag(ids), ItemVo.class);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ItemService {
 
     public TableDataInfo<ItemVo> queryPageList(ItemBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Item> lqw = buildQueryWrapper(bo);
-        Page<ItemVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<ItemVo> result = itemMapper.selectVoPage(pageQuery.build(), lqw);
         List<ItemVo> itemVoList = result.getRecords();
         if (!CollUtil.isEmpty(itemVoList)) {
             LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
@@ -102,7 +102,7 @@ public class ItemService {
 
     public List<ItemVo> queryList(ItemBo bo) {
         LambdaQueryWrapper<Item> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return itemMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<Item> buildQueryWrapper(ItemBo bo) {
@@ -136,7 +136,7 @@ public class ItemService {
     public void insertByForm(ItemBo bo) {
         validEntityBeforeSave(bo);
         Item item = MapstructUtils.convert(bo, Item.class);
-        baseMapper.insert(item);
+        itemMapper.insert(item);
         itemSkuService.saveSku(item.getId(), bo.getSku());
     }
 
@@ -148,7 +148,7 @@ public class ItemService {
     @Transactional
     public void updateByForm(ItemBo bo) {
         validEntityBeforeSave(bo);
-        baseMapper.updateById(MapstructUtils.convert(bo, Item.class));
+        itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
         itemSkuService.saveSku(bo.getId(), bo.getSku());
     }
 
@@ -165,7 +165,7 @@ public class ItemService {
         LambdaQueryWrapper<Item> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Item::getItemName, item.getItemName());
         queryWrapper.ne(item.getId() != null, Item::getId, item.getId());
-        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "商品名称重复");
+        Assert.isTrue(itemMapper.selectCount(queryWrapper) == 0, "商品名称重复");
     }
     private void validateItemNo(ItemBo form) {
         if (StrUtil.isBlank(form.getItemNo())) {
@@ -174,7 +174,7 @@ public class ItemService {
         LambdaQueryWrapper<Item> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Item::getItemNo, form.getItemNo());
         queryWrapper.ne(form.getId() != null, Item::getId, form.getId());
-        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "商品编号重复");
+        Assert.isTrue(itemMapper.selectCount(queryWrapper) == 0, "商品编号重复");
     }
 
     private void validateItemSku(List<ItemSkuBo> skuVoList) {
@@ -186,7 +186,7 @@ public class ItemService {
      */
     @Transactional
     public void deleteWithValidByIds(Collection<Long> ids) {
-        baseMapper.deleteBatchIds(ids);
+        itemMapper.deleteBatchIds(ids);
         LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(ItemSku::getItemId, ids);
         List<Long> skuIds = itemSkuMapper.selectList(wrapper).stream().map(ItemSku::getId).toList();

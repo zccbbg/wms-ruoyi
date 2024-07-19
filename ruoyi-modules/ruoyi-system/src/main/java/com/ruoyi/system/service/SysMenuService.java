@@ -37,7 +37,7 @@ import java.util.*;
 @Service
 public class SysMenuService {
 
-    private final SysMenuMapper baseMapper;
+    private final SysMenuMapper menuMapper;
     private final SysRoleMapper roleMapper;
     private final SysRoleMenuMapper roleMenuMapper;
 
@@ -61,7 +61,7 @@ public class SysMenuService {
         List<SysMenuVo> menuList = null;
         // 管理员显示所有菜单信息
         if (LoginHelper.isAdmin(userId)) {
-            menuList = baseMapper.selectVoList(new LambdaQueryWrapper<SysMenu>()
+            menuList = menuMapper.selectVoList(new LambdaQueryWrapper<SysMenu>()
                 .like(StringUtils.isNotBlank(menu.getMenuName()), SysMenu::getMenuName, menu.getMenuName())
                 .eq(StringUtils.isNotBlank(menu.getVisible()), SysMenu::getVisible, menu.getVisible())
                 .eq(StringUtils.isNotBlank(menu.getStatus()), SysMenu::getStatus, menu.getStatus())
@@ -75,7 +75,7 @@ public class SysMenuService {
                 .eq(StringUtils.isNotBlank(menu.getStatus()), "m.status", menu.getStatus())
                 .orderByAsc("m.parent_id")
                 .orderByAsc("m.order_num");
-            List<SysMenu> list = baseMapper.selectMenuListByUserId(wrapper);
+            List<SysMenu> list = menuMapper.selectMenuListByUserId(wrapper);
             menuList = MapstructUtils.convert(list, SysMenuVo.class);
         }
         return menuList;
@@ -88,7 +88,7 @@ public class SysMenuService {
      * @return 权限列表
      */
     public Set<String> selectMenuPermsByUserId(Long userId) {
-        List<String> perms = baseMapper.selectMenuPermsByUserId(userId);
+        List<String> perms = menuMapper.selectMenuPermsByUserId(userId);
         Set<String> permsSet = new HashSet<>();
         for (String perm : perms) {
             if (StringUtils.isNotEmpty(perm)) {
@@ -105,7 +105,7 @@ public class SysMenuService {
      * @return 权限列表
      */
     public Set<String> selectMenuPermsByRoleId(Long roleId) {
-        List<String> perms = baseMapper.selectMenuPermsByRoleId(roleId);
+        List<String> perms = menuMapper.selectMenuPermsByRoleId(roleId);
         Set<String> permsSet = new HashSet<>();
         for (String perm : perms) {
             if (StringUtils.isNotEmpty(perm)) {
@@ -124,9 +124,9 @@ public class SysMenuService {
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
         List<SysMenu> menus = null;
         if (LoginHelper.isAdmin(userId)) {
-            menus = baseMapper.selectMenuTreeAll();
+            menus = menuMapper.selectMenuTreeAll();
         } else {
-            menus = baseMapper.selectMenuTreeByUserId(userId);
+            menus = menuMapper.selectMenuTreeByUserId(userId);
         }
         return getChildPerms(menus, 0);
     }
@@ -139,7 +139,7 @@ public class SysMenuService {
      */
     public List<Long> selectMenuListByRoleId(Long roleId) {
         SysRole role = roleMapper.selectById(roleId);
-        return baseMapper.selectMenuListByRoleId(roleId, role.getMenuCheckStrictly());
+        return menuMapper.selectMenuListByRoleId(roleId, role.getMenuCheckStrictly());
     }
 
     /**
@@ -216,7 +216,7 @@ public class SysMenuService {
      * @return 菜单信息
      */
     public SysMenuVo selectMenuById(Long menuId) {
-        return baseMapper.selectVoById(menuId);
+        return menuMapper.selectVoById(menuId);
     }
 
     /**
@@ -226,7 +226,7 @@ public class SysMenuService {
      * @return 结果
      */
     public boolean hasChildByMenuId(Long menuId) {
-        return baseMapper.exists(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, menuId));
+        return menuMapper.exists(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, menuId));
     }
 
     /**
@@ -247,7 +247,7 @@ public class SysMenuService {
      */
     public int insertMenu(SysMenuBo bo) {
         SysMenu menu = MapstructUtils.convert(bo, SysMenu.class);
-        return baseMapper.insert(menu);
+        return menuMapper.insert(menu);
     }
 
     /**
@@ -258,7 +258,7 @@ public class SysMenuService {
      */
     public int updateMenu(SysMenuBo bo) {
         SysMenu menu = MapstructUtils.convert(bo, SysMenu.class);
-        return baseMapper.updateById(menu);
+        return menuMapper.updateById(menu);
     }
 
     /**
@@ -268,7 +268,7 @@ public class SysMenuService {
      * @return 结果
      */
     public int deleteMenuById(Long menuId) {
-        return baseMapper.deleteById(menuId);
+        return menuMapper.deleteById(menuId);
     }
 
     /**
@@ -278,7 +278,7 @@ public class SysMenuService {
      * @return 结果
      */
     public boolean checkMenuNameUnique(SysMenuBo menu) {
-        boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysMenu>()
+        boolean exist = menuMapper.exists(new LambdaQueryWrapper<SysMenu>()
             .eq(SysMenu::getMenuName, menu.getMenuName())
             .eq(SysMenu::getParentId, menu.getParentId())
             .ne(ObjectUtil.isNotNull(menu.getMenuId()), SysMenu::getMenuId, menu.getMenuId()));
