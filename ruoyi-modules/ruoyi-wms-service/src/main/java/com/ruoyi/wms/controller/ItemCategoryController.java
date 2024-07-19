@@ -78,7 +78,8 @@ public class ItemCategoryController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ItemCategoryBo bo) {
-        return toAjax(itemCategoryService.insertByBo(bo));
+        itemCategoryService.insertByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -88,7 +89,8 @@ public class ItemCategoryController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ItemCategoryBo bo) {
-        return toAjax(itemCategoryService.updateByBo(bo));
+        itemCategoryService.updateByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -101,7 +103,8 @@ public class ItemCategoryController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] itemTypeIds) {
         List<Long> ids = new ArrayList<>(Arrays.asList(itemTypeIds));
-        return toAjax(itemCategoryService.deleteWithValidByIds(ids));
+        itemCategoryService.deleteWithValidByIds(ids);
+        return R.ok();
     }
 
     @PostMapping("/update/orderNum")

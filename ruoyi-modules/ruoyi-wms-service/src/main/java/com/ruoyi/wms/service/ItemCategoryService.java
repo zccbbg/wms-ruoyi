@@ -1,6 +1,7 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -77,15 +78,12 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
      * 新增物料类型
      */
 
-    public Boolean insertByBo(ItemCategoryBo bo) {
-        if (!validateItemTypeName(bo)) {
-            throw new RuntimeException("分类名重复");
-        }
+    public void insertByBo(ItemCategoryBo bo) {
+        validateItemTypeName(bo);
         ItemCategory add = MapstructUtils.convert(bo, ItemCategory.class);
         LambdaQueryWrapper<ItemCategory> wrapper = new LambdaQueryWrapper<>();
         if (bo.getParentId() != null){
             wrapper.eq(ItemCategory::getParentId, bo.getParentId());
-            ItemCategory info = baseMapper.selectById(bo.getParentId());
         }else {
             wrapper.eq(ItemCategory::getParentId, 0L);
         }
@@ -94,30 +92,24 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         wrapper.last("limit 1");
         ItemCategory itemType = baseMapper.selectOne(wrapper);
         add.setOrderNum(itemType == null ? 0L : itemType.getOrderNum() + 1);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+        baseMapper.insert(add);
     }
 
     /**
      * 修改物料类型
      */
 
-    public Boolean updateByBo(ItemCategoryBo bo) {
-        if (!validateItemTypeName(bo)) {
-            throw new RuntimeException("分类名重复");
-        }
+    public void updateByBo(ItemCategoryBo bo) {
+        validateItemTypeName(bo);
         ItemCategory update = MapstructUtils.convert(bo, ItemCategory.class);
-        return baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
     }
 
-    private boolean validateItemTypeName(ItemCategoryBo bo) {
+    private void validateItemTypeName(ItemCategoryBo bo) {
         LambdaQueryWrapper<ItemCategory> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(ItemCategory::getCategoryName, bo.getCategoryName());
         queryWrapper.ne(bo.getId() != null, ItemCategory::getId, bo.getId());
-        return baseMapper.selectCount(queryWrapper) == 0;
+        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "分类名重复");
     }
 
     /**
@@ -125,7 +117,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
      */
 
     @Transactional
-    public Boolean deleteWithValidByIds(List<Long> ids) {
+    public void deleteWithValidByIds(List<Long> ids) {
         //因为分类只有两级，直接查一下子分类，根据分类id把分类和商品全删了就行
         LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
         itemTypeWrapper.in(ItemCategory::getParentId, ids);
@@ -140,7 +132,6 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         LambdaQueryWrapper<Item> itemWrapper = new LambdaQueryWrapper<>();
         itemWrapper.in(Item::getItemCategory, ids);
         itemMapper.delete(itemWrapper);
-        return true;
     }
 
     /**
