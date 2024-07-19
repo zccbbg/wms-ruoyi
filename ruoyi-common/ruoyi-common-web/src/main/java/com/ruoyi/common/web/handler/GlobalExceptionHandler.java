@@ -43,13 +43,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public R<Void> handleDataTooLongException(DataIntegrityViolationException e, HttpServletRequest request) {
-        log.error(e.getMessage(), e);
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}'，发生数据完整性违规异常", requestURI, e);
         return R.fail("文件名或填写内容过长");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public R<Void> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.error(e.getMessage(), e);
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}'，发生不合法参数异常", requestURI, e);
         return R.fail(e.getMessage());
     }
 
