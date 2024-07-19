@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -17,7 +18,6 @@ import com.ruoyi.wms.domain.entity.ItemSku;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemCategoryMapper;
-import com.ruoyi.wms.mapper.ItemMapper;
 import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -35,7 +35,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     private final ItemSkuMapper itemSkuMapper;
     private final ItemService itemService;
     private final ItemCategoryMapper itemCategoryMapper;
-    private final ItemMapper itemMapper;
 
     /**
      * 查询sku信息
@@ -241,7 +240,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         ArrayList<ItemSkuBo> validateHasResult = hasOutSkuIdList.stream().collect(Collectors.collectingAndThen(
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ItemSkuBo::getOutSkuId))), ArrayList::new));
         if (validateHasResult.size() < hasOutSkuIdList.size()) {
-            throw new RuntimeException("规格条码重复");
+            throw new BaseException("规格条码重复");
         }
         LambdaQueryWrapper<ItemSku> wrapper = Wrappers.lambdaQuery();
         if (CollUtil.isNotEmpty(hasOutSkuIdList)) {
@@ -249,7 +248,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
             wrapper.ne(ItemSku::getItemId, itemId);
             Long countResult = itemSkuMapper.selectCount(wrapper);
             if (countResult != null && countResult > 0L) {
-                throw new RuntimeException("条码重复");
+                throw new BaseException("条码重复");
             }
         }
         // 拿库里非本商品的sku

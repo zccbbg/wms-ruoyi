@@ -45,7 +45,7 @@ public class ItemCategoryController extends BaseController {
      * 获取物料类型下拉树列表
      */
     @GetMapping("/treeselect")
-    public R treeselect(ItemCategoryBo query) {
+    public R<List<ItemTypeTreeSelectVo>> treeselect(ItemCategoryBo query) {
         List<ItemCategoryVo> itemTypes = itemCategoryService.queryList(query);
         return R.ok(itemCategoryService.buildItemTypeTreeSelect(itemTypes));
     }
