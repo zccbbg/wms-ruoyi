@@ -71,7 +71,8 @@ public class WarehouseController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody WarehouseBo bo) {
-        return toAjax(warehouseService.insertByBo(bo));
+        warehouseService.insertByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -82,7 +83,8 @@ public class WarehouseController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody WarehouseBo bo) {
-        return toAjax(warehouseService.updateByBo(bo));
+        warehouseService.updateByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -95,7 +97,8 @@ public class WarehouseController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(warehouseService.deleteWithValidByIds(List.of(ids), true));
+        warehouseService.deleteWithValidByIds(List.of(ids));
+        return R.ok();
     }
 
     @SaCheckPermission("wms:warehouse:edit")

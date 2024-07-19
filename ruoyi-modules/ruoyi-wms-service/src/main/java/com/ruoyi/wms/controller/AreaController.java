@@ -71,7 +71,8 @@ public class AreaController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody AreaBo bo) {
-        return toAjax(areaService.insertByBo(bo));
+        areaService.insertByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -82,7 +83,8 @@ public class AreaController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody AreaBo bo) {
-        return toAjax(areaService.updateByBo(bo));
+        areaService.updateByBo(bo);
+        return R.ok();
     }
 
     /**
@@ -95,6 +97,7 @@ public class AreaController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(areaService.deleteWithValidByIds(List.of(ids), true));
+        areaService.deleteWithValidByIds(List.of(ids));
+        return R.ok();
     }
 }

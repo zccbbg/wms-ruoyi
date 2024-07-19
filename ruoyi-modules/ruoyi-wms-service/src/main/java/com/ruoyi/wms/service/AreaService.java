@@ -1,6 +1,7 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -77,24 +78,20 @@ public class AreaService {
      * 新增库区
      */
 
-    public Boolean insertByBo(AreaBo bo) {
-        validEntityBeforeSave(bo);
+    public void insertByBo(AreaBo bo) {
+        validateAreaNameAndNo(bo);
         Area add = MapstructUtils.convert(bo, Area.class);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+        baseMapper.insert(add);
     }
 
     /**
      * 修改库区
      */
 
-    public Boolean updateByBo(AreaBo bo) {
-        validEntityBeforeSave(bo);
+    public void updateByBo(AreaBo bo) {
+        validateAreaNameAndNo(bo);
         Area update = MapstructUtils.convert(bo, Area.class);
-        return baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
     }
 
     private void validateAreaNameAndNo(AreaBo area) {
@@ -102,48 +99,22 @@ public class AreaService {
         queryWrapper.eq(Area::getWarehouseId, area.getWarehouseId());
         queryWrapper.eq(Area::getAreaName, area.getAreaName());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
-        boolean result = baseMapper.selectCount(queryWrapper) == 0;
-        if (!result) {
-            throw new RuntimeException("库区名称重复");
-        }
+        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "库区名称重复");
         if (StrUtil.isBlank(area.getAreaNo())) {
             return;
         }
         queryWrapper.clear();
         queryWrapper.eq(Area::getAreaNo, area.getAreaNo());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
-        result = baseMapper.selectCount(queryWrapper) == 0;
-        if (!result) {
-            throw new RuntimeException("库区编号重复");
-        }
-    }
-
-    /**
-     * 保存前的数据校验
-     */
-    private void validEntityBeforeSave(AreaBo entity){
-        validateAreaNameAndNo(entity);
+        Assert.isTrue(baseMapper.selectCount(queryWrapper) == 0, "库区编号重复");
     }
 
     /**
      * 批量删除库区
      */
 
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        return baseMapper.deleteBatchIds(ids) > 0;
-    }
-    /*
-     * 删除前的数据校验
-     * */
-    private void validEntityBeforeDelete(Collection<Long> ids) {
-        ids.forEach(id -> {
-            AreaVo areaVo = queryById(id);
-            // 获取该仓库下的库区数量,如果只有一个,则不能删除
-            if (countByWarehouseId(areaVo.getWarehouseId()) == 1) {
-                throw new RuntimeException("该仓库下只有一个库区,不能删除");
-            }
-        });
-
+    public void deleteWithValidByIds(Collection<Long> ids) {
+        baseMapper.deleteBatchIds(ids);
     }
 
     public List<AreaVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {

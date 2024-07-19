@@ -2,6 +2,7 @@ package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -72,11 +73,11 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      * 新增仓库
      */
 
-    public Boolean insertByBo(WarehouseBo bo) {
-        validEntityBeforeSave(bo);
+    public void insertByBo(WarehouseBo bo) {
+        validateWarehouseNameAndNo(bo);
         Warehouse add = MapstructUtils.convert(bo, Warehouse.class);
         add.setOrderNum(this.getNextOrderNum());
-        return baseMapper.insert(add) > 0;
+        baseMapper.insert(add);
     }
 
     private Long getNextOrderNum() {
@@ -91,17 +92,10 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      * 修改仓库
      */
 
-    public Boolean updateByBo(WarehouseBo bo) {
-        validEntityBeforeSave(bo);
+    public void updateByBo(WarehouseBo bo) {
+        validateWarehouseNameAndNo(bo);
         Warehouse update = MapstructUtils.convert(bo, Warehouse.class);
-        return baseMapper.updateById(update) > 0;
-    }
-
-    /**
-     * 保存前的数据校验
-     */
-    private void validEntityBeforeSave(WarehouseBo entity) {
-        validateWarehouseNameAndNo(entity);
+        baseMapper.updateById(update);
     }
 
     private void validateWarehouseNameAndNo(WarehouseBo warehouse) {
@@ -110,47 +104,28 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
         List<Warehouse> warehouseList = baseMapper.selectList(queryWrapper);
         boolean validateNameResult = warehouseList.stream().anyMatch(
             it -> Objects.equals(it.getWarehouseName(), warehouse.getWarehouseName()) && !Objects.equals(it.getId(), warehouse.getId()));
-        if (validateNameResult) {
-            throw new RuntimeException("仓库名称重复");
-        }
+        Assert.isFalse(validateNameResult, "仓库名称重复");
         boolean validateNoResult = warehouseList.stream().anyMatch(
             it -> Objects.equals(it.getWarehouseNo(), warehouse.getWarehouseNo()) && !Objects.equals(it.getId(), warehouse.getId()));
-        if (validateNoResult) {
-            throw new RuntimeException("仓库编号重复");
-        }
+        Assert.isFalse(validateNoResult, "仓库编号重复");
     }
 
     /**
      * 批量删除仓库
      */
 
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+    public void deleteWithValidByIds(Collection<Long> ids) {
         List<Long> areaIdList = this.getAreaIdInWarehouse(ids);
-        boolean flag = baseMapper.deleteBatchIds(ids) > 0;
-        if (flag && CollUtil.isNotEmpty(areaIdList)) {
-            flag = areaMapper.deleteBatchIds(areaIdList) > 0;
+        baseMapper.deleteBatchIds(ids);
+        if (CollUtil.isNotEmpty(areaIdList)) {
+            areaMapper.deleteBatchIds(areaIdList);
         }
-        return flag;
     }
 
     private List<Long> getAreaIdInWarehouse(Collection<Long> ids) {
         LambdaQueryWrapper<Area> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Area::getWarehouseId, ids);
         return areaMapper.selectList(wrapper).stream().map(Area::getId).collect(Collectors.toList());
-    }
-
-
-    /*
-     * 删除前的数据校验
-     * */
-    private void validEntityBeforeDelete(Collection<Long> ids) {
-        ids.forEach(id -> {
-            // 获取该仓库下的库区数量
-            if (areaService.countByWarehouseId(id) > 0) {
-                throw new RuntimeException("该仓库下存在库区，不能删除");
-            }
-        });
-
     }
 
     public List<WarehouseVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {
