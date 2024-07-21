@@ -1,22 +1,21 @@
 package com.ruoyi.wms.service;
 
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.utils.MapstructUtils;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
+import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
+import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
+import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
-import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
-import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 入库单详情Service业务层处理
@@ -63,7 +62,6 @@ public class ReceiptOrderDetailService {
         lqw.eq(bo.getAmount() != null, ReceiptOrderDetail::getAmount, bo.getAmount());
         lqw.eq(bo.getWarehouseId() != null, ReceiptOrderDetail::getWarehouseId, bo.getWarehouseId());
         lqw.eq(bo.getAreaId() != null, ReceiptOrderDetail::getAreaId, bo.getAreaId());
-        lqw.eq(bo.getStatus() != null, ReceiptOrderDetail::getStatus, bo.getStatus());
         return lqw;
     }
 
