@@ -41,8 +41,8 @@ public class ItemController extends BaseController {
     /**
      * 查询物料列表
      */
-    @GetMapping("/selectList")
-    public List<ItemVo> selectList(ItemBo bo) {
+    @GetMapping("/listNoPage")
+    public List<ItemVo> list(ItemBo bo) {
         return itemService.queryList(bo);
     }
 
