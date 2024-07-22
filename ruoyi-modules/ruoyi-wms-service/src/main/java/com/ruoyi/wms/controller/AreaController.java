@@ -41,6 +41,15 @@ public class AreaController extends BaseController {
     }
 
     /**
+     * 查询库区列表
+     */
+    @SaCheckPermission("wms:area:list")
+    @GetMapping("/selectList")
+    public List<AreaVo> list(AreaBo bo) {
+        return areaService.queryList(bo);
+    }
+
+    /**
      * 导出库区列表
      */
     @SaCheckPermission("wms:area:export")
