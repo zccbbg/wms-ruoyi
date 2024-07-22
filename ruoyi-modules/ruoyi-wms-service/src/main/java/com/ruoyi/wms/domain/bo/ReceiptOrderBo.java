@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 入库单业务对象 wms_receipt_order
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 public class ReceiptOrderBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -44,32 +45,31 @@ public class ReceiptOrderBo extends BaseEntity {
     /**
      * 供应商
      */
-    @NotNull(message = "供应商不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long merchantId;
 
     /**
      * 订单号
      */
-    @NotBlank(message = "订单号不能为空", groups = { AddGroup.class, EditGroup.class })
     private String orderNo;
 
     /**
      * 订单金额
      */
-    @NotNull(message = "订单金额不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal payableAmount;
 
     /**
      * 入库状态
      */
-    @NotNull(message = "入库状态不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer receiptOrderStatus;
 
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
-
+    /**
+     * 商品信息
+     */
+    @NotEmpty(message = "商品明细不能为空", groups = { AddGroup.class, EditGroup.class })
+    private List<ReceiptOrderDetailBo> details;
 }

@@ -72,5 +72,8 @@ public interface Constants {
      */
     String TOKEN = "token";
 
+    Integer NOT_DELETED = 0;
+    Integer DELETED = 1;
+
 }
 

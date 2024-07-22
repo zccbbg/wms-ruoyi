@@ -1,8 +1,12 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.Constants;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -10,8 +14,10 @@ import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
 import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +31,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class ReceiptOrderDetailService {
+public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMapper, ReceiptOrderDetail> {
 
     private final ReceiptOrderDetailMapper receiptOrderDetailMapper;
 
@@ -86,5 +92,23 @@ public class ReceiptOrderDetailService {
      */
     public void deleteByIds(Collection<Long> ids) {
         receiptOrderDetailMapper.deleteBatchIds(ids);
+    }
+
+    /**
+     * 根据入库单id删除入库单详情
+     */
+    public void deleteByReceiptOrderId(@NotNull Long receiptOrderId) {
+        LambdaUpdateWrapper<ReceiptOrderDetail> luw = Wrappers.lambdaUpdate();
+        luw.eq(ReceiptOrderDetail::getReceiptOrderId, receiptOrderId);
+        luw.set(ReceiptOrderDetail::getDelFlag, Constants.DELETED);
+        receiptOrderDetailMapper.update(null, luw);
+    }
+
+    @Transactional
+    public void saveDetails(List<ReceiptOrderDetail> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        saveBatch(list);
     }
 }

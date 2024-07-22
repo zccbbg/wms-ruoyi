@@ -2,6 +2,7 @@ package com.ruoyi.wms.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.core.constant.ReceiptOrderConstants;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -69,14 +70,28 @@ public class ReceiptOrderController extends BaseController {
     }
 
     /**
-     * 新增入库单
+     * 暂存入库单
      */
     @SaCheckPermission("wms:receiptOrder:add")
     @Log(title = "入库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
+        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.PENDING);
         receiptOrderService.insertByBo(bo);
+        return R.ok();
+    }
+
+    /**
+     * 入库
+     */
+    @SaCheckPermission("wms:receiptOrder:edit")
+    @Log(title = "入库单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/warehousing")
+    public R<Void> doWarehousing(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
+        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.FINISH);
+        receiptOrderService.doWarehousing(bo);
         return R.ok();
     }
 
@@ -88,7 +103,20 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ReceiptOrderBo bo) {
+        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.PENDING);
         receiptOrderService.updateByBo(bo);
+        return R.ok();
+    }
+
+    /**
+     * 作废
+     */
+    @SaCheckPermission("wms:receiptOrder:edit")
+    @Log(title = "入库单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/invalid/{id}")
+    public R<Void> editToInvalid(@PathVariable Long id) {
+        receiptOrderService.editToInvalid(id);
         return R.ok();
     }
 

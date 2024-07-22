@@ -1,6 +1,8 @@
 package com.ruoyi.wms.domain.vo;
 
 import java.math.BigDecimal;
+
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -11,6 +13,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 入库单视图对象 wms_receipt_order
@@ -21,13 +24,13 @@ import java.io.Serial;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ReceiptOrder.class)
-public class ReceiptOrderVo implements Serializable {
+public class ReceiptOrderVo extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -74,5 +77,5 @@ public class ReceiptOrderVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
+    private List<ReceiptOrderDetailVo> details;
 }
