@@ -113,7 +113,7 @@ public class AreaService {
      * 批量删除库区
      */
 
-    public void deleteWithValidByIds(Collection<Long> ids) {
+    public void deleteByIds(Collection<Long> ids) {
         areaMapper.deleteBatchIds(ids);
     }
 

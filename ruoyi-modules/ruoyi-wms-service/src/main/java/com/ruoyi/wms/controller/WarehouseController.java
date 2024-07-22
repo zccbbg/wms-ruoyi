@@ -106,7 +106,7 @@ public class WarehouseController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        warehouseService.deleteWithValidByIds(List.of(ids));
+        warehouseService.deleteByIds(List.of(ids));
         return R.ok();
     }
 

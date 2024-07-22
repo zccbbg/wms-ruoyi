@@ -185,7 +185,7 @@ public class ItemService {
      * 批量删除物料
      */
     @Transactional
-    public void deleteWithValidByIds(Collection<Long> ids) {
+    public void deleteByIds(Collection<Long> ids) {
         itemMapper.deleteBatchIds(ids);
         LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(ItemSku::getItemId, ids);

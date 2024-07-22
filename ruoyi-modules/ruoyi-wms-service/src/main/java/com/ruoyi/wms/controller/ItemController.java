@@ -97,7 +97,7 @@ public class ItemController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        itemService.deleteWithValidByIds(List.of(ids));
+        itemService.deleteByIds(List.of(ids));
         return R.ok();
     }
 }
