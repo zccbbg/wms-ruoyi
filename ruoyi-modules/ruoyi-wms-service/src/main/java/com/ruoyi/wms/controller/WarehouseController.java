@@ -41,6 +41,15 @@ public class WarehouseController extends BaseController {
     }
 
     /**
+     * 查询仓库列表
+     */
+    @SaCheckPermission("wms:warehouse:list")
+    @GetMapping("/selectList")
+    public List<WarehouseVo> list(WarehouseBo bo) {
+        return warehouseService.queryList(bo);
+    }
+
+    /**
      * 导出仓库列表
      */
     @SaCheckPermission("wms:warehouse:export")
