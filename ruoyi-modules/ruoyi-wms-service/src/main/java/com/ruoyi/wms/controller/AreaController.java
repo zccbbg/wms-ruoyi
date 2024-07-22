@@ -97,7 +97,7 @@ public class AreaController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        areaService.deleteWithValidByIds(List.of(ids));
+        areaService.deleteByIds(List.of(ids));
         return R.ok();
     }
 }

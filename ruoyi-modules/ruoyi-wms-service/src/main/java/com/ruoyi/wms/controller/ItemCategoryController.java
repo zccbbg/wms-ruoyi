@@ -103,7 +103,7 @@ public class ItemCategoryController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] itemTypeIds) {
         List<Long> ids = new ArrayList<>(Arrays.asList(itemTypeIds));
-        itemCategoryService.deleteWithValidByIds(ids);
+        itemCategoryService.deleteByIds(ids);
         return R.ok();
     }
 

@@ -117,7 +117,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      * 批量删除仓库
      */
 
-    public void deleteWithValidByIds(Collection<Long> ids) {
+    public void deleteByIds(Collection<Long> ids) {
         List<Long> areaIdList = this.getAreaIdInWarehouse(ids);
         warehouseMapper.deleteBatchIds(ids);
         if (CollUtil.isNotEmpty(areaIdList)) {

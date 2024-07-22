@@ -117,7 +117,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
      */
 
     @Transactional
-    public void deleteWithValidByIds(List<Long> ids) {
+    public void deleteByIds(List<Long> ids) {
         //因为分类只有两级，直接查一下子分类，根据分类id把分类和商品全删了就行
         LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
         itemTypeWrapper.in(ItemCategory::getParentId, ids);
