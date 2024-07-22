@@ -47,6 +47,15 @@ public class MerchantController extends BaseController {
     }
 
     /**
+     * 查询往来单位列表
+     */
+    @SaCheckPermission("wms:merchant:list")
+    @GetMapping("/listNoPage")
+    public List<MerchantVo> listNoPage(MerchantBo bo) {
+        return merchantService.queryList(bo);
+    }
+
+    /**
      * 导出往来单位列表
      */
     @SaCheckPermission("wms:merchant:export")
