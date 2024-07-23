@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -156,8 +155,7 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
         for (ItemCategoryVo dept : itemTypes) {
             tempList.add(dept.getId());
         }
-        for (Iterator<ItemCategoryVo> iterator = itemTypes.iterator(); iterator.hasNext(); ) {
-            ItemCategoryVo dept = (ItemCategoryVo) iterator.next();
+        for (ItemCategoryVo dept : itemTypes) {
             // 如果是顶级节点, 遍历该父节点的所有子节点
             if (!tempList.contains(dept.getParentId())) {
                 recursionFn(itemTypes, dept);
