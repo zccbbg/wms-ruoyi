@@ -6,6 +6,7 @@ import com.ruoyi.common.core.constant.Constants;
 import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -85,6 +86,7 @@ public class ReceiptOrderService {
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getPayableAmount() != null, ReceiptOrder::getPayableAmount, bo.getPayableAmount());
         lqw.eq(bo.getReceiptOrderStatus() != null, ReceiptOrder::getReceiptOrderStatus, bo.getReceiptOrderStatus());
+        lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
 
