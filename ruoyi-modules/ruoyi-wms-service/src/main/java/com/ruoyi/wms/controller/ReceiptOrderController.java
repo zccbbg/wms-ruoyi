@@ -2,7 +2,7 @@ package com.ruoyi.wms.controller;
 
 import java.util.List;
 
-import com.ruoyi.common.core.constant.ReceiptOrderConstants;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -77,7 +77,7 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
-        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.PENDING);
+        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.PENDING);
         receiptOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -90,7 +90,7 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/warehousing")
     public R<Void> doWarehousing(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
-        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.FINISH);
+        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.FINISH);
         receiptOrderService.doWarehousing(bo);
         return R.ok();
     }
@@ -103,7 +103,7 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ReceiptOrderBo bo) {
-        bo.setReceiptOrderStatus(ReceiptOrderConstants.ReceiptOrderStatus.PENDING);
+        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.PENDING);
         receiptOrderService.updateByBo(bo);
         return R.ok();
     }
@@ -132,5 +132,10 @@ public class ReceiptOrderController extends BaseController {
                           @PathVariable Long[] ids) {
         receiptOrderService.deleteByIds(List.of(ids));
         return R.ok();
+    }
+
+    @GetMapping("/generate/no")
+    public R<String> generateNo() {
+        return R.ok(receiptOrderService.generateNo());
     }
 }

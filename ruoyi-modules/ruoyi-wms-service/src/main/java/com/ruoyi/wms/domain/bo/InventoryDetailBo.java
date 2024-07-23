@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -26,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class InventoryDetailBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -53,7 +54,7 @@ public class InventoryDetailBo extends BaseEntity {
      * 类型 1：入库 2：移库 3：盘库
      */
     @NotNull(message = "类型 1：入库 2：移库 3：盘库不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long type;
+    private Integer type;
 
     /**
      * sku的ID
@@ -83,7 +84,7 @@ public class InventoryDetailBo extends BaseEntity {
      * 过期时间
      */
     @NotNull(message = "过期时间不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Date expirationTime;
+    private LocalDateTime expirationTime;
 
     /**
      * 金额

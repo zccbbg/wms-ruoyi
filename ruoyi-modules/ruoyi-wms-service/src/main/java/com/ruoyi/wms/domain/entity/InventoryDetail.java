@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -45,7 +46,7 @@ public class InventoryDetail extends BaseEntity {
     /**
      * 类型 1：入库 2：移库 3：盘库
      */
-    private Long type;
+    private Integer type;
     /**
      * sku的ID
      */
@@ -65,7 +66,7 @@ public class InventoryDetail extends BaseEntity {
     /**
      * 过期时间
      */
-    private Date expirationTime;
+    private LocalDateTime expirationTime;
     /**
      * 金额
      */

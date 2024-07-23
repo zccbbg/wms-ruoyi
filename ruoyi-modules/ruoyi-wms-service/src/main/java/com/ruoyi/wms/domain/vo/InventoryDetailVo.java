@@ -1,6 +1,7 @@
 package com.ruoyi.wms.domain.vo;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.wms.domain.entity.InventoryDetail;
@@ -29,7 +30,7 @@ public class InventoryDetailVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -56,7 +57,7 @@ public class InventoryDetailVo implements Serializable {
      * 类型 1：入库 2：移库 3：盘库
      */
     @ExcelProperty(value = "类型 1：入库 2：移库 3：盘库")
-    private Long type;
+    private Integer type;
 
     /**
      * sku的ID
@@ -86,7 +87,7 @@ public class InventoryDetailVo implements Serializable {
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")
-    private Date expirationTime;
+    private LocalDateTime expirationTime;
 
     /**
      * 金额

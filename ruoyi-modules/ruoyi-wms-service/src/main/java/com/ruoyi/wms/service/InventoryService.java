@@ -1,9 +1,11 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.Constants;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,10 +15,12 @@ import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.mapper.InventoryMapper;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 库存Service业务层处理
@@ -26,7 +30,7 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class InventoryService {
+public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
 
     private final InventoryMapper inventoryMapper;
 
@@ -85,5 +89,48 @@ public class InventoryService {
      */
     public void deleteByIds(Collection<Long> ids) {
         inventoryMapper.deleteBatchIds(ids);
+    }
+
+    /**
+     * 更新库存
+     * @param list
+     */
+    @Transactional
+    public synchronized void saveData(List<Inventory> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        List<Inventory> validList = list
+            .stream()
+            .filter(it ->
+                   it.getWarehouseId() != null
+                && it.getAreaId() != null
+                && it.getSkuId() != null
+                && it.getQuantity() != null
+                && it.getQuantity().compareTo(BigDecimal.ZERO) > 0)
+            .toList();
+        if (CollUtil.isEmpty(validList)) {
+            return;
+        }
+        Function<Inventory, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
+        Map<String, Long> existMap = inventoryMapper.selectList().stream().collect(Collectors.toMap(keyFunction, Inventory::getId));
+        List<Inventory> addList = new LinkedList<>();
+        List<Inventory> updateList = new LinkedList<>();
+        validList.forEach(it -> {
+            Long inventoryId = existMap.get(keyFunction.apply(it));
+            if (inventoryId != null) {
+                it.setId(inventoryId);
+                updateList.add(it);
+            } else {
+                it.setDelFlag(Constants.NOT_DELETED);
+                addList.add(it);
+            }
+        });
+        if (addList.size() > 0) {
+            saveBatch(addList);
+        }
+        if (updateList.size() > 0) {
+            inventoryMapper.updateQuantity(updateList);
+        }
     }
 }

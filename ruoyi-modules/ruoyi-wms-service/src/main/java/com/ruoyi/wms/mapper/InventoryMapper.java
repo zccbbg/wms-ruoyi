@@ -3,6 +3,9 @@ package com.ruoyi.wms.mapper;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 库存Mapper接口
@@ -12,4 +15,5 @@ import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
  */
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
+    void updateQuantity(@Param("list") List<Inventory> updateList);
 }

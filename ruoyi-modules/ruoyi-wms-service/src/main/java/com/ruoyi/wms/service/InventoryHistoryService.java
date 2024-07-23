@@ -1,5 +1,6 @@
 package com.ruoyi.wms.service;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -26,7 +27,7 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class InventoryHistoryService {
+public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper, InventoryHistory> {
 
     private final InventoryHistoryMapper inventoryHistoryMapper;
 
