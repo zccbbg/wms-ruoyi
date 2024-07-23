@@ -115,22 +115,19 @@ public class ItemCategoryService extends ServiceImpl<ItemCategoryMapper, ItemCat
      * 批量删除物料类型
      */
 
-    @Transactional
     public void deleteByIds(List<Long> ids) {
-        //因为分类只有两级，直接查一下子分类，根据分类id把分类和商品全删了就行
-        LambdaQueryWrapper<ItemCategory> itemTypeWrapper = new LambdaQueryWrapper<>();
-        itemTypeWrapper.in(ItemCategory::getParentId, ids);
-        List<Long> subIdList = itemCategoryMapper.selectList(itemTypeWrapper).stream().map(ItemCategory::getId).collect(Collectors.toList());
-        if (!CollUtil.isEmpty(subIdList)) {
-            ids.addAll(subIdList);
-        }
-        int rows = itemCategoryMapper.deleteBatchIds(ids);
-        if (rows < 1) {
-            throw new RuntimeException("删除分类失败");
-        }
-        LambdaQueryWrapper<Item> itemWrapper = new LambdaQueryWrapper<>();
-        itemWrapper.in(Item::getItemCategory, ids);
-        itemMapper.delete(itemWrapper);
+        // 有子分类不能删
+        LambdaQueryWrapper<ItemCategory> itemCategoryLqw = new LambdaQueryWrapper<>();
+        itemCategoryLqw.in(ItemCategory::getParentId, ids);
+        Assert.state(itemCategoryMapper.selectCount(itemCategoryLqw) == 0, "删除失败！请先删除该分类下的子分类！");
+        // 被商品应用了不能删
+        LambdaQueryWrapper<Item> itemLqw = Wrappers.lambdaQuery();
+        itemLqw.in(Item::getItemCategory, ids);
+        Assert.state(itemMapper.selectCount(itemLqw) == 0, "删除失败！分类已被商品使用！");
+        // 删除
+        LambdaQueryWrapper<ItemCategory> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.in(ItemCategory::getId, ids);
+        itemCategoryMapper.delete(deleteWrapper);
     }
 
     /**
