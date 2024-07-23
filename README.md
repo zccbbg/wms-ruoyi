@@ -4,8 +4,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1-blue.svg)]()
 [![JDK-17](https://img.shields.io/badge/JDK-17-green.svg)]()
 
-> 本项目继承自ruoyi-vue-plus,由于ruoyi-vue-plus 4.x版本不再开发，而5.x过于庞大，增加了flowable和多租户，本项目在4.x基础上适当增加一些5.x比较好的功能。
-
+> 本项目基于ruoyi-vue-fast实现
 
 > 项目代码、文档 均开源免费可商用 遵循开源协议在项目中保留开源协议文件即可<br>
 活到老写到老 为兴趣而开源 为学习而开源 为让大家真正可以学到技术而开源
