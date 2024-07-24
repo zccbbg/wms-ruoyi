@@ -157,7 +157,6 @@ public class ItemService {
      */
     private void validEntityBeforeSave(ItemBo entity) {
         validateItemName(entity);
-        validateItemNo(entity);
         validateItemSku(entity.getSku());
     }
 
@@ -166,15 +165,6 @@ public class ItemService {
         queryWrapper.eq(Item::getItemName, item.getItemName());
         queryWrapper.ne(item.getId() != null, Item::getId, item.getId());
         Assert.isTrue(itemMapper.selectCount(queryWrapper) == 0, "商品名称重复");
-    }
-    private void validateItemNo(ItemBo form) {
-        if (StrUtil.isBlank(form.getItemNo())) {
-            return;
-        }
-        LambdaQueryWrapper<Item> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(Item::getItemNo, form.getItemNo());
-        queryWrapper.ne(form.getId() != null, Item::getId, form.getId());
-        Assert.isTrue(itemMapper.selectCount(queryWrapper) == 0, "商品编号重复");
     }
 
     private void validateItemSku(List<ItemSkuBo> skuVoList) {
