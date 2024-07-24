@@ -123,14 +123,14 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 删除入库单
      *
-     * @param ids 主键串
+     * @param id 主键串
      */
     @SaCheckPermission("wms:receiptOrder:remove")
     @Log(title = "入库单", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        receiptOrderService.deleteByIds(List.of(ids));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        receiptOrderService.deleteById(id);
         return R.ok();
     }
 

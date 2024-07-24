@@ -56,10 +56,5 @@ public class ReceiptOrder extends BaseEntity {
      * 备注
      */
     private String remark;
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
 
 }

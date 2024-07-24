@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ruoyi.common.core.constant.Constants;
 import com.ruoyi.common.core.constant.ServiceConstants;
+import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
@@ -99,7 +100,6 @@ public class ReceiptOrderService {
         validateReceiptOrderNo(bo.getReceiptOrderNo());
         // 创建入库单
         ReceiptOrder add = MapstructUtils.convert(bo, ReceiptOrder.class);
-        add.setDelFlag(Constants.NOT_DELETED);
         receiptOrderMapper.insert(add);
         bo.setId(add.getId());
         List<ReceiptOrderDetailBo> detailBoList = bo.getDetails();
@@ -204,7 +204,6 @@ public class ReceiptOrderService {
     public void updateByBo(ReceiptOrderBo bo) {
         // 更新入库单
         ReceiptOrder update = MapstructUtils.convert(bo, ReceiptOrder.class);
-        update.setDelFlag(Constants.NOT_DELETED);
         receiptOrderMapper.updateById(update);
         // 删除老的
         receiptOrderDetailService.deleteByReceiptOrderId(bo.getId());
@@ -227,6 +226,18 @@ public class ReceiptOrderService {
         luw.eq(ReceiptOrder::getId, id);
         luw.set(ReceiptOrder::getReceiptOrderStatus, ServiceConstants.ReceiptOrderStatus.INVALID);
         receiptOrderMapper.update(null, luw);
+    }
+
+    /**
+     * 删除入库单
+     */
+    public void deleteById(Long id) {
+        ReceiptOrderVo receiptOrderVo = queryById(id);
+        Assert.notNull(receiptOrderVo, "入库单不存在");
+        if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getReceiptOrderStatus())) {
+            throw new BaseException("入库单【" + receiptOrderVo.getReceiptOrderNo() + "】已入库，不能删除！");
+        }
+        receiptOrderMapper.deleteById(id);
     }
 
     /**
