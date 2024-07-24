@@ -181,16 +181,15 @@ public class ItemService {
      */
     @Transactional
     public void deleteById(Long id) {
-        List<Long> skuIds = validIdBeforeDelete(id);
+        List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
+        validSkuIdsBeforeDelete(skuIds);
         itemMapper.deleteById(id);
         itemSkuService.deleteByIds(skuIds);
     }
 
-    private List<Long> validIdBeforeDelete(Long id) {
-        List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
+    private void validSkuIdsBeforeDelete(List<Long> skuIds) {
         if (inventoryService.checkInventoryBySkuIds(skuIds)) {
             throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }
-        return skuIds;
     }
 }

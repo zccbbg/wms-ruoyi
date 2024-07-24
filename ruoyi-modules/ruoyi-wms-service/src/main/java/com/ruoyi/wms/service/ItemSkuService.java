@@ -1,11 +1,9 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -169,8 +167,10 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     private void validIdBeforeDelete(Long id) {
         // 只有一个不能删除
         ItemSku itemSku = itemSkuMapper.selectById(id);
-        Assert.notNull(itemSku, "规格不存在");
-        Assert.state(queryListByItemId(itemSku.getItemId()).size() > 1, "至少包含一个商品规格");
+
+        if(queryListByItemId(itemSku.getItemId()).size() > 1){
+            throw new BaseException("至少包含一个商品规格");
+        }
         // 校验库存是否已关联
         if (inventoryService.checkInventoryBySkuIds(List.of(id))) {
             throw new ServiceException("规格" + itemSku.getSkuName() + "已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
