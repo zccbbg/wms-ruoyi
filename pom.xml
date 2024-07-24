@@ -330,7 +330,7 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-admin</module>
+        <module>ruoyi-admin-wms</module>
         <module>ruoyi-common</module>
         <module>ruoyi-modules</module>
     </modules>
