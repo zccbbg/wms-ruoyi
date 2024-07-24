@@ -7,6 +7,8 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.entity.ReceiptOrder;
+import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.MerchantBo;
@@ -29,6 +31,7 @@ import java.util.Collection;
 public class MerchantService {
 
     private final MerchantMapper merchantMapper;
+    private final ReceiptOrderMapper receiptOrderMapper;
 
     /**
      * 查询往来单位
@@ -77,6 +80,20 @@ public class MerchantService {
     public void updateByBo(MerchantBo bo) {
         Merchant update = MapstructUtils.convert(bo, Merchant.class);
         merchantMapper.updateById(update);
+    }
+
+    /**
+     * 删除往来单位
+     */
+    public Boolean deleteById(Long id) {
+        LambdaQueryWrapper<ReceiptOrder> receiptOrderLqw = Wrappers.lambdaQuery();
+        receiptOrderLqw.eq(ReceiptOrder::getMerchantId, id);
+        Long receiptOrderCount = receiptOrderMapper.selectCount(receiptOrderLqw);
+        if (receiptOrderCount != null && receiptOrderCount > 0) {
+            return false;
+        }
+        merchantMapper.deleteById(id);
+        return true;
     }
 
     /**
