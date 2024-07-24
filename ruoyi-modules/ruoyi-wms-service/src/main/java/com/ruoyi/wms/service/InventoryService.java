@@ -124,8 +124,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             Long inventoryId = existMap.get(keyFunction.apply(it));
             if (inventoryId != null) {
                 it.setId(inventoryId);
-                it.setUpdateBy(optUser);
-                it.setUpdateTime(optDate);
                 updateList.add(it);
             } else {
                 addList.add(it);
