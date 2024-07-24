@@ -22,6 +22,7 @@ import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -164,112 +165,29 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     }
 
     /**
-     * 批量新增商品sku
-     * 1.a)校验传入sku规格条码彼此唯一性。 b)校验传入sku和不同商品下sku唯一性
-     * 2.查询商品未删sku
-     * 3.比较传入的sku和1中查到的，标记需要删除的sku
-     * 4.批量删除，更新，新增....
-     *
+     * 批量保存商品sku
      * @param itemId 商品id
      * @param sku    商品sku
      */
-
+    @Transactional
     public void saveSku(Long itemId, List<ItemSkuBo> sku) {
-        // 校验，填充条码
-        this.generateOutSkuId(sku, itemId);
-        List<ItemSkuVo> itemSkuInDb = this.queryListByItemId(itemId);
-        //商品在库里的sku为空，肯定是新增，直接批量插入就行了
-        if (CollUtil.isEmpty(itemSkuInDb)) {
-            sku.forEach(item -> item.setItemId(itemId));
-            itemSkuMapper.insertBatch(MapstructUtils.convert(sku, ItemSku.class));
-        }
-        // 标记删除集合
-        List<ItemSkuVo> deleteList = this.markDeleteItemSkuList(sku, itemSkuInDb);
-        // 批量删除
-        this.batchUpdateDelFlag(deleteList.stream().map(ItemSkuVo::getId).collect(Collectors.toList()));
-        // 批量新增sku
-        // 遍历sku绑定商品id
-        sku.forEach(item -> item.setItemId(itemId));
-        // 筛出更新和新增集合
-        List<ItemSkuBo> addList = sku.stream().filter(it -> it.getId() == null).toList();
-        List<ItemSkuBo> updateList = sku.stream().filter(it -> it.getId() != null).toList();
-        // 批量新增
-        if (CollUtil.isNotEmpty(addList)) {
-            saveBatch(MapstructUtils.convert(addList, ItemSku.class));
-        }
-        if (CollUtil.isNotEmpty(updateList)) {
-            saveOrUpdateBatch(MapstructUtils.convert(updateList, ItemSku.class));
-        }
+        List<ItemSku> itemSkuList = MapstructUtils.convert(sku, ItemSku.class);
+        // 填充条码和itemId
+        this.populate(itemSkuList, itemId);
+        saveOrUpdateBatch(itemSkuList);
     }
 
     /**
-     * 标记需要删除的sku
-     *
-     * @param saveList 需要保存的sku
-     * @param dbList   库中的sku
-     * @return 删除集合
+     * 填充sku的条码和itemId
+     * @param itemSkuList
+     * @param itemId
      */
-    private List<ItemSkuVo> markDeleteItemSkuList(List<ItemSkuBo> saveList, List<ItemSkuVo> dbList) {
-        List<ItemSkuVo> deleteList = new ArrayList<>();
-        Map<Long, ItemSkuBo> saveMap = saveList.stream().collect(Collectors.toMap(ItemSkuBo::getId, Function.identity(), (v1, v2) -> v1));
-        dbList.forEach(item -> {
-            if (saveMap.get(item.getId()) == null) {
-                deleteList.add(item);
+    public void populate(List<ItemSku> itemSkuList, Long itemId) {
+        for (ItemSku itemSku : itemSkuList) {
+            if (StrUtil.isBlank(itemSku.getOutSkuId())) {
+                itemSku.setOutSkuId(RandomUtil.randomNumbers(8));
             }
-        });
-        return deleteList;
-    }
-
-    private boolean validateOutSkuIdIfExist(List<ItemSkuVo> skuVoList) {
-        ArrayList<ItemSkuVo> collect =
-            skuVoList.stream().collect(Collectors.collectingAndThen(
-                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ItemSkuVo::getOutSkuId))), ArrayList::new));
-        if (collect.size() < skuVoList.size()) {
-            return true;
-        }
-        Long itemId = skuVoList.get(0).getItemId();
-        LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(ItemSku::getOutSkuId, skuVoList.stream().map(ItemSkuVo::getOutSkuId).toList());
-        List<ItemSku> itemSkuList = itemSkuMapper.selectList(wrapper);
-        return itemSkuList.size() > 0 && itemSkuList.stream().anyMatch(it -> !it.getItemId().equals(itemId));
-    }
-
-    private void generateOutSkuId(List<ItemSkuBo> skuVoList, Long itemId) {
-        // 先校验用户填的条码是否唯一 1.本商品下比较 2.与库里其余sku比较
-        List<ItemSkuBo> hasOutSkuIdList = skuVoList.stream().filter(it -> StrUtil.isNotBlank(it.getOutSkuId())).toList();
-        ArrayList<ItemSkuBo> validateHasResult = hasOutSkuIdList.stream().collect(Collectors.collectingAndThen(
-            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ItemSkuBo::getOutSkuId))), ArrayList::new));
-        if (validateHasResult.size() < hasOutSkuIdList.size()) {
-            throw new BaseException("规格条码重复");
-        }
-        LambdaQueryWrapper<ItemSku> wrapper = Wrappers.lambdaQuery();
-        if (CollUtil.isNotEmpty(hasOutSkuIdList)) {
-            wrapper.in(ItemSku::getOutSkuId, hasOutSkuIdList.stream().map(ItemSkuBo::getOutSkuId).toList());
-            wrapper.ne(ItemSku::getItemId, itemId);
-            Long countResult = itemSkuMapper.selectCount(wrapper);
-            if (countResult != null && countResult > 0L) {
-                throw new BaseException("条码重复");
-            }
-        }
-        // 拿库里非本商品的sku
-        wrapper.clear();
-        wrapper.eq(ItemSku::getItemId, itemId);
-        List<ItemSku> skuListInDb = itemSkuMapper.selectList(wrapper);
-        // 循环生成未填条码，校验通过加入sku中
-        for (ItemSkuBo itemSkuVo : skuVoList) {
-            if (StrUtil.isBlank(itemSkuVo.getOutSkuId())) {
-                boolean flag = true;
-                while (flag) {
-                    String outSkuId = RandomUtil.randomNumbers(8);
-                    flag = hasOutSkuIdList.stream().anyMatch(it -> it.getOutSkuId().equals(outSkuId));
-                    if (!flag) {
-                        flag = skuListInDb.stream().anyMatch(it -> it.getOutSkuId().equals(outSkuId));
-                    }
-                    if (!flag) {
-                        itemSkuVo.setOutSkuId(outSkuId);
-                    }
-                }
-            }
+            itemSku.setItemId(itemId);
         }
     }
 
