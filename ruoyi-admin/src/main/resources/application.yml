@@ -170,10 +170,6 @@ mybatis-plus:
       # 主键类型
       # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
       idType: ASSIGN_ID
-      # 逻辑已删除值
-      logicDeleteValue: 1
-      # 逻辑未删除值
-      logicNotDeleteValue: 0
       # 字段验证策略之 insert,在 insert 的时候的字段验证策略
       # IGNORED 忽略 NOT_NULL 非NULL NOT_EMPTY 非空 DEFAULT 默认 NEVER 不加入 SQL
       insertStrategy: NOT_NULL
