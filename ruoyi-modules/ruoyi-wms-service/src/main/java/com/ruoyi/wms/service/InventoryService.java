@@ -148,4 +148,19 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         Long count = inventoryMapper.selectCount(lqw);
         return count != null && count > 0;
     }
+
+    /**
+     * 校验该库区是否有库存
+     * @param areaIds
+     * @return
+     */
+    public boolean checkInventoryByAreaIds(Collection<Long> areaIds) {
+        if (CollUtil.isEmpty(areaIds)) {
+            return false;
+        }
+        LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
+        lqw.in(Inventory::getAreaId, areaIds);
+        Long count = inventoryMapper.selectCount(lqw);
+        return count != null && count > 0;
+    }
 }

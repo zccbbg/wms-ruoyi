@@ -99,14 +99,14 @@ public class WarehouseController extends BaseController {
     /**
      * 删除仓库
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @SaCheckPermission("wms:warehouse:remove")
     @Log(title = "仓库", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        warehouseService.deleteByIds(List.of(ids));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        warehouseService.deleteById(id);
         return R.ok();
     }
 

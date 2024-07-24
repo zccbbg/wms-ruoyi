@@ -47,6 +47,4 @@ public class AreaVo implements Serializable {
      */
     @ExcelProperty(value = "备注")
     private String remark;
-
-    private Integer delFlag;
 }

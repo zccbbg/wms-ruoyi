@@ -114,6 +114,17 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
     }
 
     /**
+     * 删除仓库
+     */
+
+    public void deleteById(Long id) {
+        LambdaQueryWrapper<Area> lqw = Wrappers.lambdaQuery();
+        lqw.eq(Area::getWarehouseId, id);
+        Assert.isTrue(areaMapper.selectCount(lqw) == 0, "删除失败！请先删除该仓库下的库区！");
+        warehouseMapper.deleteById(id);
+    }
+
+    /**
      * 批量删除仓库
      */
 
@@ -129,13 +140,6 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
         LambdaQueryWrapper<Area> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Area::getWarehouseId, ids);
         return areaMapper.selectList(wrapper).stream().map(Area::getId).collect(Collectors.toList());
-    }
-
-    public List<WarehouseVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {
-        if (CollUtil.isEmpty(ids)) {
-            return CollUtil.newArrayList();
-        }
-        return warehouseMapper.selectByIdsIgnoreDelFlag(ids);
     }
 
     @Transactional(rollbackFor = {Exception.class})

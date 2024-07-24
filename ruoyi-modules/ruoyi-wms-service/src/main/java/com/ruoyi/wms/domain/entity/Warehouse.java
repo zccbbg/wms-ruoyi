@@ -36,11 +36,6 @@ public class Warehouse extends BaseEntity {
      * 排序
      */
     private Long orderNum;
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
 
     /**
      * 备注

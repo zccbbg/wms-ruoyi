@@ -99,14 +99,13 @@ public class AreaController extends BaseController {
     /**
      * 删除库区
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @SaCheckPermission("wms:area:remove")
     @Log(title = "库区", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        areaService.deleteByIds(List.of(ids));
-        return R.ok();
+    @DeleteMapping("/{id}")
+    public R<Boolean> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        return R.ok(areaService.deleteById(id));
     }
 }

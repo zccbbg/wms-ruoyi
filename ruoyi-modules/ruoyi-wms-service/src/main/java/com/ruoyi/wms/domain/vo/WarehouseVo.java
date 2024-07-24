@@ -47,7 +47,5 @@ public class WarehouseVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-    private Integer delFlag;
-
     private List<AreaVo> areaList;
 }

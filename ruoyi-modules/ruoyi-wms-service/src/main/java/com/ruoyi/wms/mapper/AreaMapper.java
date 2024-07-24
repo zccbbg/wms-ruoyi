@@ -9,5 +9,4 @@ import java.util.Collection;
 import java.util.List;
 
 public interface AreaMapper extends BaseMapperPlus<Area, AreaVo> {
-    List<AreaVo> queryByIdsIgnoreDelFlag(@Param("list") Collection<Long> ids);
 }

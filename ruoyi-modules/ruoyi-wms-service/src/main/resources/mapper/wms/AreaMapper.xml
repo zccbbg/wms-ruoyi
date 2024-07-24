@@ -7,13 +7,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectAreaVo">
         select * from wms_area
     </sql>
-
-
-    <select id="queryByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.vo.AreaVo">
-        <include refid="selectAreaVo"/>
-        where id in
-        <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item}
-        </foreach>
-    </select>
 </mapper>

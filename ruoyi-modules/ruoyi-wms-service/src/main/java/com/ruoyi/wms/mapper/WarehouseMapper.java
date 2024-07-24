@@ -12,5 +12,4 @@ import java.util.Collection;
 import java.util.List;
 
 public interface WarehouseMapper extends BaseMapperPlus<Warehouse, WarehouseVo> {
-    List<WarehouseVo> selectByIdsIgnoreDelFlag(@Param("list") Collection<Long> ids);
 }

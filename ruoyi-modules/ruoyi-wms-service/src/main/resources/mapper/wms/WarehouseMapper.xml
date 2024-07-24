@@ -7,12 +7,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from wms_warehouse
     </sql>
 
-    <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.vo.WarehouseVo">
-        <include refid="selectWarehouseVo"/>
-        where id in
-        <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item}
-        </foreach>
-    </select>
-
 </mapper>

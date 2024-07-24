@@ -16,6 +16,7 @@ import com.ruoyi.wms.mapper.AreaMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class AreaService {
 
     private final AreaMapper areaMapper;
+    private final InventoryService inventoryService;
 
     /**
      * 查询库区
@@ -109,18 +111,20 @@ public class AreaService {
         Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区编号重复");
     }
 
+    public Boolean deleteById(Long id) {
+        if (inventoryService.checkInventoryByAreaIds(Arrays.asList(id))) {
+            return false;
+        }
+        areaMapper.deleteById(id);
+        return true;
+    }
+
+
     /**
      * 批量删除库区
      */
 
     public void deleteByIds(Collection<Long> ids) {
         areaMapper.deleteBatchIds(ids);
-    }
-
-    public List<AreaVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {
-        if (CollUtil.isEmpty(ids)) {
-            return CollUtil.newArrayList();
-        }
-        return areaMapper.queryByIdsIgnoreDelFlag(ids);
     }
 }
