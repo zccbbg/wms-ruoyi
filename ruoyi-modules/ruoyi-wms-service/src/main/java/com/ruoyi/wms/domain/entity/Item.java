@@ -48,13 +48,6 @@ public class Item extends BaseEntity {
      */
     private String itemBrand;
 
-
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
-
     /**
      * 备注
      */

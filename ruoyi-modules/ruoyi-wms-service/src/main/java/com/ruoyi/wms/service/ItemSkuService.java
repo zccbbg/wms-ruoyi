@@ -1,6 +1,7 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,6 +21,7 @@ import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemCategoryMapper;
 import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +32,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
 @Service
+@Slf4j
 public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
 
 
     private final ItemSkuMapper itemSkuMapper;
     private final ItemService itemService;
     private final ItemCategoryMapper itemCategoryMapper;
+    private final InventoryService inventoryService;
 
     /**
      * 查询sku信息
@@ -155,13 +159,33 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         return itemSkuMapper.updateById(update) > 0;
     }
 
+    public Boolean deleteById(Long id) {
+        // 只有一个不能删除
+        ItemSku itemSku = itemSkuMapper.selectById(id);
+        Assert.notNull(itemSku, "规格不存在");
+        Assert.state(queryListByItemId(itemSku.getItemId()).size() > 1, "至少包含一个商品规格");
+        // 校验库存是否已关联
+        if (inventoryService.checkInventoryBySkuIds(Arrays.asList(id))) {
+            log.info("规格{}已有业务关联，无法删除！", id);
+            return false;
+        }
+        // 删除
+        itemSkuMapper.deleteById(id);
+        return true;
+    }
 
     /**
      * 批量删除sku信息
      */
 
     public Boolean deleteByIds(Collection<Long> ids) {
-        return itemSkuMapper.deleteBatchIds(ids) > 0;
+        // 校验库存是否已关联
+        if (inventoryService.checkInventoryBySkuIds(ids)) {
+            return false;
+        }
+        // 删除
+        itemSkuMapper.deleteBatchIds(ids);
+        return true;
     }
 
     /**
@@ -203,18 +227,12 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         return itemSkuMapper.selectVoList(lqw);
     }
 
-    /**
-     * 批量软删除sku
-     *
-     * @param itemSkuIds
-     */
-    public void batchUpdateDelFlag(Collection<Long> itemSkuIds) {
-        if (CollUtil.isEmpty(itemSkuIds)) {
-            return;
+    public List<ItemSku> queryByItemIds(Collection<Long> itemIds) {
+        if (CollUtil.isEmpty(itemIds)) {
+            return Collections.emptyList();
         }
-        LambdaUpdateWrapper<ItemSku> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.in(ItemSku::getId, itemSkuIds);
-        wrapper.set(ItemSku::getDelFlag, 2);
-        itemSkuMapper.update(null, wrapper);
+        LambdaQueryWrapper<ItemSku> lqw = Wrappers.lambdaQuery();
+        lqw.in(ItemSku::getItemId, itemIds);
+        return itemSkuMapper.selectList(lqw);
     }
 }

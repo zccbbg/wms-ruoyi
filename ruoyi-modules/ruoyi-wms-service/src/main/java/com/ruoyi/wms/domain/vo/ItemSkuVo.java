@@ -92,8 +92,6 @@ public class ItemSkuVo implements Serializable {
     @ExcelProperty(value = "商品品牌")
     private String itemBrand;
 
-    private Integer delFlag;
-
     private Long itemCategoryId;
 
 }

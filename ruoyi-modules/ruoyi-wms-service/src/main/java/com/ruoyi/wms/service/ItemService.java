@@ -39,6 +39,7 @@ public class ItemService {
     private final ItemSkuService itemSkuService;
     private final ItemSkuMapper itemSkuMapper;
     private final ItemCategoryMapper itemCategoryMapper;
+    private final InventoryService inventoryService;
 
     /**
      * 查询物料
@@ -175,11 +176,13 @@ public class ItemService {
      * 批量删除物料
      */
     @Transactional
-    public void deleteByIds(Collection<Long> ids) {
+    public Boolean deleteByIds(Collection<Long> ids) {
+        List<Long> skuIds = itemSkuService.queryByItemIds(ids).stream().map(ItemSku::getId).toList();
+        if (inventoryService.checkInventoryBySkuIds(skuIds)) {
+            return false;
+        }
         itemMapper.deleteBatchIds(ids);
-        LambdaQueryWrapper<ItemSku> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(ItemSku::getItemId, ids);
-        List<Long> skuIds = itemSkuMapper.selectList(wrapper).stream().map(ItemSku::getId).toList();
-        itemSkuService.batchUpdateDelFlag(skuIds);
+        itemSkuService.deleteByIds(skuIds);
+        return true;
     }
 }

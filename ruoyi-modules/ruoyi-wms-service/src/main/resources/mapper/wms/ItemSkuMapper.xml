@@ -21,7 +21,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.sku_name,
         a.item_id,
         a.out_sku_id,
-        a.del_flag,
         a.length,
         a.width,
         a.height,
@@ -39,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from wms_item_sku a
         inner join wms_item b on a.item_id=b.id
         inner join wms_item_category c on b.item_category=c.id
-        where a.del_flag=0 and b.del_flag=0
+        where 1=1
         <if test="bo.itemName != null and bo.itemName != ''">
             and b.item_name like concat('%', #{bo.itemName}, '%')
         </if>

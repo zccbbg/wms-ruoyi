@@ -133,4 +133,19 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             inventoryMapper.updateQuantity(updateList);
         }
     }
+
+    /**
+     * 校验规格是否有库存
+     * @param skuIds
+     * @return
+     */
+    public boolean checkInventoryBySkuIds(Collection<Long> skuIds) {
+        if (CollUtil.isEmpty(skuIds)) {
+            return false;
+        }
+        LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
+        lqw.in(Inventory::getSkuId, skuIds);
+        Long count = inventoryMapper.selectCount(lqw);
+        return count != null && count > 0;
+    }
 }

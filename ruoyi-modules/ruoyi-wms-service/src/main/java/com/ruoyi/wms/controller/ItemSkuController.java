@@ -89,12 +89,12 @@ public class ItemSkuController extends BaseController {
     /**
      * 删除sku信息
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @Log(title = "sku信息", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(itemSkuService.deleteByIds(List.of(ids)));
+    @DeleteMapping("/{id}")
+    public R<Boolean> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        return R.ok(itemSkuService.deleteById(id));
     }
 }

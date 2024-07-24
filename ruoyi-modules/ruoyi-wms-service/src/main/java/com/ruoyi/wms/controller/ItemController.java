@@ -95,9 +95,8 @@ public class ItemController extends BaseController {
      */
     @Log(title = "物料", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+    public R<Boolean> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        itemService.deleteByIds(List.of(ids));
-        return R.ok();
+        return R.ok(itemService.deleteByIds(List.of(ids)));
     }
 }

@@ -59,12 +59,4 @@ public class ItemSku extends BaseEntity {
      * 重量(kg)
      */
     private BigDecimal weight;
-
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
-
-
 }
