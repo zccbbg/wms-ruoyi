@@ -14,9 +14,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
         end
         )
---             ,
---         update_time = #{updateTime},
---         update_by = #{userId}
+            ,
+        update_time = #{updateTime},
+        update_by = #{updateBy}
         where id in
         <foreach collection="list" open="(" separator="," close=")" item="it">
             #{it.id}

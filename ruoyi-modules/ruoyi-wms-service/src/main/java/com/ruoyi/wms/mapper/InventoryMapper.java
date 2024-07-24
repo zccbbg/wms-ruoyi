@@ -5,6 +5,7 @@ import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
-    void updateQuantity(@Param("list") List<Inventory> updateList);
+    void updateQuantity(@Param("list") List<Inventory> updateList, @Param("updateTime") LocalDateTime updateTime, @Param("updateBy") String updateBy);
 }

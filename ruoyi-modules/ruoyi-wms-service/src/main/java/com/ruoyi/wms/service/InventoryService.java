@@ -9,6 +9,7 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.common.satoken.utils.LoginHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.InventoryBo;
@@ -18,6 +19,7 @@ import com.ruoyi.wms.mapper.InventoryMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -116,10 +118,14 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         Map<String, Long> existMap = inventoryMapper.selectList().stream().collect(Collectors.toMap(keyFunction, Inventory::getId));
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
+        LocalDateTime optDate = LocalDateTime.now();
+        String optUser = LoginHelper.getUsername();
         validList.forEach(it -> {
             Long inventoryId = existMap.get(keyFunction.apply(it));
             if (inventoryId != null) {
                 it.setId(inventoryId);
+                it.setUpdateBy(optUser);
+                it.setUpdateTime(optDate);
                 updateList.add(it);
             } else {
                 addList.add(it);
@@ -129,7 +135,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             saveBatch(addList);
         }
         if (updateList.size() > 0) {
-            inventoryMapper.updateQuantity(updateList);
+            inventoryMapper.updateQuantity(updateList, optDate, optUser);
         }
     }
 
