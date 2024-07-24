@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -21,6 +22,7 @@ import com.ruoyi.wms.mapper.ItemMapper;
 import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -172,17 +174,23 @@ public class ItemService {
          Assert.isTrue(skuVoList.stream().map(ItemSkuBo::getSkuName).distinct().count() == skuVoList.size(), "商品规格重复");
     }
 
+
+
     /**
      * 批量删除物料
      */
     @Transactional
-    public Boolean deleteByIds(Collection<Long> ids) {
-        List<Long> skuIds = itemSkuService.queryByItemIds(ids).stream().map(ItemSku::getId).toList();
-        if (inventoryService.checkInventoryBySkuIds(skuIds)) {
-            return false;
-        }
-        itemMapper.deleteBatchIds(ids);
+    public void deleteById(Long id) {
+        List<Long> skuIds = validIdBeforeDelete(id);
+        itemMapper.deleteById(id);
         itemSkuService.deleteByIds(skuIds);
-        return true;
+    }
+
+    private List<Long> validIdBeforeDelete(Long id) {
+        List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
+        if (inventoryService.checkInventoryBySkuIds(skuIds)) {
+            throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+        }
+        return skuIds;
     }
 }

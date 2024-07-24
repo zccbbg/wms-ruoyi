@@ -93,8 +93,9 @@ public class ItemSkuController extends BaseController {
      */
     @Log(title = "sku信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
-    public R<Boolean> remove(@NotNull(message = "主键不能为空")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
                           @PathVariable Long id) {
-        return R.ok(itemSkuService.deleteById(id));
+        itemSkuService.deleteById(id);
+        return R.ok();
     }
 }

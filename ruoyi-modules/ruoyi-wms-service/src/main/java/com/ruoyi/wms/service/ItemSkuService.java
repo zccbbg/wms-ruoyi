@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -23,6 +24,7 @@ import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,19 +161,20 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         return itemSkuMapper.updateById(update) > 0;
     }
 
-    public Boolean deleteById(Long id) {
+    public void deleteById(Long id) {
+        validIdBeforeDelete(id);
+        itemSkuMapper.deleteById(id);
+    }
+
+    private void validIdBeforeDelete(Long id) {
         // 只有一个不能删除
         ItemSku itemSku = itemSkuMapper.selectById(id);
         Assert.notNull(itemSku, "规格不存在");
         Assert.state(queryListByItemId(itemSku.getItemId()).size() > 1, "至少包含一个商品规格");
         // 校验库存是否已关联
-        if (inventoryService.checkInventoryBySkuIds(Arrays.asList(id))) {
-            log.info("规格{}已有业务关联，无法删除！", id);
-            return false;
+        if (inventoryService.checkInventoryBySkuIds(List.of(id))) {
+            throw new ServiceException("规格" + itemSku.getSkuName() + "已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }
-        // 删除
-        itemSkuMapper.deleteById(id);
-        return true;
     }
 
     /**

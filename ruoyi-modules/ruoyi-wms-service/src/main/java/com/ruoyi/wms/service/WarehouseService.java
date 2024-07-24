@@ -118,10 +118,14 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      */
 
     public void deleteById(Long id) {
+        validIdBeforeDelete(id);
+        warehouseMapper.deleteById(id);
+    }
+
+    private void validIdBeforeDelete(Long id) {
         LambdaQueryWrapper<Area> lqw = Wrappers.lambdaQuery();
         lqw.eq(Area::getWarehouseId, id);
         Assert.isTrue(areaMapper.selectCount(lqw) == 0, "删除失败！请先删除该仓库下的库区！");
-        warehouseMapper.deleteById(id);
     }
 
     /**

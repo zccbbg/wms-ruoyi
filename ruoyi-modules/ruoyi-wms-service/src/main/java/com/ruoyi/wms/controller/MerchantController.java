@@ -110,8 +110,9 @@ public class MerchantController extends BaseController {
     @SaCheckPermission("wms:merchant:remove")
     @Log(title = "往来单位", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
-    public R<Boolean> remove(@NotNull(message = "主键不能为空")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
                           @PathVariable Long id) {
-        return R.ok(merchantService.deleteById(id));
+        merchantService.deleteById(id);
+        return R.ok();
     }
 }

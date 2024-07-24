@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -14,6 +15,7 @@ import com.ruoyi.wms.domain.entity.Area;
 import com.ruoyi.wms.domain.vo.AreaVo;
 import com.ruoyi.wms.mapper.AreaMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -111,12 +113,15 @@ public class AreaService {
         Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区编号重复");
     }
 
-    public Boolean deleteById(Long id) {
-        if (inventoryService.checkInventoryByAreaIds(Arrays.asList(id))) {
-            return false;
-        }
+    public void deleteById(Long id) {
+        validIdBeforeDelete(id);
         areaMapper.deleteById(id);
-        return true;
+    }
+
+    private void validIdBeforeDelete(Long id) {
+        if (inventoryService.checkInventoryByAreaIds(List.of(id))) {
+            throw new ServiceException("库区已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+        }
     }
 
 

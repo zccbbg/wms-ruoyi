@@ -1,5 +1,6 @@
 package com.ruoyi.wms.service;
 
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -10,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.MerchantBo;
 import com.ruoyi.wms.domain.vo.MerchantVo;
@@ -85,15 +87,18 @@ public class MerchantService {
     /**
      * 删除往来单位
      */
-    public Boolean deleteById(Long id) {
+    public void deleteById(Long id) {
+        validIdBeforeDelete(id);
+        merchantMapper.deleteById(id);
+    }
+
+    private void validIdBeforeDelete(Long id) {
         LambdaQueryWrapper<ReceiptOrder> receiptOrderLqw = Wrappers.lambdaQuery();
         receiptOrderLqw.eq(ReceiptOrder::getMerchantId, id);
         Long receiptOrderCount = receiptOrderMapper.selectCount(receiptOrderLqw);
         if (receiptOrderCount != null && receiptOrderCount > 0) {
-            return false;
+            throw new ServiceException("企业已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }
-        merchantMapper.deleteById(id);
-        return true;
     }
 
     /**

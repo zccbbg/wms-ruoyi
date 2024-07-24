@@ -91,12 +91,13 @@ public class ItemController extends BaseController {
     /**
      * 删除物料
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @Log(title = "物料", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Boolean> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return R.ok(itemService.deleteByIds(List.of(ids)));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        itemService.deleteById(id);
+        return R.ok();
     }
 }
