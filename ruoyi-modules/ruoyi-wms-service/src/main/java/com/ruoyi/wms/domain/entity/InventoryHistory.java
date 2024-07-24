@@ -49,11 +49,6 @@ public class InventoryHistory extends BaseEntity {
      */
     private String remark;
     /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
-    /**
      * 所属仓库
      */
     private Long warehouseId;

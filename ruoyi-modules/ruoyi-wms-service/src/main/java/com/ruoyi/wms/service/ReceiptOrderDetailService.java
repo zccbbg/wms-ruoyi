@@ -98,10 +98,9 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
      * 根据入库单id删除入库单详情
      */
     public void deleteByReceiptOrderId(@NotNull Long receiptOrderId) {
-        LambdaUpdateWrapper<ReceiptOrderDetail> luw = Wrappers.lambdaUpdate();
-        luw.eq(ReceiptOrderDetail::getReceiptOrderId, receiptOrderId);
-        luw.set(ReceiptOrderDetail::getDelFlag, Constants.DELETED);
-        receiptOrderDetailMapper.update(null, luw);
+        LambdaQueryWrapper<ReceiptOrderDetail> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ReceiptOrderDetail::getReceiptOrderId, receiptOrderId);
+        receiptOrderDetailMapper.delete(lqw);
     }
 
     @Transactional

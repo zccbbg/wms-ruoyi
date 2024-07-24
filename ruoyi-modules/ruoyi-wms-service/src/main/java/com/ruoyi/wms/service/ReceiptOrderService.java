@@ -108,7 +108,6 @@ public class ReceiptOrderService {
         List<ReceiptOrderDetail> addDetailList = MapstructUtils.convert(detailBoList, ReceiptOrderDetail.class);
         addDetailList.forEach(it -> {
             it.setReceiptOrderId(add.getId());
-            it.setDelFlag(Constants.NOT_DELETED);
         });
         // 创建入库单明细
         receiptOrderDetailService.saveDetails(addDetailList);
@@ -147,7 +146,6 @@ public class ReceiptOrderService {
             inventoryDetail.setQuantity(detail.getQuantity());
             inventoryDetail.setExpirationTime(detail.getExpirationTime());
             inventoryDetail.setAmount(detail.getAmount());
-            inventoryDetail.setDelFlag(Constants.NOT_DELETED);
             inventoryDetailList.add(inventoryDetail);
         });
         mergedDetailList.stream().forEach(detail -> {
@@ -156,7 +154,6 @@ public class ReceiptOrderService {
             inventory.setWarehouseId(detail.getWarehouseId());
             inventory.setAreaId(detail.getAreaId());
             inventory.setQuantity(detail.getQuantity());
-            inventory.setDelFlag(Constants.NOT_DELETED);
             inventoryList.add(inventory);
 
             InventoryHistory inventoryHistory = new InventoryHistory();
@@ -166,7 +163,6 @@ public class ReceiptOrderService {
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAreaId(detail.getAreaId());
-            inventoryHistory.setDelFlag(Constants.NOT_DELETED);
             inventoryHistoryList.add(inventoryHistory);
         });
         // 创建入库记录
@@ -214,7 +210,6 @@ public class ReceiptOrderService {
         addDetailList.forEach(it -> {
             it.setId(null);
             it.setReceiptOrderId(bo.getId());
-            it.setDelFlag(Constants.NOT_DELETED);
         });
         receiptOrderDetailService.saveDetails(addDetailList);
     }

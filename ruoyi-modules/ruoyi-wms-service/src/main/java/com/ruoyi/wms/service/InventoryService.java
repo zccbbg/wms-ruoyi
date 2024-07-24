@@ -122,7 +122,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                 it.setId(inventoryId);
                 updateList.add(it);
             } else {
-                it.setDelFlag(Constants.NOT_DELETED);
                 addList.add(it);
             }
         });

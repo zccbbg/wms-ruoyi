@@ -50,11 +50,6 @@ public class ReceiptOrderDetail extends BaseEntity {
      */
     private LocalDateTime expirationTime;
     /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
-    /**
      * 备注
      */
     private String remark;

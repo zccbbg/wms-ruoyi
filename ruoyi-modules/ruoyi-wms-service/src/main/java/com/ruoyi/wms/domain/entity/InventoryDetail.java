@@ -79,10 +79,5 @@ public class InventoryDetail extends BaseEntity {
      * 剩余数量
      */
     private BigDecimal remainQuantity;
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Integer delFlag;
 
 }
