@@ -14,10 +14,10 @@
 
 ## 前端项目地址
 #### gitee
-[https://gitee.com/zccbbg/ruoyi-fast-vue3](https://gitee.com/zccbbg/ruoyi-fast-vue3)
+[https://gitee.com/zccbbg/ruo-yi-wms-vue](https://gitee.com/zccbbg/ruo-yi-wms-vue)
 
 #### github
-[https://github.com/zccbbg/ruoyi-fast-vue3](https://github.com/zccbbg/ruoyi-fast-vue3)
+[https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
 
 ## 本框架与RuoYi的功能差异
 
