@@ -39,7 +39,6 @@ public class ItemService {
 
     private final ItemMapper itemMapper;
     private final ItemSkuService itemSkuService;
-    private final ItemSkuMapper itemSkuMapper;
     private final ItemCategoryMapper itemCategoryMapper;
     private final InventoryService inventoryService;
 
@@ -137,7 +136,7 @@ public class ItemService {
      */
     @Transactional
     public void insertByForm(ItemBo bo) {
-        validateEntityBeforeSave(bo);
+        validateBoBeforeSave(bo);
         Item item = MapstructUtils.convert(bo, Item.class);
         itemMapper.insert(item);
         itemSkuService.saveSku(item.getId(), bo.getSku());
@@ -150,7 +149,7 @@ public class ItemService {
      */
     @Transactional
     public void updateByForm(ItemBo bo) {
-        validateEntityBeforeSave(bo);
+        validateBoBeforeSave(bo);
         itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
         itemSkuService.saveSku(bo.getId(), bo.getSku());
     }
@@ -158,9 +157,9 @@ public class ItemService {
     /**
      * 保存前的数据校验
      */
-    private void validateEntityBeforeSave(ItemBo entity) {
-        validateItemName(entity);
-        validateItemSku(entity.getSku());
+    private void validateBoBeforeSave(ItemBo itemBo) {
+        validateItemName(itemBo);
+        validateItemSkuName(itemBo.getSku());
     }
 
     private void validateItemName(ItemBo item) {
@@ -170,8 +169,11 @@ public class ItemService {
         Assert.isTrue(itemMapper.selectCount(queryWrapper) == 0, "商品名称重复");
     }
 
-    private void validateItemSku(List<ItemSkuBo> skuVoList) {
-         Assert.isTrue(skuVoList.stream().map(ItemSkuBo::getSkuName).distinct().count() == skuVoList.size(), "商品规格重复");
+    private void validateItemSkuName(List<ItemSkuBo> skuVoList) {
+         Assert.isTrue(
+             skuVoList.stream().map(ItemSkuBo::getSkuName).distinct().count() == skuVoList.size(),
+             "商品规格重复"
+         );
     }
 
 
