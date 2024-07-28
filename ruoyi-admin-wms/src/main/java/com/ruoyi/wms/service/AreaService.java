@@ -112,11 +112,11 @@ public class AreaService {
     }
 
     public void deleteById(Long id) {
-        validIdBeforeDelete(id);
+        validateIdBeforeDelete(id);
         areaMapper.deleteById(id);
     }
 
-    private void validIdBeforeDelete(Long id) {
+    private void validateIdBeforeDelete(Long id) {
         if (inventoryService.checkInventoryByAreaIds(List.of(id))) {
             throw new ServiceException("库区已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }

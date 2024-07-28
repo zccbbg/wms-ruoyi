@@ -228,11 +228,11 @@ public class ReceiptOrderService {
      * 删除入库单
      */
     public void deleteById(Long id) {
-        validIdBeforeDelete(id);
+        validdateIdBeforeDelete(id);
         receiptOrderMapper.deleteById(id);
     }
 
-    private void validIdBeforeDelete(Long id) {
+    private void validdateIdBeforeDelete(Long id) {
         ReceiptOrderVo receiptOrderVo = queryById(id);
         Assert.notNull(receiptOrderVo, "入库单不存在");
         if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getReceiptOrderStatus())) {

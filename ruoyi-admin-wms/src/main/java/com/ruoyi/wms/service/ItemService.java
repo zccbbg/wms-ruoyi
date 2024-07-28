@@ -137,7 +137,7 @@ public class ItemService {
      */
     @Transactional
     public void insertByForm(ItemBo bo) {
-        validEntityBeforeSave(bo);
+        validateEntityBeforeSave(bo);
         Item item = MapstructUtils.convert(bo, Item.class);
         itemMapper.insert(item);
         itemSkuService.saveSku(item.getId(), bo.getSku());
@@ -150,7 +150,7 @@ public class ItemService {
      */
     @Transactional
     public void updateByForm(ItemBo bo) {
-        validEntityBeforeSave(bo);
+        validateEntityBeforeSave(bo);
         itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
         itemSkuService.saveSku(bo.getId(), bo.getSku());
     }
@@ -158,7 +158,7 @@ public class ItemService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ItemBo entity) {
+    private void validateEntityBeforeSave(ItemBo entity) {
         validateItemName(entity);
         validateItemSku(entity.getSku());
     }
@@ -182,12 +182,12 @@ public class ItemService {
     @Transactional
     public void deleteById(Long id) {
         List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
-        validSkuIdsBeforeDelete(skuIds);
+        validateSkuIdsBeforeDelete(skuIds);
         itemMapper.deleteById(id);
         itemSkuService.deleteByIds(skuIds);
     }
 
-    private void validSkuIdsBeforeDelete(List<Long> skuIds) {
+    private void validateSkuIdsBeforeDelete(List<Long> skuIds) {
         if (inventoryService.checkInventoryBySkuIds(skuIds)) {
             throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }

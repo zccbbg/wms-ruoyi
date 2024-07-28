@@ -88,11 +88,11 @@ public class MerchantService {
      * 删除往来单位
      */
     public void deleteById(Long id) {
-        validIdBeforeDelete(id);
+        validateIdBeforeDelete(id);
         merchantMapper.deleteById(id);
     }
 
-    private void validIdBeforeDelete(Long id) {
+    private void validateIdBeforeDelete(Long id) {
         LambdaQueryWrapper<ReceiptOrder> receiptOrderLqw = Wrappers.lambdaQuery();
         receiptOrderLqw.eq(ReceiptOrder::getMerchantId, id);
         Long receiptOrderCount = receiptOrderMapper.selectCount(receiptOrderLqw);

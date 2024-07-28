@@ -160,11 +160,11 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     }
 
     public void deleteById(Long id) {
-        validIdBeforeDelete(id);
+        validateIdBeforeDelete(id);
         itemSkuMapper.deleteById(id);
     }
 
-    private void validIdBeforeDelete(Long id) {
+    private void validateIdBeforeDelete(Long id) {
         // 只有一个不能删除
         ItemSku itemSku = itemSkuMapper.selectById(id);
 
@@ -200,7 +200,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     public void saveSku(Long itemId, List<ItemSkuBo> sku) {
         List<ItemSku> itemSkuList = MapstructUtils.convert(sku, ItemSku.class);
         // 填充条码和itemId
-        this.populate(itemSkuList, itemId);
+        this.addOutSkuId(itemSkuList, itemId);
         saveOrUpdateBatch(itemSkuList);
     }
 
@@ -209,7 +209,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
      * @param itemSkuList
      * @param itemId
      */
-    public void populate(List<ItemSku> itemSkuList, Long itemId) {
+    private void addOutSkuId(List<ItemSku> itemSkuList, Long itemId) {
         for (ItemSku itemSku : itemSkuList) {
             if (StrUtil.isBlank(itemSku.getOutSkuId())) {
                 itemSku.setOutSkuId(RandomUtil.randomNumbers(8));
