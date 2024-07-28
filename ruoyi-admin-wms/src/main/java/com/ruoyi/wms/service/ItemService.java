@@ -10,23 +10,21 @@ import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.ItemBo;
 import com.ruoyi.wms.domain.bo.ItemSkuBo;
 import com.ruoyi.wms.domain.entity.Item;
+import com.ruoyi.wms.domain.entity.ItemCategory;
+import com.ruoyi.wms.domain.entity.ItemSku;
+import com.ruoyi.wms.domain.vo.ItemCategoryVo;
 import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemCategoryMapper;
-import com.ruoyi.wms.mapper.ItemSkuMapper;
+import com.ruoyi.wms.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.wms.domain.bo.ItemBo;
-import com.ruoyi.wms.domain.entity.ItemCategory;
-import com.ruoyi.wms.domain.entity.ItemSku;
-import com.ruoyi.wms.domain.vo.ItemCategoryVo;
-import com.ruoyi.wms.mapper.ItemMapper;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -59,24 +57,12 @@ public class ItemService {
      */
 
     public List<ItemVo> queryById(List<Long> itemIds) {
-        if (itemIds == null || itemIds.isEmpty()) {
+        if (CollUtil.isEmpty(itemIds)) {
             return CollUtil.newArrayList();
         }
         LambdaQueryWrapper<Item> lambdaQueryWrapper = Wrappers.lambdaQuery();
         lambdaQueryWrapper.in(Item::getId, itemIds);
         return itemMapper.selectVoList(lambdaQueryWrapper);
-    }
-
-    /**
-     * 忽略删除标识查询商品
-     * @param ids
-     * @return
-     */
-    public List<ItemVo> queryByIdsIgnoreDelFlag(Collection<Long> ids) {
-        if (CollUtil.isEmpty(ids)) {
-            return CollUtil.newArrayList();
-        }
-        return MapstructUtils.convert(itemMapper.selectByIdsIgnoreDelFlag(ids), ItemVo.class);
     }
 
     /**
@@ -139,7 +125,9 @@ public class ItemService {
         validateBoBeforeSave(bo);
         Item item = MapstructUtils.convert(bo, Item.class);
         itemMapper.insert(item);
-        itemSkuService.saveSku(item.getId(), bo.getSku());
+        itemSkuService.setItemId(bo.getSku(),item.getId());
+        itemSkuService.setOutSkuId(bo.getSku());
+        itemSkuService.saveOrUpdateBatchByBo(bo.getSku());
     }
 
     /**
@@ -151,7 +139,8 @@ public class ItemService {
     public void updateByForm(ItemBo bo) {
         validateBoBeforeSave(bo);
         itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
-        itemSkuService.saveSku(bo.getId(), bo.getSku());
+        itemSkuService.setOutSkuId(bo.getSku());
+        itemSkuService.saveOrUpdateBatchByBo(bo.getSku());
     }
 
     /**

@@ -96,7 +96,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     private void injectItemInfo(List<ItemSkuVo> records) {
         List<Long> itemIds = records.stream().map(ItemSkuVo::getItemId).toList();
         if (!CollUtil.isEmpty(itemIds)) {
-            Map<Long, ItemVo> itemMap = itemService.queryByIdsIgnoreDelFlag(itemIds).stream().collect(Collectors.toMap(ItemVo::getId, Function.identity()));
+            Map<Long, ItemVo> itemMap = itemService.queryById(itemIds).stream().collect(Collectors.toMap(ItemVo::getId, Function.identity()));
             records.forEach(itemSkuVo -> {
                 ItemVo itemVo = itemMap.get(itemSkuVo.getItemId());
                 itemSkuVo.setItemName(itemVo.getItemName());
@@ -193,28 +193,31 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
 
     /**
      * 批量保存商品sku
-     * @param itemId 商品id
      * @param sku    商品sku
      */
     @Transactional
-    public void saveSku(Long itemId, List<ItemSkuBo> sku) {
+    public void saveOrUpdateBatchByBo(List<ItemSkuBo> sku) {
         List<ItemSku> itemSkuList = MapstructUtils.convert(sku, ItemSku.class);
-        // 填充条码和itemId
-        this.addOutSkuId(itemSkuList, itemId);
         saveOrUpdateBatch(itemSkuList);
     }
 
     /**
-     * 填充sku的条码和itemId
+     * 填充sku的编码
      * @param itemSkuList
-     * @param itemId
      */
-    private void addOutSkuId(List<ItemSku> itemSkuList, Long itemId) {
-        for (ItemSku itemSku : itemSkuList) {
-            if (StrUtil.isBlank(itemSku.getOutSkuId())) {
-                itemSku.setOutSkuId(RandomUtil.randomNumbers(8));
+    public void setOutSkuId(List<ItemSkuBo> itemSkuList) {
+        for (ItemSkuBo itemSkuBo : itemSkuList) {
+            if (StrUtil.isBlank(itemSkuBo.getOutSkuId())) {
+                itemSkuBo.setOutSkuId(RandomUtil.randomNumbers(8));
             }
-            itemSku.setItemId(itemId);
+        }
+    }
+
+    public void setItemId(List<ItemSkuBo> itemSkuList,Long itemId) {
+        for (ItemSkuBo itemSkuBo : itemSkuList) {
+            if (StrUtil.isBlank(itemSkuBo.getOutSkuId())) {
+                itemSkuBo.setItemId(itemId);
+            }
         }
     }
 
