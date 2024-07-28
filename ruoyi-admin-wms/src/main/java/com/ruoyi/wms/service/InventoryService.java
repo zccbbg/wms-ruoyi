@@ -9,15 +9,14 @@ import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
+import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.entity.Inventory;
+import com.ruoyi.wms.domain.vo.InventoryVo;
+import com.ruoyi.wms.mapper.InventoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.wms.domain.bo.InventoryBo;
-import com.ruoyi.wms.domain.vo.InventoryVo;
-import com.ruoyi.wms.mapper.InventoryMapper;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -100,29 +99,12 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      * @param list
      */
     @Transactional
-    public synchronized void saveData(List<Inventory> list) {
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-        List<Inventory> validList = list
-            .stream()
-            .filter(it ->
-                   it.getWarehouseId() != null
-                && it.getAreaId() != null
-                && it.getSkuId() != null
-                && it.getQuantity() != null
-                && it.getQuantity().compareTo(BigDecimal.ZERO) > 0)
-            .toList();
-        if (CollUtil.isEmpty(validList)) {
-            return;
-        }
+    public synchronized void updateInventoryQuantity(List<Inventory> list) {
         Function<Inventory, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
         Map<String, Long> existMap = inventoryMapper.selectList().stream().collect(Collectors.toMap(keyFunction, Inventory::getId));
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
-        LocalDateTime optDate = LocalDateTime.now();
-        String optUser = LoginHelper.getUsername();
-        validList.forEach(it -> {
+        list.forEach(it -> {
             Long inventoryId = existMap.get(keyFunction.apply(it));
             if (inventoryId != null) {
                 it.setId(inventoryId);
@@ -135,7 +117,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             saveBatch(addList);
         }
         if (updateList.size() > 0) {
-            inventoryMapper.updateQuantity(updateList, optDate, optUser);
+            inventoryMapper.updateQuantity(updateList, LocalDateTime.now(), LoginHelper.getUsername());
         }
     }
 

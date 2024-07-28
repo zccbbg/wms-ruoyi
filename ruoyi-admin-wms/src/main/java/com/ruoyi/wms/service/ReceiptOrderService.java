@@ -13,7 +13,6 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.system.domain.vo.SysDictDataVo;
 import com.ruoyi.system.service.SysDictTypeService;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
@@ -22,7 +21,6 @@ import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
 import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,48 +111,35 @@ public class ReceiptOrderService {
     }
 
     /**
-     * 执行入库
+     * 入库：
+     * 1.保存入库单和入库单明细
+     * 2.保存库存明细
+     * 3.增加库存
+     * 4.保存库存记录
      */
     @Transactional
-    public void doWarehousing(ReceiptOrderBo bo) {
-        // 如果没暂存过
+    public void receive(ReceiptOrderBo bo) {
+        // 1. 保存入库单和入库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
-        List<ReceiptOrderDetailBo> mergedDetailList = mergeReceiptOrderDetail(bo.getDetails());
-        List<InventoryDetail> inventoryDetailList = new LinkedList<>();
-        List<Inventory> inventoryList = new LinkedList<>();
-        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
-        Optional<SysDictDataVo> wmsReceiptType = dictTypeService.selectDictDataByType("wms_receipt_type")
-            .stream()
-            .filter(it -> it.getDictValue().equals(bo.getReceiptOrderType().toString()))
-            .findFirst();
-        String receiptOrderType = wmsReceiptType.isEmpty() ? StringUtils.EMPTY : wmsReceiptType.get().getDictLabel();
-        // 构建入库记录、入库数据、库存记录
-        bo.getDetails().forEach(detail -> {
-            InventoryDetail inventoryDetail = new InventoryDetail();
-            inventoryDetail.setReceiptOrderId(bo.getId());
-            inventoryDetail.setReceiptOrderType(receiptOrderType);
-            inventoryDetail.setOrderNo(bo.getOrderNo());
-            inventoryDetail.setType(ServiceConstants.InventoryDetailType.RECEIPT);
-            inventoryDetail.setSkuId(detail.getSkuId());
-            inventoryDetail.setWarehouseId(detail.getWarehouseId());
-            inventoryDetail.setAreaId(detail.getAreaId());
-            inventoryDetail.setQuantity(detail.getQuantity());
-            inventoryDetail.setExpirationTime(detail.getExpirationTime());
-            inventoryDetail.setAmount(detail.getAmount());
-            inventoryDetailList.add(inventoryDetail);
-        });
-        mergedDetailList.stream().forEach(detail -> {
-            Inventory inventory = new Inventory();
-            inventory.setSkuId(detail.getSkuId());
-            inventory.setWarehouseId(detail.getWarehouseId());
-            inventory.setAreaId(detail.getAreaId());
-            inventory.setQuantity(detail.getQuantity());
-            inventoryList.add(inventory);
 
+        // 2.保存库存明细
+        this.saveInventoryDetails(bo);
+
+        //3.增加库存
+        List<Inventory> inventoryList = convertInventoryList(bo.getDetails());
+        inventoryService.updateInventoryQuantity(inventoryList);
+
+        // 4.保存库存记录
+        this.saveInventoryHistory(bo);
+    }
+
+    private void saveInventoryHistory(ReceiptOrderBo bo){
+        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
+        bo.getDetails().forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setFormId(bo.getId());
             inventoryHistory.setFormType(bo.getReceiptOrderType());
@@ -164,34 +149,44 @@ public class ReceiptOrderService {
             inventoryHistory.setAreaId(detail.getAreaId());
             inventoryHistoryList.add(inventoryHistory);
         });
-        // 创建入库记录
-        inventoryDetailService.saveBatch(inventoryDetailList);
-        // 操作库存
-        inventoryService.saveData(inventoryList);
-        // 记录库存历史
         inventoryHistoryService.saveBatch(inventoryHistoryList);
+    }
+
+    private void saveInventoryDetails(ReceiptOrderBo bo){
+
+        List<InventoryDetail> inventoryDetailList = MapstructUtils.convert(bo.getDetails(), InventoryDetail.class);
+
+        inventoryDetailList.forEach(inventoryDetail -> {
+            inventoryDetail.setReceiptOrderId(bo.getId());
+            inventoryDetail.setOrderNo(bo.getOrderNo());
+            inventoryDetail.setType(ServiceConstants.InventoryDetailType.RECEIPT);
+        });
+        inventoryDetailService.saveBatch(inventoryDetailList);
     }
 
     /**
      * 合并入库单详情 合并key：warehouseId_areaId_skuId
-     * @param unmergedList
+     * @param orderDetailBoList
      * @return
      */
-    private List<ReceiptOrderDetailBo> mergeReceiptOrderDetail(List<ReceiptOrderDetailBo> unmergedList) {
+    private List<Inventory> convertInventoryList(List<ReceiptOrderDetailBo> orderDetailBoList) {
         Function<ReceiptOrderDetailBo, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
-        Map<String, ReceiptOrderDetailBo> mergedMap = new HashMap<>();
-        unmergedList.forEach(unmergedItem -> {
-            String key = keyFunction.apply(unmergedItem);
-            if (mergedMap.containsKey(key)) {
-                ReceiptOrderDetailBo mergedItem = mergedMap.get(key);
-                mergedItem.setQuantity(mergedItem.getQuantity().add(unmergedItem.getQuantity()));
+        Map<String, Inventory> inventoryMap = new HashMap<>();
+        orderDetailBoList.forEach(orderDetailBo -> {
+            String key = keyFunction.apply(orderDetailBo);
+            if (inventoryMap.containsKey(key)) {
+                Inventory mergedItem = inventoryMap.get(key);
+                mergedItem.setQuantity(mergedItem.getQuantity().add(orderDetailBo.getQuantity()));
             } else {
-                ReceiptOrderDetailBo copiedUnmergedItem = new ReceiptOrderDetailBo();
-                BeanUtils.copyProperties(unmergedItem, copiedUnmergedItem);
-                mergedMap.put(key, copiedUnmergedItem);
+                Inventory inventory = new Inventory();
+                inventory.setSkuId(orderDetailBo.getSkuId());
+                inventory.setWarehouseId(orderDetailBo.getWarehouseId());
+                inventory.setAreaId(orderDetailBo.getAreaId());
+                inventory.setQuantity(orderDetailBo.getQuantity());
+                inventoryMap.put(key, inventory);
             }
         });
-        return new ArrayList<>(mergedMap.values());
+        return new ArrayList<>(inventoryMap.values());
     }
 
     /**
@@ -218,10 +213,10 @@ public class ReceiptOrderService {
      * @param id
      */
     public void editToInvalid(Long id) {
-        LambdaUpdateWrapper<ReceiptOrder> luw = Wrappers.lambdaUpdate();
-        luw.eq(ReceiptOrder::getId, id);
-        luw.set(ReceiptOrder::getReceiptOrderStatus, ServiceConstants.ReceiptOrderStatus.INVALID);
-        receiptOrderMapper.update(null, luw);
+        LambdaUpdateWrapper<ReceiptOrder> wrapper = Wrappers.lambdaUpdate();
+        wrapper.eq(ReceiptOrder::getId, id);
+        wrapper.set(ReceiptOrder::getReceiptOrderStatus, ServiceConstants.ReceiptOrderStatus.INVALID);
+        receiptOrderMapper.update(null, wrapper);
     }
 
     /**
