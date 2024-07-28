@@ -234,6 +234,7 @@ public class ReceiptOrderService {
 
     private void validIdBeforeDelete(Long id) {
         ReceiptOrderVo receiptOrderVo = queryById(id);
+        Assert.notNull(receiptOrderVo, "入库单不存在");
         if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getReceiptOrderStatus())) {
             throw new ServiceException("入库单【" + receiptOrderVo.getReceiptOrderNo() + "】已入库，无法删除！", HttpStatus.CONFLICT.value());
         }
