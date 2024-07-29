@@ -106,8 +106,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result!=null){
                 result.setQuantity(result.getQuantity().add(inventory.getQuantity()));
-                result.setUpdateBy(LoginHelper.getUsername());
-                result.setUpdateTime(LocalDateTime.now());
                 updateList.add(result);
             }else {
                 addList.add(inventory);
