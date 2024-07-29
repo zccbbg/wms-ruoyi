@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
+import com.ruoyi.common.core.utils.ValidatorUtils;
+import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
@@ -93,19 +95,24 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      * @param list
      */
     @Transactional
-    public synchronized void updateInventoryQuantity(List<Inventory> list) {
+    public synchronized void updateInventoryQuantity(List<InventoryBo> list) {
+        list.forEach(inventoryBo -> {
+            ValidatorUtils.validate(inventoryBo, AddGroup.class);
+        });
+
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
-        list.forEach(inventory -> {
+        list.forEach(inventoryBo -> {
             LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Inventory::getWarehouseId, inventory.getWarehouseId());
-            wrapper.eq(Inventory::getAreaId, inventory.getAreaId());
-            wrapper.eq(Inventory::getSkuId, inventory.getSkuId());
+            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
+            wrapper.eq(Inventory::getAreaId, inventoryBo.getAreaId());
+            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result!=null){
-                result.setQuantity(result.getQuantity().add(inventory.getQuantity()));
+                result.setQuantity(result.getQuantity().add(inventoryBo.getQuantity()));
                 updateList.add(result);
             }else {
+                Inventory inventory = MapstructUtils.convert(inventoryBo, Inventory.class);
                 addList.add(inventory);
             }
         });
