@@ -137,6 +137,7 @@ public class ItemService {
     public void updateByForm(ItemBo bo) {
         validateBoBeforeSave(bo);
         itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
+        itemSkuService.setItemId(bo.getSku(),bo.getId());
         itemSkuService.setOutSkuId(bo.getSku());
         itemSkuService.saveOrUpdateBatchByBo(bo.getSku());
     }
