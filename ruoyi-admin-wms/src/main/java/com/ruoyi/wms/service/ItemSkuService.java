@@ -124,6 +124,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         lqw.like(StrUtil.isNotBlank(bo.getSkuName()), ItemSku::getSkuName, bo.getSkuName());
         lqw.eq(bo.getItemId() != null, ItemSku::getItemId, bo.getItemId());
         lqw.eq(StrUtil.isNotBlank(bo.getOutSkuId()), ItemSku::getOutSkuId, bo.getOutSkuId());
+        lqw.orderByDesc(ItemSku::getItemId);
         return lqw;
     }
 

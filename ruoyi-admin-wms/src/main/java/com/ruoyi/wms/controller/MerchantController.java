@@ -50,8 +50,8 @@ public class MerchantController extends BaseController {
      */
     @SaCheckPermission("wms:merchant:list")
     @GetMapping("/listNoPage")
-    public List<MerchantVo> listNoPage(MerchantBo bo) {
-        return merchantService.queryList(bo);
+    public R<List<MerchantVo>> listNoPage(MerchantBo bo) {
+        return R.ok(merchantService.queryList(bo));
     }
 
     /**

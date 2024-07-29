@@ -40,8 +40,8 @@ public class ItemSkuController extends BaseController {
      * 查询sku信息列表
      */
     @GetMapping("/listNoPage")
-    public List<ItemSkuVo> list(ItemSkuBo bo) {
-        return itemSkuService.queryList(bo);
+    public R<List<ItemSkuVo>> list(ItemSkuBo bo) {
+        return R.ok(itemSkuService.queryList(bo));
     }
 
     /**

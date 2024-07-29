@@ -44,8 +44,8 @@ public class WarehouseController extends BaseController {
      */
     @SaCheckPermission("wms:warehouse:list")
     @GetMapping("/listNoPage")
-    public List<WarehouseVo> listNoPage(WarehouseBo bo) {
-        return warehouseService.queryList(bo);
+    public R<List<WarehouseVo>> listNoPage(WarehouseBo bo) {
+        return R.ok(warehouseService.queryList(bo));
     }
 
     /**

@@ -41,8 +41,8 @@ public class ItemController extends BaseController {
      * 查询物料列表
      */
     @GetMapping("/listNoPage")
-    public List<ItemVo> list(ItemBo bo) {
-        return itemService.queryList(bo);
+    public R<List<ItemVo>> list(ItemBo bo) {
+        return R.ok(itemService.queryList(bo));
     }
 
     /**

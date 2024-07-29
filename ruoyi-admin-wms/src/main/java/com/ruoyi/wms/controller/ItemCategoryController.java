@@ -42,6 +42,14 @@ public class ItemCategoryController extends BaseController {
     }
 
     /**
+     * 查询物料类型列表
+     */
+    @GetMapping("/listNoPage")
+    public R<List<ItemCategoryVo>> listNoPage(ItemCategoryBo bo) {
+        return R.ok(itemCategoryService.queryList(bo));
+    }
+
+    /**
      * 获取物料类型下拉树列表
      */
     @GetMapping("/treeselect")

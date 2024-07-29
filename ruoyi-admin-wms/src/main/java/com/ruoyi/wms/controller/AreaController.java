@@ -44,8 +44,8 @@ public class AreaController extends BaseController {
      */
     @SaCheckPermission("wms:area:list")
     @GetMapping("/listNoPage")
-    public List<AreaVo> listNoPage(AreaBo bo) {
-        return areaService.queryList(bo);
+    public R<List<AreaVo>> listNoPage(AreaBo bo) {
+        return R.ok(areaService.queryList(bo));
     }
 
     /**
