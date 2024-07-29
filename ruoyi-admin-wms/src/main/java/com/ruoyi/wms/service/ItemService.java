@@ -6,7 +6,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -21,7 +20,6 @@ import com.ruoyi.wms.mapper.ItemCategoryMapper;
 import com.ruoyi.wms.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -173,14 +171,8 @@ public class ItemService {
     @Transactional
     public void deleteById(Long id) {
         List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
-        validateSkuIdsBeforeDelete(skuIds);
         itemMapper.deleteById(id);
         itemSkuService.deleteByIds(skuIds);
     }
 
-    private void validateSkuIdsBeforeDelete(List<Long> skuIds) {
-        if (inventoryService.checkInventoryBySkuIds(skuIds)) {
-            throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
-        }
-    }
 }

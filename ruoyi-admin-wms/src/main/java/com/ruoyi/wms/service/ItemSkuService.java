@@ -158,23 +158,25 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
             throw new BaseException("至少包含一个商品规格");
         }
         // 校验库存是否已关联
-        if (inventoryService.checkInventoryBySkuIds(List.of(id))) {
+        if (inventoryService.existsBySkuIds(List.of(id))) {
             throw new ServiceException("规格" + itemSku.getSkuName() + "已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
         }
     }
 
+    private void validateSkuIdsBeforeDelete(Collection<Long> skuIds) {
+        if (inventoryService.existsBySkuIds(skuIds)) {
+            throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+        }
+    }
     /**
      * 批量删除sku信息
      */
 
-    public Boolean deleteByIds(Collection<Long> ids) {
+    public void deleteByIds(Collection<Long> ids) {
         // 校验库存是否已关联
-        if (inventoryService.checkInventoryBySkuIds(ids)) {
-            return false;
-        }
+        validateSkuIdsBeforeDelete(ids);
         // 删除
         itemSkuMapper.deleteBatchIds(ids);
-        return true;
     }
 
     /**

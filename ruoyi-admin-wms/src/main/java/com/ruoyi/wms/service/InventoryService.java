@@ -1,6 +1,5 @@
 package com.ruoyi.wms.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +12,7 @@ import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.mapper.InventoryMapper;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,14 +126,10 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      * @param skuIds
      * @return
      */
-    public boolean checkInventoryBySkuIds(Collection<Long> skuIds) {
-        if (CollUtil.isEmpty(skuIds)) {
-            return false;
-        }
+    public boolean existsBySkuIds(@NotEmpty Collection<Long> skuIds) {
         LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
         lqw.in(Inventory::getSkuId, skuIds);
-        Long count = inventoryMapper.selectCount(lqw);
-        return count != null && count > 0;
+        return inventoryMapper.exists(lqw);
     }
 
     /**
@@ -141,13 +137,9 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      * @param areaIds
      * @return
      */
-    public boolean checkInventoryByAreaIds(Collection<Long> areaIds) {
-        if (CollUtil.isEmpty(areaIds)) {
-            return false;
-        }
+    public boolean existsByAreaIds(@NotEmpty Collection<Long> areaIds) {
         LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
         lqw.in(Inventory::getAreaId, areaIds);
-        Long count = inventoryMapper.selectCount(lqw);
-        return count != null && count > 0;
+        return inventoryMapper.exists(lqw);
     }
 }
