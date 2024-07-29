@@ -14,6 +14,7 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.system.service.SysDictTypeService;
+import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.*;
@@ -130,7 +131,7 @@ public class ReceiptOrderService {
         this.saveInventoryDetails(bo);
 
         //3.增加库存
-        List<Inventory> inventoryList = convertInventoryList(bo.getDetails());
+        List<InventoryBo> inventoryList = convertInventoryList(bo.getDetails());
         inventoryService.updateInventoryQuantity(inventoryList);
 
         // 4.保存库存记录
@@ -169,16 +170,16 @@ public class ReceiptOrderService {
      * @param orderDetailBoList
      * @return
      */
-    private List<Inventory> convertInventoryList(List<ReceiptOrderDetailBo> orderDetailBoList) {
+    private List<InventoryBo> convertInventoryList(List<ReceiptOrderDetailBo> orderDetailBoList) {
         Function<ReceiptOrderDetailBo, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
-        Map<String, Inventory> inventoryMap = new HashMap<>();
+        Map<String, InventoryBo> inventoryMap = new HashMap<>();
         orderDetailBoList.forEach(orderDetailBo -> {
             String key = keyFunction.apply(orderDetailBo);
             if (inventoryMap.containsKey(key)) {
-                Inventory mergedItem = inventoryMap.get(key);
+                InventoryBo mergedItem = inventoryMap.get(key);
                 mergedItem.setQuantity(mergedItem.getQuantity().add(orderDetailBo.getQuantity()));
             } else {
-                Inventory inventory = new Inventory();
+                InventoryBo inventory = new InventoryBo();
                 inventory.setSkuId(orderDetailBo.getSkuId());
                 inventory.setWarehouseId(orderDetailBo.getWarehouseId());
                 inventory.setAreaId(orderDetailBo.getAreaId());
