@@ -65,20 +65,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     }
 
     /**
-     * 根据itemId忽略逻辑删除标识查询sku信息
-     * @param itemIds
-     * @return
-     */
-    public List<ItemSkuVo> queryByIdsIgnoreDelFlag(Collection<Long> itemIds) {
-        if (CollUtil.isEmpty(itemIds)) {
-            return CollUtil.newArrayList();
-        }
-        List<ItemSkuVo> skuVoList = MapstructUtils.convert(itemSkuMapper.selectByIdsIgnoreDelFlag(itemIds), ItemSkuVo.class);
-        injectItemInfo(skuVoList);
-        return skuVoList;
-    }
-
-    /**
      * 查询sku信息列表，用于出入库的选择组件
      */
 

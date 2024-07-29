@@ -8,13 +8,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from wms_item_sku
     </sql>
 
-    <select id="selectByIdsIgnoreDelFlag" resultType="com.ruoyi.wms.domain.entity.ItemSku">
-        <include refid="selectItemSku"/>
-        where id in
-        <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item}
-        </foreach>
-    </select>
     <select id="selectByBo" resultType="com.ruoyi.wms.domain.vo.ItemSkuVo">
         select
         a.id,
