@@ -7,14 +7,12 @@ import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.ruoyi.common.mybatis.handler.InjectionMetaObjectHandler;
-import com.ruoyi.common.mybatis.handler.MybatisExceptionHandler;
 import com.ruoyi.common.core.factory.YmlPropertySourceFactory;
 import com.ruoyi.common.core.utils.SpringUtils;
+import com.ruoyi.common.mybatis.handler.InjectionMetaObjectHandler;
+import com.ruoyi.common.mybatis.handler.MybatisExceptionHandler;
 import com.ruoyi.common.mybatis.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,12 +30,6 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 多租户插件 必须放到第一位
-        try {
-            TenantLineInnerInterceptor tenant = SpringUtils.getBean(TenantLineInnerInterceptor.class);
-            interceptor.addInnerInterceptor(tenant);
-        } catch (BeansException ignore) {
-        }
         // 数据权限处理
         interceptor.addInnerInterceptor(dataPermissionInterceptor());
         // 分页插件

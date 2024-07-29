@@ -21,10 +21,6 @@ public class AreaBo extends BaseEntity {
     @NotNull(message = "不能为空", groups = {EditGroup.class})
     private Long id;
     /**
-     * 租户编号
-     */
-    private String tenantId;
-    /**
      * 编号
      */
     private String areaNo;

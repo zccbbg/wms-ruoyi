@@ -12,7 +12,6 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 /**
@@ -34,11 +33,6 @@ public class SysLogininforVo implements Serializable {
      */
     @ExcelProperty(value = "序号")
     private Long infoId;
-
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 用户账号

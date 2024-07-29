@@ -11,7 +11,6 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 /**
@@ -33,11 +32,6 @@ public class SysOperLogVo implements Serializable {
      */
     @ExcelProperty(value = "日志主键")
     private Long operId;
-
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 模块标题
