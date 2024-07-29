@@ -16,5 +16,4 @@ import java.util.List;
  */
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
-    void updateQuantity(@Param("list") List<Inventory> updateList, @Param("updateTime") LocalDateTime updateTime, @Param("updateBy") String updateBy);
 }

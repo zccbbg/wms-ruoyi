@@ -21,9 +21,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 库存Service业务层处理
@@ -62,13 +59,12 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     }
 
     private LambdaQueryWrapper<Inventory> buildQueryWrapper(InventoryBo bo) {
-        Map<String, Object> params = bo.getParams();
-        LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getSkuId() != null, Inventory::getSkuId, bo.getSkuId());
-        lqw.eq(bo.getWarehouseId() != null, Inventory::getWarehouseId, bo.getWarehouseId());
-        lqw.eq(bo.getAreaId() != null, Inventory::getAreaId, bo.getAreaId());
-        lqw.eq(bo.getQuantity() != null, Inventory::getQuantity, bo.getQuantity());
-        return lqw;
+        LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(bo.getSkuId() != null, Inventory::getSkuId, bo.getSkuId());
+        wrapper.eq(bo.getWarehouseId() != null, Inventory::getWarehouseId, bo.getWarehouseId());
+        wrapper.eq(bo.getAreaId() != null, Inventory::getAreaId, bo.getAreaId());
+        wrapper.eq(bo.getQuantity() != null, Inventory::getQuantity, bo.getQuantity());
+        return wrapper;
     }
 
     /**
@@ -100,24 +96,28 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      */
     @Transactional
     public synchronized void updateInventoryQuantity(List<Inventory> list) {
-        Function<Inventory, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
-        Map<String, Long> existMap = inventoryMapper.selectList().stream().collect(Collectors.toMap(keyFunction, Inventory::getId));
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
-        list.forEach(it -> {
-            Long inventoryId = existMap.get(keyFunction.apply(it));
-            if (inventoryId != null) {
-                it.setId(inventoryId);
-                updateList.add(it);
-            } else {
-                addList.add(it);
+        list.forEach(inventory -> {
+            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+            wrapper.eq(Inventory::getWarehouseId, inventory.getWarehouseId());
+            wrapper.eq(Inventory::getAreaId, inventory.getAreaId());
+            wrapper.eq(Inventory::getSkuId, inventory.getSkuId());
+            Inventory result = inventoryMapper.selectOne(wrapper);
+            if(result!=null){
+                result.setQuantity(result.getQuantity().add(inventory.getQuantity()));
+                result.setUpdateBy(LoginHelper.getUsername());
+                result.setUpdateTime(LocalDateTime.now());
+                updateList.add(result);
+            }else {
+                addList.add(inventory);
             }
         });
         if (addList.size() > 0) {
             saveBatch(addList);
         }
         if (updateList.size() > 0) {
-            inventoryMapper.updateQuantity(updateList, LocalDateTime.now(), LoginHelper.getUsername());
+            updateBatchById(updateList);
         }
     }
 

@@ -4,22 +4,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.InventoryMapper">
 
-    <update id="updateQuantity">
-        update wms_inventory
-        set quantity = quantity +
-        (
-        case
-        <foreach collection="list" item="it">
-            when id = #{it.id} then #{it.quantity}
-        </foreach>
-        end
-        )
-            ,
-        update_time = #{updateTime},
-        update_by = #{updateBy}
-        where id in
-        <foreach collection="list" open="(" separator="," close=")" item="it">
-            #{it.id}
-        </foreach>
-    </update>
 </mapper>
