@@ -18,25 +18,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from wms_item_sku sku
         inner join wms_item item on sku.item_id=item.id
         inner join wms_item_category category on item.item_category=category.id
-        where 1=1
-        <if test="bo.itemName != null and bo.itemName != ''">
-            and item.item_name like concat('%', #{bo.itemName}, '%')
-        </if>
-        <if test="bo.itemCode != null and bo.itemCode != ''">
-            and item.item_code like concat('%', #{bo.itemCode}, '%')
-        </if>
-        <if test="bo.itemBrand != null">
-            and item.item_brand=#{bo.itemBrand}
-        </if>
-        <if test="bo.skuName != null and bo.skuName != ''">
-            and sku.sku_name like concat('%', #{bo.skuName}, '%')
-        </if>
-        <if test="bo.barcode != null and bo.barcode != ''">
-            and sku.barcode like concat('%', #{bo.barcode}, '%')
-        </if>
-        <if test="bo.itemCategory != null and bo.itemCategory != ''">
-            and (category.id=#{bo.itemCategory} or category.parent_id=#{bo.itemCategory})
-        </if>
+        <where>
+            <if test="bo.itemName != null and bo.itemName != ''">
+                and item.item_name like concat('%', #{bo.itemName}, '%')
+            </if>
+            <if test="bo.itemCode != null and bo.itemCode != ''">
+                and item.item_code like concat('%', #{bo.itemCode}, '%')
+            </if>
+            <if test="bo.itemBrand != null">
+                and item.item_brand=#{bo.itemBrand}
+            </if>
+            <if test="bo.skuName != null and bo.skuName != ''">
+                and sku.sku_name like concat('%', #{bo.skuName}, '%')
+            </if>
+            <if test="bo.barcode != null and bo.barcode != ''">
+                and sku.barcode like concat('%', #{bo.barcode}, '%')
+            </if>
+            <if test="bo.itemCategory != null and bo.itemCategory != ''">
+                and (category.id=#{bo.itemCategory} or category.parent_id=#{bo.itemCategory})
+            </if>
+        </where>
         order by category.id desc,sku.item_id desc
     </select>
 </mapper>

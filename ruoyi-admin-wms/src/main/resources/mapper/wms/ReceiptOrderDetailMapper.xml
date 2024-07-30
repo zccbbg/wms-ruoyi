@@ -6,27 +6,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByReceiptOrderId" resultType="com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo">
         select
-            a.id,
-            a.receipt_order_id,
-            a.sku_id,
-            a.quantity,
-            a.amount,
-            a.expiration_time,
-            a.remark,
-            a.warehouse_id,
-            a.area_id,
-            a.create_time,
-            a.create_by,
-            a.update_time,
-            a.update_by,
-            b.sku_name,
-            b.out_sku_id,
-            c.item_name,
-            c.item_no,
-            c.item_brand
-            from wms_receipt_order_detail a
-        left join wms_item_sku b on a.sku_id=b.id
-        left join wms_item c on b.item_id=c.id
-        where a.receipt_order_id=#{receiptOrderId} and a.del_flag=0
+            detail.*,
+            sku.sku_name,
+            sku.barcode,
+            item.item_name,
+            item.item_code,
+            item.item_brand
+            from wms_receipt_order_detail detail
+        left join wms_item_sku sku on detail.sku_id=sku.id
+        left join wms_item item on sku.item_id=item.id
+        where detail.receipt_order_id=#{receiptOrderId}
     </select>
 </mapper>
