@@ -70,7 +70,7 @@ public class AreaService {
     private LambdaQueryWrapper<Area> buildQueryWrapper(AreaBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<Area> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StrUtil.isNotBlank(bo.getAreaNo()), Area::getAreaNo, bo.getAreaNo());
+        lqw.eq(StrUtil.isNotBlank(bo.getAreaCode()), Area::getAreaCode, bo.getAreaCode());
         lqw.like(StrUtil.isNotBlank(bo.getAreaName()), Area::getAreaName, bo.getAreaName());
         lqw.eq(bo.getWarehouseId() != null, Area::getWarehouseId, bo.getWarehouseId());
         return lqw;
@@ -102,11 +102,11 @@ public class AreaService {
         queryWrapper.eq(Area::getAreaName, area.getAreaName());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
         Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区名称重复");
-        if (StrUtil.isBlank(area.getAreaNo())) {
+        if (StrUtil.isBlank(area.getAreaCode())) {
             return;
         }
         queryWrapper.clear();
-        queryWrapper.eq(Area::getAreaNo, area.getAreaNo());
+        queryWrapper.eq(Area::getAreaCode, area.getAreaCode());
         queryWrapper.ne(area.getId() != null, Area::getId, area.getId());
         Assert.isTrue(areaMapper.selectCount(queryWrapper) == 0, "库区编号重复");
     }

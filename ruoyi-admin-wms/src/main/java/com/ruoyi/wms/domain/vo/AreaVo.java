@@ -28,7 +28,7 @@ public class AreaVo implements Serializable {
      * 编号
      */
     @ExcelProperty(value = "编号")
-    private String areaNo;
+    private String areaCode;
 
     /**
      * 名称

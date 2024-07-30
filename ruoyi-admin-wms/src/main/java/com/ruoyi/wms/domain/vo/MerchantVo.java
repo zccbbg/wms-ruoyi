@@ -35,7 +35,7 @@ public class MerchantVo implements Serializable {
      * 编号
      */
     @ExcelProperty(value = "编号")
-    private String merchantNo;
+    private String merchantCode;
 
     /**
      * 名称

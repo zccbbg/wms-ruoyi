@@ -25,7 +25,7 @@ public class Warehouse extends BaseEntity {
     /**
      * 编号
      */
-    private String warehouseNo;
+    private String warehouseCode;
 
     /**
      * 名称

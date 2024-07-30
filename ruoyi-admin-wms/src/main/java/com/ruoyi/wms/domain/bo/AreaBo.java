@@ -23,7 +23,7 @@ public class AreaBo extends BaseEntity {
     /**
      * 编号
      */
-    private String areaNo;
+    private String areaCode;
 
     /**
      * 名称

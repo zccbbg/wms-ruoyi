@@ -33,7 +33,7 @@ public class MerchantBo extends BaseEntity {
      * 编号
      */
     @NotBlank(message = "编号不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String merchantNo;
+    private String merchantCode;
 
     /**
      * 名称

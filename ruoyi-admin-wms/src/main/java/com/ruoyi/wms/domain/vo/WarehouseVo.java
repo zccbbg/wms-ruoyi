@@ -29,7 +29,7 @@ public class WarehouseVo implements Serializable {
      * 编号
      */
     @ExcelProperty(value = "编号")
-    private String warehouseNo;
+    private String warehouseCode;
 
     /**
      * 名称
