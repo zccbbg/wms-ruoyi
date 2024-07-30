@@ -29,7 +29,7 @@ public class ItemVo implements Serializable {
      * 编号
      */
     @ExcelProperty(value = "编号")
-    private String itemNo;
+    private String itemCode;
 
     /**
      * 名称

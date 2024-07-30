@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.wms.domain.bo.ItemSkuBo;
-import com.ruoyi.wms.domain.entity.ItemCategory;
 import com.ruoyi.wms.domain.entity.ItemSku;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.ItemVo;
@@ -86,7 +85,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
             records.forEach(itemSkuVo -> {
                 ItemVo itemVo = itemMap.get(itemSkuVo.getItemId());
                 itemSkuVo.setItemName(itemVo.getItemName());
-                itemSkuVo.setItemNo(itemVo.getItemNo());
+                itemSkuVo.setItemNo(itemVo.getItemCode());
                 itemSkuVo.setItemId(itemVo.getId());
             });
         }
@@ -107,7 +106,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         LambdaQueryWrapper<ItemSku> lqw = Wrappers.lambdaQuery();
         lqw.like(StrUtil.isNotBlank(bo.getSkuName()), ItemSku::getSkuName, bo.getSkuName());
         lqw.eq(bo.getItemId() != null, ItemSku::getItemId, bo.getItemId());
-        lqw.eq(StrUtil.isNotBlank(bo.getOutSkuId()), ItemSku::getOutSkuId, bo.getOutSkuId());
+        lqw.eq(StrUtil.isNotBlank(bo.getBarcode()), ItemSku::getBarcode, bo.getBarcode());
         lqw.orderByDesc(ItemSku::getItemId);
         return lqw;
     }
@@ -180,15 +179,15 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
      */
     public void setOutSkuId(List<ItemSkuBo> itemSkuList) {
         for (ItemSkuBo itemSkuBo : itemSkuList) {
-            if (StrUtil.isBlank(itemSkuBo.getOutSkuId())) {
-                itemSkuBo.setOutSkuId(RandomUtil.randomNumbers(8));
+            if (StrUtil.isBlank(itemSkuBo.getBarcode())) {
+                itemSkuBo.setBarcode(RandomUtil.randomNumbers(8));
             }
         }
     }
 
     public void setItemId(List<ItemSkuBo> itemSkuList,Long itemId) {
         for (ItemSkuBo itemSkuBo : itemSkuList) {
-            if (StrUtil.isBlank(itemSkuBo.getOutSkuId())) {
+            if (StrUtil.isBlank(itemSkuBo.getBarcode())) {
                 itemSkuBo.setItemId(itemId);
             }
         }

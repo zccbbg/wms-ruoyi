@@ -93,7 +93,7 @@ public class ItemService {
 
     private LambdaQueryWrapper<Item> buildQueryWrapper(ItemBo bo) {
         LambdaQueryWrapper<Item> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StrUtil.isNotBlank(bo.getItemNo()), Item::getItemNo, bo.getItemNo());
+        lqw.eq(StrUtil.isNotBlank(bo.getItemCode()), Item::getItemCode, bo.getItemCode());
         // 主键集合
         lqw.in(!CollUtil.isEmpty(bo.getIds()), Item::getId, bo.getIds());
         lqw.like(StrUtil.isNotBlank(bo.getItemName()), Item::getItemName, bo.getItemName());
@@ -124,7 +124,6 @@ public class ItemService {
         Item item = MapstructUtils.convert(bo, Item.class);
         itemMapper.insert(item);
         itemSkuService.setItemId(bo.getSku(),item.getId());
-        itemSkuService.setOutSkuId(bo.getSku());
         itemSkuService.saveOrUpdateBatchByBo(bo.getSku());
     }
 
@@ -138,7 +137,6 @@ public class ItemService {
         validateBoBeforeSave(bo);
         itemMapper.updateById(MapstructUtils.convert(bo, Item.class));
         itemSkuService.setItemId(bo.getSku(),bo.getId());
-        itemSkuService.setOutSkuId(bo.getSku());
         itemSkuService.saveOrUpdateBatchByBo(bo.getSku());
     }
 

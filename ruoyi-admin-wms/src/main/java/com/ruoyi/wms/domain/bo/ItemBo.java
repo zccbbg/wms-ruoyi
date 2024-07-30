@@ -31,7 +31,7 @@ public class ItemBo extends BaseEntity {
     /**
      * 编号
      */
-    private String itemNo;
+    private String itemCode;
 
     /**
      * 名称

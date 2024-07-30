@@ -10,21 +10,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByBo" resultType="com.ruoyi.wms.domain.vo.ItemSkuVo">
         select
-        sku.id,
-        sku.sku_name,
-        sku.item_id,
-        sku.out_sku_id,
-        sku.length,
-        sku.width,
-        sku.height,
-        sku.height,
-        sku.weight,
-        sku.create_by,
-        sku.create_time,
-        sku.update_by,
-        sku.update_time,
+        sku.*,
         item.item_name,
-        item.item_no,
+        item.item_code,
         item.item_brand,
         category.id itemCategory
         from wms_item_sku sku
@@ -34,8 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="bo.itemName != null and bo.itemName != ''">
             and item.item_name like concat('%', #{bo.itemName}, '%')
         </if>
-        <if test="bo.itemNo != null and bo.itemNo != ''">
-            and item.item_no like concat('%', #{bo.itemNo}, '%')
+        <if test="bo.itemCode != null and bo.itemCode != ''">
+            and item.item_code like concat('%', #{bo.itemCode}, '%')
         </if>
         <if test="bo.itemBrand != null">
             and item.item_brand=#{bo.itemBrand}
@@ -43,8 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="bo.skuName != null and bo.skuName != ''">
             and sku.sku_name like concat('%', #{bo.skuName}, '%')
         </if>
-        <if test="bo.outSkuId != null and bo.outSkuId != ''">
-            and sku.out_sku_id like concat('%', #{bo.outSkuId}, '%')
+        <if test="bo.barcode != null and bo.barcode != ''">
+            and sku.barcode like concat('%', #{bo.barcode}, '%')
         </if>
         <if test="bo.itemCategory != null and bo.itemCategory != ''">
             and (category.id=#{bo.itemCategory} or category.parent_id=#{bo.itemCategory})

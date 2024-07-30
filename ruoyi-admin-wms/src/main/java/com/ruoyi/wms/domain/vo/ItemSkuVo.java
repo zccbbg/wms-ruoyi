@@ -51,10 +51,22 @@ public class ItemSkuVo implements Serializable {
     private String itemNo;
 
     /**
+     * sku条码
+     */
+    @ExcelProperty(value = "sku条码")
+    private String barcode;
+
+    /**
+     * 货号
+     */
+    @ExcelProperty(value = "货号")
+    private String skuNumber;
+
+    /**
      * sku编码
      */
     @ExcelProperty(value = "sku编码")
-    private String outSkuId;
+    private String skuCode;
 
     /**
      * 长(cm)
@@ -75,10 +87,28 @@ public class ItemSkuVo implements Serializable {
     private BigDecimal height;
 
     /**
-     * 重量(kg)
+     * 毛重(kg)
      */
-    @ExcelProperty(value = "重量(kg)")
-    private BigDecimal weight;
+    @ExcelProperty(value = "毛重(kg)")
+    private BigDecimal grossWeight;
+
+    /**
+     * 净重(kg)
+     */
+    @ExcelProperty(value = "净重(kg)")
+    private BigDecimal netWeight;
+
+    /**
+     * 成本价(元)
+     */
+    @ExcelProperty(value = "成本价(元)")
+    private BigDecimal costPrice;
+
+    /**
+     * 销售价(元)
+     */
+    @ExcelProperty(value = "销售价(元)")
+    private BigDecimal sellingPrice;
 
     /**
      * 商品品牌

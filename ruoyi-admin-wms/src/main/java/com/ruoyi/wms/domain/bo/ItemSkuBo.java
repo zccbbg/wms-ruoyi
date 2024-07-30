@@ -36,9 +36,21 @@ public class ItemSkuBo extends BaseEntity {
     private Long itemId;
 
     /**
-     * sku编码
+     * sku条码
      */
-    private String outSkuId;
+    private String barcode;
+
+    /**
+     * 货号
+     */
+    private String skuNumber;
+
+    /**
+     * 编码
+     */
+    private String skuCode;
+
+
 
     /**
      * 长(cm)
@@ -56,9 +68,24 @@ public class ItemSkuBo extends BaseEntity {
     private BigDecimal height;
 
     /**
-     * 重量(kg)
+     * 毛重(kg)
      */
-    private BigDecimal weight;
+    private BigDecimal grossWeight;
+
+    /**
+     * 净重(kg)
+     */
+    private BigDecimal netWeight;
+
+    /**
+     * 成本价(元)
+     */
+    private BigDecimal costPrice;
+
+    /**
+     * 销售价(元)
+     */
+    private BigDecimal sellingPrice;
 
     /**
      * 商品名称
@@ -68,7 +95,7 @@ public class ItemSkuBo extends BaseEntity {
     /**
      * 商品编码
      */
-    private String itemNo;
+    private String itemCode;
 
     /**
      * 商品分类
