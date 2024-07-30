@@ -45,7 +45,7 @@ public class Item extends BaseEntity {
     /**
      * 品牌
      */
-    private String itemBrand;
+    private Long itemBrand;
 
     /**
      * 备注

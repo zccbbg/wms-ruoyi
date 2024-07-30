@@ -53,7 +53,7 @@ public class ItemVo implements Serializable {
      * 品牌
      */
     @ExcelProperty(value = "品牌")
-    private String itemBrand;
+    private Long itemBrand;
 
     /**
      * 备注

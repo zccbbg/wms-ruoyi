@@ -53,7 +53,7 @@ public class ItemBo extends BaseEntity {
     /**
      * 品牌
      */
-    private String itemBrand;
+    private Long itemBrand;
 
 
     /**
