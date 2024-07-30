@@ -56,6 +56,18 @@ public class ReceiptOrderDetailVo implements Serializable {
     private BigDecimal amount;
 
     /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNumber;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")
@@ -83,5 +95,5 @@ public class ReceiptOrderDetailVo implements Serializable {
     private String itemNo;
     private String itemBrand;
     private String skuName;
-    private String outSkuId;
+    private String barcode;
 }

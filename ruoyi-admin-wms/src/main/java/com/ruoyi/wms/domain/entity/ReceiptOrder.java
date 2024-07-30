@@ -45,6 +45,10 @@ public class ReceiptOrder extends BaseEntity {
      */
     private String orderNo;
     /**
+     * 商品总数
+     */
+    private BigDecimal totalQuantity;
+    /**
      * 订单金额
      */
     private BigDecimal payableAmount;

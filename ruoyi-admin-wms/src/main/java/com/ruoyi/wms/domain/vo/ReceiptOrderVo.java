@@ -57,6 +57,12 @@ public class ReceiptOrderVo extends BaseEntity implements Serializable {
     private String orderNo;
 
     /**
+     * 商品总数
+     */
+    @ExcelProperty(value = "商品总数")
+    private BigDecimal totalQuantity;
+
+    /**
      * 订单金额
      */
     @ExcelProperty(value = "订单金额")

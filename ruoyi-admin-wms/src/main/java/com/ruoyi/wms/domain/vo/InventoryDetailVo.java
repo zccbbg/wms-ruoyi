@@ -80,6 +80,18 @@ public class InventoryDetailVo implements Serializable {
     private BigDecimal quantity;
 
     /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNumber;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")

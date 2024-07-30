@@ -62,6 +62,14 @@ public class InventoryDetail extends BaseEntity {
      */
     private BigDecimal quantity;
     /**
+     * 批号
+     */
+    private String batchNumber;
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+    /**
      * 过期时间
      */
     private LocalDateTime expirationTime;
