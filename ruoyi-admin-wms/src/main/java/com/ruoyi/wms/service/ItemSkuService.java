@@ -93,22 +93,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
 
     }
 
-    private void injectItemTypeName(List<ItemSkuVo> records) {
-        List<Long> itemIdList = records.stream().map(ItemSkuVo::getItemId).toList();
-        if (CollUtil.isNotEmpty(itemIdList)) {
-            List<ItemVo> itemVos = itemService.queryById(itemIdList);
-            Map<Long, String> itemToCategoryMap = itemVos.stream().collect(Collectors.toMap(ItemVo::getId, ItemVo::getItemCategory));
-            Set<String> typeSet = itemVos.stream().map(ItemVo::getItemCategory).collect(Collectors.toSet());
-            LambdaQueryWrapper<ItemCategory> wrapper = new LambdaQueryWrapper<>();
-            wrapper.in(ItemCategory::getId, typeSet);
-            Map<Long, ItemCategory> itemCategoryMap = itemCategoryMapper.selectList(wrapper).stream().collect(Collectors.toMap(ItemCategory::getId, Function.identity()));
-            records.forEach(itemSkuVo -> {
-                itemSkuVo.setItemCategoryName(itemCategoryMap.get(Long.valueOf(itemToCategoryMap.get(itemSkuVo.getItemId()))).getCategoryName());
-                itemSkuVo.setItemCategoryId(itemCategoryMap.get(Long.valueOf(itemToCategoryMap.get(itemSkuVo.getItemId()))).getId());
-            });
-        }
-    }
-
     /**
      * 查询sku信息列表
      */

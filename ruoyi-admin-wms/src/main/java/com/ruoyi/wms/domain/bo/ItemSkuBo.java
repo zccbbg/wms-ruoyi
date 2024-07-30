@@ -74,4 +74,6 @@ public class ItemSkuBo extends BaseEntity {
      * 商品分类
      */
     private String itemCategory;
+
+    private Long itemBrand;
 }

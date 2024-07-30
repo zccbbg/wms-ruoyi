@@ -10,43 +10,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByBo" resultType="com.ruoyi.wms.domain.vo.ItemSkuVo">
         select
-        a.id,
-        a.sku_name,
-        a.item_id,
-        a.out_sku_id,
-        a.length,
-        a.width,
-        a.height,
-        a.height,
-        a.weight,
-        a.create_by,
-        a.create_time,
-        a.update_by,
-        a.update_time,
-        b.item_name,
-        b.item_no,
-        b.item_brand,
-        c.category_name itemCategoryName,
-        c.id itemCategoryId
-        from wms_item_sku a
-        inner join wms_item b on a.item_id=b.id
-        inner join wms_item_category c on b.item_category=c.id
+        sku.id,
+        sku.sku_name,
+        sku.item_id,
+        sku.out_sku_id,
+        sku.length,
+        sku.width,
+        sku.height,
+        sku.height,
+        sku.weight,
+        sku.create_by,
+        sku.create_time,
+        sku.update_by,
+        sku.update_time,
+        item.item_name,
+        item.item_no,
+        item.item_brand,
+        category.id itemCategory
+        from wms_item_sku sku
+        inner join wms_item item on sku.item_id=item.id
+        inner join wms_item_category category on item.item_category=category.id
         where 1=1
         <if test="bo.itemName != null and bo.itemName != ''">
-            and b.item_name like concat('%', #{bo.itemName}, '%')
+            and item.item_name like concat('%', #{bo.itemName}, '%')
         </if>
         <if test="bo.itemNo != null and bo.itemNo != ''">
-            and b.item_no like concat('%', #{bo.itemNo}, '%')
+            and item.item_no like concat('%', #{bo.itemNo}, '%')
+        </if>
+        <if test="bo.itemBrand != null">
+            and item.item_brand=#{bo.itemBrand}
         </if>
         <if test="bo.skuName != null and bo.skuName != ''">
-            and a.sku_name like concat('%', #{bo.skuName}, '%')
+            and sku.sku_name like concat('%', #{bo.skuName}, '%')
         </if>
         <if test="bo.outSkuId != null and bo.outSkuId != ''">
-            and a.out_sku_id like concat('%', #{bo.outSkuId}, '%')
+            and sku.out_sku_id like concat('%', #{bo.outSkuId}, '%')
         </if>
         <if test="bo.itemCategory != null and bo.itemCategory != ''">
-            and (c.id=#{bo.itemCategory} or c.parent_id=#{bo.itemCategory})
+            and (category.id=#{bo.itemCategory} or category.parent_id=#{bo.itemCategory})
         </if>
-        order by c.id desc,a.item_id desc
+        order by category.id desc,sku.item_id desc
     </select>
 </mapper>

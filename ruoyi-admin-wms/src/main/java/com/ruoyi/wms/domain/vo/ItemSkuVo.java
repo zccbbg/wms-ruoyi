@@ -81,17 +81,11 @@ public class ItemSkuVo implements Serializable {
     private BigDecimal weight;
 
     /**
-     * 所属分类名称
-     */
-    @ExcelProperty(value = "所属分类名称")
-    private String itemCategoryName;
-
-    /**
      * 商品品牌
      */
     @ExcelProperty(value = "商品品牌")
-    private String itemBrand;
+    private Long itemBrand;
 
-    private Long itemCategoryId;
+    private Long itemCategory;
 
 }
