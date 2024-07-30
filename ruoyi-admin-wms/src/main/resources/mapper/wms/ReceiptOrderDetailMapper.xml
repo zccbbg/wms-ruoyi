@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             item.item_name,
             item.item_code,
             item.item_brand
-            from wms_receipt_order_detail detail
+        from wms_receipt_order_detail detail
         left join wms_item_sku sku on detail.sku_id=sku.id
         left join wms_item item on sku.item_id=item.id
         where detail.receipt_order_id=#{receiptOrderId}
