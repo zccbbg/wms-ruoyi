@@ -1,5 +1,6 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.ServiceException;
+import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -113,29 +115,39 @@ public class ReceiptOrderService {
 
     /**
      * 入库：
-     * 1.保存入库单和入库单明细
-     * 2.保存库存明细
-     * 3.增加库存
-     * 4.保存库存记录
+     * 1.校验
+     * 2.保存入库单和入库单明细
+     * 3.保存库存明细
+     * 4.增加库存
+     * 5.保存库存记录
      */
     @Transactional
     public void receive(ReceiptOrderBo bo) {
-        // 1. 保存入库单和入库单明细
+        // 1. 校验
+        validateBeforeReceive(bo);
+
+        // 2. 保存入库单和入库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
 
-        // 2.保存库存明细
+        // 3.保存库存明细
         this.saveInventoryDetails(bo);
 
-        //3.增加库存
+        // 4.增加库存
         List<InventoryBo> inventoryList = convertInventoryList(bo.getDetails());
         inventoryService.updateInventoryQuantity(inventoryList);
 
-        // 4.保存库存记录
+        // 5.保存库存记录
         this.saveInventoryHistory(bo);
+    }
+
+    private void validateBeforeReceive(ReceiptOrderBo bo) {
+        if (CollUtil.isEmpty(bo.getDetails())) {
+            throw new BaseException("商品明细不能为空");
+        }
     }
 
     private void saveInventoryHistory(ReceiptOrderBo bo){

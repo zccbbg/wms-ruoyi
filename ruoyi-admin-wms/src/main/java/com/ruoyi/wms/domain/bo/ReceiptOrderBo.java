@@ -77,6 +77,5 @@ public class ReceiptOrderBo extends BaseEntity {
     /**
      * 商品信息
      */
-    @NotEmpty(message = "商品明细不能为空", groups = { AddGroup.class, EditGroup.class })
     private List<ReceiptOrderDetailBo> details;
 }
