@@ -4,17 +4,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.ReceiptOrderDetailMapper">
 
-    <select id="selectByReceiptOrderId" resultType="com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo">
-        select
-            detail.*,
-            sku.sku_name,
-            sku.barcode,
-            item.item_name,
-            item.item_code,
-            item.item_brand
-        from wms_receipt_order_detail detail
-        left join wms_item_sku sku on detail.sku_id=sku.id
-        left join wms_item item on sku.item_id=item.id
-        where detail.receipt_order_id=#{receiptOrderId}
-    </select>
 </mapper>

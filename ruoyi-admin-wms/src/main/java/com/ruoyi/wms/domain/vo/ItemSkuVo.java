@@ -39,18 +39,6 @@ public class ItemSkuVo implements Serializable {
     private Long itemId;
 
     /**
-     *
-     */
-    @ExcelProperty(value = "")
-    private String itemName;
-
-    /**
-     *
-     */
-    @ExcelProperty(value = "")
-    private String itemNo;
-
-    /**
      * sku条码
      */
     @ExcelProperty(value = "sku条码")
@@ -110,12 +98,6 @@ public class ItemSkuVo implements Serializable {
     @ExcelProperty(value = "销售价(元)")
     private BigDecimal sellingPrice;
 
-    /**
-     * 商品品牌
-     */
-    @ExcelProperty(value = "商品品牌")
-    private Long itemBrand;
-
-    private Long itemCategory;
+    private ItemVo item;
 
 }

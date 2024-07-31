@@ -15,5 +15,4 @@ import java.util.List;
  */
 public interface ReceiptOrderDetailMapper extends BaseMapperPlus<ReceiptOrderDetail, ReceiptOrderDetailVo> {
 
-    List<ReceiptOrderDetailVo> selectByReceiptOrderId(@Param("receiptOrderId") Long id);
 }

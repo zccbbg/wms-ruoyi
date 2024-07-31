@@ -106,4 +106,13 @@ public class ReceiptOrderDetailController extends BaseController {
         receiptOrderDetailService.deleteByIds(List.of(ids));
         return R.ok();
     }
+
+    /**
+     * 根据入库单id查询入库单详情列表
+     */
+    @SaCheckPermission("wms:receiptOrderDetail:query")
+    @GetMapping("/list/{receiptOrderId}")
+    public R<List<ReceiptOrderDetailVo>> listByReceiptOrderId(@NotNull @PathVariable Long receiptOrderId) {
+        return R.ok(receiptOrderDetailService.queryByReceiptOrderId(receiptOrderId));
+    }
 }

@@ -12,6 +12,7 @@ import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.mapper.ItemMapper;
 import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     private final ItemService itemService;
     private final ItemCategoryMapper itemCategoryMapper;
     private final InventoryService inventoryService;
+    private final ItemMapper itemMapper;
 
     /**
      * 查询sku信息
@@ -48,20 +50,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         return itemSkuMapper.selectVoById(id);
     }
 
-    /**
-     * 根据skuId查询sku信息
-     *
-     * @param itemIds skuId
-     */
-
-    public List<ItemSkuVo> queryByIds(List<Long> itemIds) {
-        LambdaQueryWrapper<ItemSku> lambdaQueryWrapper = Wrappers.lambdaQuery();
-        lambdaQueryWrapper.in(ItemSku::getItemId, itemIds);
-        List<ItemSkuVo> itemSkuVos = itemSkuMapper.selectVoList();
-        // 注入itemName
-        injectItemInfo(itemSkuVos);
-        return itemSkuVos;
-    }
 
     /**
      * 查询sku信息列表，用于出入库的选择组件
@@ -71,25 +59,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         //开始查sku
         IPage<ItemSkuVo> result = itemSkuMapper.selectByBo(pageQuery.build(), bo);
         return TableDataInfo.build(result);
-    }
-
-    /**
-     * 注入itemName
-     *
-     * @param records sku信息列表
-     */
-    private void injectItemInfo(List<ItemSkuVo> records) {
-        List<Long> itemIds = records.stream().map(ItemSkuVo::getItemId).toList();
-        if (!CollUtil.isEmpty(itemIds)) {
-            Map<Long, ItemVo> itemMap = itemService.queryById(itemIds).stream().collect(Collectors.toMap(ItemVo::getId, Function.identity()));
-            records.forEach(itemSkuVo -> {
-                ItemVo itemVo = itemMap.get(itemSkuVo.getItemId());
-                itemSkuVo.setItemName(itemVo.getItemName());
-                itemSkuVo.setItemNo(itemVo.getItemCode());
-                itemSkuVo.setItemId(itemVo.getId());
-            });
-        }
-
     }
 
     /**
@@ -212,5 +181,19 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         LambdaQueryWrapper<ItemSku> lqw = Wrappers.lambdaQuery();
         lqw.in(ItemSku::getItemId, itemIds);
         return itemSkuMapper.selectList(lqw);
+    }
+
+    public List<ItemSkuVo> queryVosByIds(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        List<ItemSkuVo> vos = itemSkuMapper.selectVoBatchIds(ids);
+        if (CollUtil.isEmpty(vos)) {
+            return Collections.emptyList();
+        }
+        Set<Long> itemIds = vos.stream().map(ItemSkuVo::getItemId).collect(Collectors.toSet());
+        Map<Long, ItemVo> itemMap = itemMapper.selectVoBatchIds(itemIds).stream().collect(Collectors.toMap(ItemVo::getId, Function.identity()));
+        vos.forEach(vo -> vo.setItem(itemMap.get(vo.getItemId())));
+        return vos;
     }
 }

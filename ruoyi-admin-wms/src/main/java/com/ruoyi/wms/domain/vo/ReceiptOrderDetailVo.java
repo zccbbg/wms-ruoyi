@@ -91,9 +91,5 @@ public class ReceiptOrderDetailVo implements Serializable {
     @ExcelProperty(value = "所属库区")
     private Long areaId;
 
-    private String itemName;
-    private String itemNo;
-    private String itemBrand;
-    private String skuName;
-    private String barcode;
+    private ItemSkuVo itemSku;
 }
