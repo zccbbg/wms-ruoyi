@@ -75,6 +75,18 @@ public class ReceiptOrderVo extends BaseEntity implements Serializable {
     private Integer receiptOrderStatus;
 
     /**
+     * 仓库id
+     */
+    @ExcelProperty(value = "仓库id")
+    private Long warehouseId;
+
+    /**
+     * 库区id
+     */
+    @ExcelProperty(value = "库区id")
+    private Long areaId;
+
+    /**
      * 备注
      */
     @ExcelProperty(value = "备注")

@@ -70,6 +70,17 @@ public class ReceiptOrderBo extends BaseEntity {
     private Integer receiptOrderStatus;
 
     /**
+     * 仓库id
+     */
+    @NotNull(message = "仓库不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long warehouseId;
+
+    /**
+     * 库区id
+     */
+    private Long areaId;
+
+    /**
      * 备注
      */
     private String remark;

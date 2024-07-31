@@ -57,6 +57,14 @@ public class ReceiptOrder extends BaseEntity {
      */
     private Integer receiptOrderStatus;
     /**
+     * 仓库id
+     */
+    private Long warehouseId;
+    /**
+     * 库区id
+     */
+    private Long areaId;
+    /**
      * 备注
      */
     private String remark;
