@@ -210,15 +210,10 @@ public class ReceiptOrderService {
         // 更新入库单
         ReceiptOrder update = MapstructUtils.convert(bo, ReceiptOrder.class);
         receiptOrderMapper.updateById(update);
-        // 删除老的
-        receiptOrderDetailService.deleteByReceiptOrderId(bo.getId());
-        // 创建新入库单明细
-        List<ReceiptOrderDetail> addDetailList = MapstructUtils.convert(bo.getDetails(), ReceiptOrderDetail.class);
-        addDetailList.forEach(it -> {
-            it.setId(null);
-            it.setReceiptOrderId(bo.getId());
-        });
-        receiptOrderDetailService.saveDetails(addDetailList);
+        // 保存入库单明细
+        List<ReceiptOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ReceiptOrderDetail.class);
+        detailList.forEach(it -> it.setReceiptOrderId(bo.getId()));
+        receiptOrderDetailService.saveDetails(detailList);
     }
 
     /**

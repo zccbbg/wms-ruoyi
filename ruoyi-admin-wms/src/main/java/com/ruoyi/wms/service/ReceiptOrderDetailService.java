@@ -108,7 +108,7 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        saveBatch(list);
+        saveOrUpdateBatch(list);
     }
 
     public List<ReceiptOrderDetailVo> queryByReceiptOrderId(Long receiptOrderId) {
