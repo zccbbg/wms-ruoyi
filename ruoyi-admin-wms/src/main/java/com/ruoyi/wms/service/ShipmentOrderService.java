@@ -1,5 +1,6 @@
 package com.ruoyi.wms.service;
 
+import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -7,6 +8,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
@@ -14,9 +16,14 @@ import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 出库单Service业务层处理
@@ -88,5 +95,13 @@ public class ShipmentOrderService {
      */
     public void deleteByIds(Collection<Long> ids) {
         shipmentOrderMapper.deleteBatchIds(ids);
+    }
+
+    public String generateNo() {
+        LambdaQueryWrapper<ShipmentOrder> shipmentOrderLambdaQueryWrapper = Wrappers.lambdaQuery();
+        shipmentOrderLambdaQueryWrapper.select(ShipmentOrder::getShipmentOrderNo);
+        shipmentOrderLambdaQueryWrapper.between(ShipmentOrder::getCreateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+        Set<String> noSet = shipmentOrderMapper.selectList(shipmentOrderLambdaQueryWrapper).stream().map(ShipmentOrder::getShipmentOrderNo).collect(Collectors.toSet());
+        return GenerateNoUtil.generateNextNo(noSet);
     }
 }

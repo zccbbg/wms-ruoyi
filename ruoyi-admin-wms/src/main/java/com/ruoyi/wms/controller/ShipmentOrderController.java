@@ -105,4 +105,9 @@ public class ShipmentOrderController extends BaseController {
         shipmentOrderService.deleteByIds(List.of(ids));
         return R.ok();
     }
+
+    @GetMapping("/generate/no")
+    public R<String> generateNo() {
+        return R.ok(shipmentOrderService.generateNo());
+    }
 }
