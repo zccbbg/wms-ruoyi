@@ -90,6 +90,7 @@ public class ShipmentOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ShipmentOrderBo bo) {
+        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.PENDING);
         shipmentOrderService.updateByBo(bo);
         return R.ok();
     }

@@ -97,6 +97,6 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        saveBatch(list);
+        saveOrUpdateBatch(list);
     }
 }

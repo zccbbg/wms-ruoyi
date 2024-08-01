@@ -107,9 +107,15 @@ public class ShipmentOrderService {
     /**
      * 修改出库单
      */
+    @Transactional
     public void updateByBo(ShipmentOrderBo bo) {
+        // 更新出库单
         ShipmentOrder update = MapstructUtils.convert(bo, ShipmentOrder.class);
         shipmentOrderMapper.updateById(update);
+        // 保存出库单明细
+        List<ShipmentOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ShipmentOrderDetail.class);
+        detailList.forEach(it -> it.setShipmentOrderId(bo.getId()));
+        shipmentOrderDetailService.saveDetails(detailList);
     }
 
     /**
