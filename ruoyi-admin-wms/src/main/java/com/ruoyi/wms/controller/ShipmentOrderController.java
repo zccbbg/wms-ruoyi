@@ -1,27 +1,28 @@
 package com.ruoyi.wms.controller;
 
-import java.util.List;
-
-import com.ruoyi.common.core.constant.ServiceConstants;
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
-import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
-import com.ruoyi.wms.service.ShipmentOrderService;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
+import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
+import com.ruoyi.wms.service.ShipmentOrderService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 出库单
@@ -107,10 +108,5 @@ public class ShipmentOrderController extends BaseController {
                           @PathVariable Long[] ids) {
         shipmentOrderService.deleteByIds(List.of(ids));
         return R.ok();
-    }
-
-    @GetMapping("/generate/no")
-    public R<String> generateNo() {
-        return R.ok(shipmentOrderService.generateNo());
     }
 }

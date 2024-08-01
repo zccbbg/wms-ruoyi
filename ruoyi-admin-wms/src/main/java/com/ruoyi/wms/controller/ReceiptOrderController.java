@@ -133,9 +133,4 @@ public class ReceiptOrderController extends BaseController {
         receiptOrderService.deleteById(id);
         return R.ok();
     }
-
-    @GetMapping("/generate/no")
-    public R<String> generateNo() {
-        return R.ok(receiptOrderService.generateNo());
-    }
 }

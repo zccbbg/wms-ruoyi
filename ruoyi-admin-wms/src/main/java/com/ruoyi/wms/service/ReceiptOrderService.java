@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
-import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
@@ -19,7 +18,10 @@ import com.ruoyi.system.service.SysDictTypeService;
 import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.*;
+import com.ruoyi.wms.domain.entity.InventoryDetail;
+import com.ruoyi.wms.domain.entity.InventoryHistory;
+import com.ruoyi.wms.domain.entity.ReceiptOrder;
+import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
 import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
@@ -28,12 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 入库单Service业务层处理
@@ -248,14 +246,6 @@ public class ReceiptOrderService {
      */
     public void deleteByIds(Collection<Long> ids) {
         receiptOrderMapper.deleteBatchIds(ids);
-    }
-
-    public String generateNo() {
-        LambdaQueryWrapper<ReceiptOrder> receiptOrderLqw = Wrappers.lambdaQuery();
-        receiptOrderLqw.select(ReceiptOrder::getReceiptOrderNo);
-        receiptOrderLqw.between(ReceiptOrder::getCreateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
-        Set<String> noSet = receiptOrderMapper.selectList(receiptOrderLqw).stream().map(ReceiptOrder::getReceiptOrderNo).collect(Collectors.toSet());
-        return GenerateNoUtil.generateNextNo(noSet);
     }
 
     public void validateReceiptOrderNo(String receiptOrderNo) {
