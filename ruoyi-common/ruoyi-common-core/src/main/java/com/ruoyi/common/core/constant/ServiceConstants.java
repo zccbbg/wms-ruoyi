@@ -19,4 +19,13 @@ public class ServiceConstants {
         public static final Integer CHECK = 3;
 
     }
+
+    /**
+     * 入库单状态
+     */
+    public class ShipmentOrderStatus {
+        public static final Integer INVALID = -1;
+        public static final Integer PENDING = 0;
+        public static final Integer FINISH = 1;
+    }
 }

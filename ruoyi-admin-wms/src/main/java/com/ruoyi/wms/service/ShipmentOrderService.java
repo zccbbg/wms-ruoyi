@@ -1,5 +1,6 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.lang.Assert;
 import com.ruoyi.common.core.utils.GenerateNoUtil;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -8,13 +9,16 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
+import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +40,7 @@ import java.util.stream.Collectors;
 public class ShipmentOrderService {
 
     private final ShipmentOrderMapper shipmentOrderMapper;
+    private final ShipmentOrderDetailService shipmentOrderDetailService;
 
     /**
      * 查询出库单
@@ -75,12 +80,29 @@ public class ShipmentOrderService {
     }
 
     /**
-     * 新增出库单
+     * 暂存出库单
      */
+    @Transactional
     public void insertByBo(ShipmentOrderBo bo) {
+        // 校验出库单号唯一性
+        validateShipmentOrderNo(bo.getShipmentOrderNo());
+        // 创建出库单
         ShipmentOrder add = MapstructUtils.convert(bo, ShipmentOrder.class);
         shipmentOrderMapper.insert(add);
+        bo.setId(add.getId());
+        List<ShipmentOrderDetailBo> detailBoList = bo.getDetails();
+        List<ShipmentOrderDetail> addDetailList = MapstructUtils.convert(detailBoList, ShipmentOrderDetail.class);
+        addDetailList.forEach(it -> it.setShipmentOrderId(add.getId()));
+        shipmentOrderDetailService.saveDetails(addDetailList);
     }
+
+    public void validateShipmentOrderNo(String shipmentOrderNo) {
+        LambdaQueryWrapper<ShipmentOrder> receiptOrderLqw = Wrappers.lambdaQuery();
+        receiptOrderLqw.eq(ShipmentOrder::getShipmentOrderNo, shipmentOrderNo);
+        ShipmentOrder shipmentOrder = shipmentOrderMapper.selectOne(receiptOrderLqw);
+        Assert.isNull(shipmentOrder, "出库单号重复，请手动修改");
+    }
+
 
     /**
      * 修改出库单

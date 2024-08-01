@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 出库单业务对象 wms_shipment_order
@@ -24,15 +25,15 @@ import java.math.BigDecimal;
 public class ShipmentOrderBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
-    @NotNull(message = "不能为空", groups = { EditGroup.class })
+    @NotNull(message = "id不能为空", groups = { EditGroup.class })
     private Long id;
 
     /**
      * 出库单号，系统自动生成
      */
-    @NotBlank(message = "出库单号，系统自动生成不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "出库单号不能为空", groups = { AddGroup.class, EditGroup.class })
     private String shipmentOrderNo;
 
     /**
@@ -44,38 +45,32 @@ public class ShipmentOrderBo extends BaseEntity {
     /**
      * 出库订单
      */
-    @NotBlank(message = "出库订单不能为空", groups = { AddGroup.class, EditGroup.class })
     private String orderNo;
 
     /**
      * 客户
      */
-    @NotNull(message = "客户不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long merchantId;
 
     /**
      * 订单金额
      */
-    @NotNull(message = "订单金额不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal receivableAmount;
 
     /**
      * 出库数量
      */
-    @NotNull(message = "出库数量不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal totalQuantity;
 
     /**
      * 出库单状态
      */
-    @NotNull(message = "出库单状态不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer shipmentOrderStatus;
 
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
-
+    private List<ShipmentOrderDetailBo> details;
 }

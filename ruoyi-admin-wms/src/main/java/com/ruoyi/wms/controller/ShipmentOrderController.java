@@ -2,6 +2,7 @@ package com.ruoyi.wms.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.core.constant.ServiceConstants;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -76,6 +77,7 @@ public class ShipmentOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
+        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.PENDING);
         shipmentOrderService.insertByBo(bo);
         return R.ok();
     }
