@@ -27,7 +27,7 @@ public class ShipmentOrderDetailVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -74,5 +74,7 @@ public class ShipmentOrderDetailVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
+    private ItemSkuVo itemSku;
 
+    private BigDecimal maxQuantity;
 }

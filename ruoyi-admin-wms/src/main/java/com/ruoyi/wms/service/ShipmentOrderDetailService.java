@@ -9,6 +9,8 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
+import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
@@ -17,9 +19,9 @@ import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.wms.mapper.ShipmentOrderDetailMapper;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 出库单详情Service业务层处理
@@ -32,6 +34,7 @@ import java.util.Collection;
 public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailMapper, ShipmentOrderDetail> {
 
     private final ShipmentOrderDetailMapper shipmentOrderDetailMapper;
+    private final ItemSkuService itemSkuService;
 
     /**
      * 查询出库单详情
@@ -98,5 +101,23 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
             return;
         }
         saveOrUpdateBatch(list);
+    }
+
+    public List<ShipmentOrderDetailVo> queryByShipmentOrderId(Long shipmentOrderId) {
+        ShipmentOrderDetailBo bo = new ShipmentOrderDetailBo();
+        bo.setShipmentOrderId(shipmentOrderId);
+        List<ShipmentOrderDetailVo> details = queryList(bo);
+        if (CollUtil.isEmpty(details)) {
+            return Collections.EMPTY_LIST;
+        }
+        Set<Long> skuIds = details
+            .stream()
+            .map(ShipmentOrderDetailVo::getSkuId)
+            .collect(Collectors.toSet());
+        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+            .stream()
+            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        details.forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
+        return details;
     }
 }

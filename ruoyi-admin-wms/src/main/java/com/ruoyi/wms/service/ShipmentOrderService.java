@@ -9,6 +9,7 @@ import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
@@ -46,7 +47,12 @@ public class ShipmentOrderService {
      * 查询出库单
      */
     public ShipmentOrderVo queryById(Long id){
-        return shipmentOrderMapper.selectVoById(id);
+        ShipmentOrderVo shipmentOrderVo = shipmentOrderMapper.selectVoById(id);
+        if (shipmentOrderVo == null) {
+            throw new BaseException("出库单不存在");
+        }
+        shipmentOrderVo.setDetails(shipmentOrderDetailService.queryByShipmentOrderId(shipmentOrderVo.getId()));
+        return shipmentOrderVo;
     }
 
     /**
@@ -76,6 +82,7 @@ public class ShipmentOrderService {
         lqw.eq(bo.getReceivableAmount() != null, ShipmentOrder::getReceivableAmount, bo.getReceivableAmount());
         lqw.eq(bo.getTotalQuantity() != null, ShipmentOrder::getTotalQuantity, bo.getTotalQuantity());
         lqw.eq(bo.getShipmentOrderStatus() != null, ShipmentOrder::getShipmentOrderStatus, bo.getShipmentOrderStatus());
+        lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
 

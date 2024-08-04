@@ -13,6 +13,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 出库单视图对象 wms_shipment_order
@@ -94,5 +95,5 @@ public class ShipmentOrderVo extends BaseEntity implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
+    List<ShipmentOrderDetailVo> details;
 }
