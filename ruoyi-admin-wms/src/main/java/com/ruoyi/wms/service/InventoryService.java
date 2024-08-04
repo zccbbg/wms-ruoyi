@@ -1,26 +1,34 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
 import com.ruoyi.common.core.validate.AddGroup;
+import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.InventoryBo;
+import com.ruoyi.wms.domain.bo.*;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.mapper.InventoryMapper;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 库存Service业务层处理
@@ -33,6 +41,7 @@ import java.util.List;
 public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
 
     private final InventoryMapper inventoryMapper;
+    private final InventoryDetailService inventoryDetailService;
 
     /**
      * 查询库存
@@ -45,8 +54,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      * 查询库存列表
      */
     public TableDataInfo<InventoryVo> queryPageList(InventoryBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<Inventory> lqw = buildQueryWrapper(bo);
-        Page<InventoryVo> result = inventoryMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<InventoryVo> result = inventoryMapper.selectVoPageByBo(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }
 
@@ -144,5 +152,41 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
         lqw.in(Inventory::getAreaId, areaIds);
         return inventoryMapper.exists(lqw);
+    }
+
+    /**
+     * 校验库存并计算出库数据
+     * @param warehouseId
+     * @param inventoryBoList
+     */
+    public ShipmentDataBo validateInventoryAndCalcShipmentData(@NotNull Long warehouseId, @NotEmpty List<InventoryBo> inventoryBoList) {
+        List<InventoryBo> shipmentInventoryList = validateInventoryAndCalcShipmentInventoryData(warehouseId, inventoryBoList);
+        List<InventoryDetailBo> shipmentInventoryDetailList = inventoryDetailService.calcShipmentInventoryDetailData(warehouseId, inventoryBoList);
+        ShipmentDataBo shipmentDataBo = new ShipmentDataBo(shipmentInventoryDetailList, shipmentInventoryList);
+        return shipmentDataBo;
+    }
+
+    public List<InventoryBo> validateInventoryAndCalcShipmentInventoryData(@NotNull Long warehouseId, @NotEmpty List<InventoryBo> inventoryBoList) {
+        LambdaQueryWrapper<Inventory> inventoryLambdaQueryWrapper = Wrappers.lambdaQuery();
+        inventoryLambdaQueryWrapper.eq(Inventory::getWarehouseId, warehouseId);
+        inventoryLambdaQueryWrapper.in(Inventory::getAreaId, inventoryBoList.stream().map(InventoryBo::getAreaId).toList());
+        inventoryLambdaQueryWrapper.gt(Inventory::getQuantity, 0);
+        List<Inventory> inventoryList = inventoryMapper.selectList(inventoryLambdaQueryWrapper);
+        if (CollUtil.isEmpty(inventoryList)) {
+            throw new BaseException("库存不足");
+        }
+        Map<String, Inventory> inventoryMap = inventoryList.stream().collect(Collectors.toMap(PlaceAndItem::getKey, Function.identity()));
+        List<InventoryBo> shipmentData = new LinkedList<>();
+        for (InventoryBo bo : inventoryBoList) {
+            Inventory inventory = inventoryMap.get(bo.getKey());
+            if (inventory == null || inventory.getQuantity().compareTo(bo.getQuantity()) < 0) {
+                throw new BaseException("库存不足");
+            }
+            InventoryBo addData = new InventoryBo();
+            BeanUtils.copyProperties(bo, addData);
+            addData.setQuantity(bo.getQuantity().negate());
+            shipmentData.add(addData);
+        }
+        return shipmentData;
     }
 }

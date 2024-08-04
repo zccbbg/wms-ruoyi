@@ -97,6 +97,19 @@ public class ShipmentOrderController extends BaseController {
     }
 
     /**
+     * 出库
+     */
+    @SaCheckPermission("wms:shipmentOrder:shipment")
+    @Log(title = "出库单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/shipment")
+    public R<Void> shipment(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
+        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.FINISH);
+        shipmentOrderService.shipment(bo);
+        return R.ok();
+    }
+
+    /**
      * 删除出库单
      *
      * @param ids 主键串

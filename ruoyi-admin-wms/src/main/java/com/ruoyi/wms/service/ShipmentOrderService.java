@@ -1,26 +1,30 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.constant.ServiceConstants;
+import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
-import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
+import com.ruoyi.common.satoken.utils.LoginHelper;
+import com.ruoyi.wms.domain.bo.*;
+import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
+import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * 出库单Service业务层处理
@@ -34,6 +38,9 @@ public class ShipmentOrderService {
 
     private final ShipmentOrderMapper shipmentOrderMapper;
     private final ShipmentOrderDetailService shipmentOrderDetailService;
+    private final InventoryService inventoryService;
+    private final InventoryDetailMapper inventoryDetailMapper;
+    private final InventoryHistoryService inventoryHistoryService;
 
     /**
      * 查询出库单
@@ -116,5 +123,54 @@ public class ShipmentOrderService {
      */
     public void deleteByIds(Collection<Long> ids) {
         shipmentOrderMapper.deleteBatchIds(ids);
+    }
+
+    /**
+     * 出库
+     * @param bo
+     */
+    @Transactional
+    public void shipment(ShipmentOrderBo bo) {
+        // 1.校验
+        validateBeforeShipment(bo);
+        // 2. 保存入库单和入库单明细
+        if (Objects.isNull(bo.getId())) {
+            insertByBo(bo);
+        } else {
+            updateByBo(bo);
+        }
+        // 3.计算出库数据
+        ShipmentDataBo shipmentDataBo = inventoryService.validateInventoryAndCalcShipmentData(bo.getWarehouseId(), MapstructUtils.convert(bo.getDetails(), InventoryBo.class));
+        // 4.更新库存
+        inventoryService.updateInventoryQuantity(shipmentDataBo.getShipmentInventoryList());
+        // 5.更新入库记录剩余数
+        inventoryDetailMapper.updateRemainQuantity(shipmentDataBo.getShipmentInventoryDetailList(), LoginHelper.getUsername(), LocalDateTime.now());
+        // 6.创建出库记录
+        saveInventoryHistory(shipmentDataBo.getShipmentInventoryDetailList(), bo);
+    }
+
+    private void saveInventoryHistory(List<InventoryDetailBo> list, ShipmentOrderBo bo){
+        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
+        list.forEach(detail -> {
+            InventoryHistory inventoryHistory = new InventoryHistory();
+            inventoryHistory.setFormId(bo.getId());
+            inventoryHistory.setFormType(bo.getShipmentOrderType());
+            inventoryHistory.setSkuId(detail.getSkuId());
+            inventoryHistory.setQuantity(detail.getQuantity());
+            inventoryHistory.setWarehouseId(detail.getWarehouseId());
+            inventoryHistory.setAreaId(detail.getAreaId());
+            inventoryHistory.setBatchNumber(detail.getBatchNumber());
+            inventoryHistory.setProductionDate(detail.getProductionDate());
+            inventoryHistory.setExpirationTime(detail.getExpirationTime());
+            inventoryHistory.setAmount(detail.getAmount());
+            inventoryHistoryList.add(inventoryHistory);
+        });
+        inventoryHistoryService.saveBatch(inventoryHistoryList);
+    }
+
+    private void validateBeforeShipment(ShipmentOrderBo bo) {
+        if (CollUtil.isEmpty(bo.getDetails())) {
+            throw new BaseException("商品明细不能为空！");
+        }
     }
 }

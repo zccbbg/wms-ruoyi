@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 库存记录对象 wms_inventory_history
@@ -40,6 +41,22 @@ public class InventoryHistory extends BaseEntity {
      * 物料ID
      */
     private Long skuId;
+    /**
+     * 批号
+     */
+    private String batchNumber;
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+    /**
+     * 过期时间
+     */
+    private LocalDateTime expirationTime;
+    /**
+     * 金额
+     */
+    private BigDecimal amount;
     /**
      * 库存变化
      */

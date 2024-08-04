@@ -60,5 +60,8 @@ public class InventoryVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
+    private ItemSkuVo itemSku;
+
+    private ItemVo item;
 
 }

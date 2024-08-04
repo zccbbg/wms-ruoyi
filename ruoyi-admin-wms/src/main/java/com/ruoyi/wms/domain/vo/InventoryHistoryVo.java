@@ -11,6 +11,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 库存记录视图对象 wms_inventory_history
@@ -50,6 +51,30 @@ public class InventoryHistoryVo implements Serializable {
      */
     @ExcelProperty(value = "物料ID")
     private Long skuId;
+
+    /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNumber;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
+     * 过期时间
+     */
+    @ExcelProperty(value = "过期时间")
+    private LocalDateTime expirationTime;
+
+    /**
+     * 金额
+     */
+    @ExcelProperty(value = "金额")
+    private BigDecimal amount;
 
     /**
      * 库存变化
