@@ -68,6 +68,16 @@ public class ShipmentOrderBo extends BaseEntity {
     private Integer shipmentOrderStatus;
 
     /**
+     * 仓库id
+     */
+    private Long warehouseId;
+
+    /**
+     * 库区id
+     */
+    private Long areaId;
+
+    /**
      * 备注
      */
     private String remark;

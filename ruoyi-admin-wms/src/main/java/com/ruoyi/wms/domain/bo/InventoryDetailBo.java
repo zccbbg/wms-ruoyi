@@ -113,5 +113,7 @@ public class InventoryDetailBo extends BaseEntity {
     @NotNull(message = "剩余数量不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal remainQuantity;
 
+    /** 出库数量 */
+    private BigDecimal shipmentQuantity;
 
 }

@@ -4,4 +4,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.InventoryMapper">
 
+    <resultMap id="inventoryVoMap" type="com.ruoyi.wms.domain.vo.InventoryVo">
+        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo" />
+        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
+    </resultMap>
+
+    <select id="selectVoPageByBo" resultMap="inventoryVoMap">
+        select
+            inventory.*,
+            sku.*,
+            item.*
+            from wms_inventory inventory
+        inner join wms_item_sku sku on inventory.sku_id=sku.id
+        inner join wms_item item on sku.item_id=item.id
+        <where>
+            <if test="bo.itemName != null and bo.itemName != ''">
+                item.item_name like concat('%', #{bo.itemName}, '%')
+            </if>
+            <if test="bo.itemCode != null and bo.itemCode != ''">
+                and item.item_code like concat('%', #{bo.itemCode}, '%')
+            </if>
+            <if test="bo.skuName != null and bo.skuName != ''">
+                and sku.sku_name like concat('%', #{bo.skuName}, '%')
+            </if>
+            <if test="bo.skuCode != null and bo.skuCode != ''">
+                and sku.sku_code like concat('%', #{bo.skuCode}, '%')
+            </if>
+            <if test="bo.itemCategory != null">
+                and item.item_category=#{bo.itemCategory}
+            </if>
+            <if test="bo.warehouseId != null">
+                and inventory.warehouse_id=#{bo.warehouseId}
+            </if>
+            <if test="bo.areaId != null">
+                and inventory.area_id=#{bo.areaId}
+            </if>
+            <if test="bo.minQuantity != null">
+                and inventory.quantity>=#{bo.minQuantity}
+            </if>
+        </where>
+        order by inventory.warehouse_id,inventory.area_id,sku.item_id
+    </select>
 </mapper>

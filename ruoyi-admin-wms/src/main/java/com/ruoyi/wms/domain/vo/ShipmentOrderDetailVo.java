@@ -1,6 +1,8 @@
 package com.ruoyi.wms.domain.vo;
 
 import java.math.BigDecimal;
+
+import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -21,13 +23,13 @@ import java.io.Serial;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ShipmentOrderDetail.class)
-public class ShipmentOrderDetailVo implements Serializable {
+public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -74,5 +76,7 @@ public class ShipmentOrderDetailVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
+    private ItemSkuVo itemSku;
 
+    private BigDecimal maxQuantity;
 }

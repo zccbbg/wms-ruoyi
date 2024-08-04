@@ -3,6 +3,7 @@ package ${packageName}.domain.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 
 #foreach ($import in $importList)
 import ${import};

@@ -171,6 +171,7 @@ public class ReceiptOrderService {
             inventoryDetail.setReceiptOrderId(bo.getId());
             inventoryDetail.setOrderNo(bo.getOrderNo());
             inventoryDetail.setType(ServiceConstants.InventoryDetailType.RECEIPT);
+            inventoryDetail.setRemainQuantity(inventoryDetail.getQuantity());
         });
         inventoryDetailService.saveBatch(inventoryDetailList);
     }

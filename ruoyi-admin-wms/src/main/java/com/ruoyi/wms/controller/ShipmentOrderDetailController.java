@@ -105,4 +105,14 @@ public class ShipmentOrderDetailController extends BaseController {
         shipmentOrderDetailService.deleteByIds(List.of(ids));
         return R.ok();
     }
+
+    /**
+     * 获取出库单详情详细信息
+     *
+     */
+    @SaCheckPermission("wms:shipmentOrderDetail:query")
+    @GetMapping("/list/{shipmentOrderId}")
+    public R<List<ShipmentOrderDetailVo>> listByShipmentOrderId(@NotNull @PathVariable Long shipmentOrderId) {
+        return R.ok(shipmentOrderDetailService.queryByShipmentOrderId(shipmentOrderId));
+    }
 }

@@ -4,6 +4,7 @@ import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
@@ -20,11 +21,14 @@ import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = ShipmentOrderDetail.class, reverseConvertGenerate = false)
+@AutoMappers({
+    @AutoMapper(target = ShipmentOrderDetail.class, reverseConvertGenerate = false),
+    @AutoMapper(target = InventoryBo.class, reverseConvertGenerate = false)
+})
 public class ShipmentOrderDetailBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -68,7 +72,6 @@ public class ShipmentOrderDetailBo extends BaseEntity {
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
 

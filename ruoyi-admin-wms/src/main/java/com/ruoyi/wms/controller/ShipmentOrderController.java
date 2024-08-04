@@ -78,7 +78,6 @@ public class ShipmentOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
-        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.PENDING);
         shipmentOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -91,8 +90,20 @@ public class ShipmentOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ShipmentOrderBo bo) {
-        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.PENDING);
         shipmentOrderService.updateByBo(bo);
+        return R.ok();
+    }
+
+    /**
+     * 出库
+     */
+    @SaCheckPermission("wms:shipmentOrder:shipment")
+    @Log(title = "出库单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/shipment")
+    public R<Void> shipment(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
+        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.FINISH);
+        shipmentOrderService.shipment(bo);
         return R.ok();
     }
 
