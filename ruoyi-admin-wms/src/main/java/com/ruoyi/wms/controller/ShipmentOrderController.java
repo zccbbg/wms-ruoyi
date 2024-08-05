@@ -110,14 +110,14 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 删除出库单
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @SaCheckPermission("wms:shipmentOrder:remove")
     @Log(title = "出库单", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        shipmentOrderService.deleteByIds(List.of(ids));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        shipmentOrderService.deleteById(id);
         return R.ok();
     }
 }

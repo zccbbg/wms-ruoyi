@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.constant.ServiceConstants;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -21,6 +22,7 @@ import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,8 +130,19 @@ public class ShipmentOrderService {
     /**
      * 批量删除出库单
      */
-    public void deleteByIds(Collection<Long> ids) {
-        shipmentOrderMapper.deleteBatchIds(ids);
+    public void deleteById(Long id) {
+        validateIdBeforeDelete(id);
+        shipmentOrderMapper.deleteById(id);
+    }
+
+    public void validateIdBeforeDelete(Long id) {
+        ShipmentOrderVo shipmentOrderVo = queryById(id);
+        if (shipmentOrderVo == null) {
+            throw new BaseException("出库单不存在");
+        }
+        if (ServiceConstants.ShipmentOrderStatus.FINISH.equals(shipmentOrderVo.getShipmentOrderStatus())) {
+            throw new ServiceException("出库单【" + shipmentOrderVo.getShipmentOrderNo() + "】已出库，无法删除！", HttpStatus.CONFLICT.value());
+        }
     }
 
     /**
