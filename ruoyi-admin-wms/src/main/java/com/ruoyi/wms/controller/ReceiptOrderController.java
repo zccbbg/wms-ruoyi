@@ -90,7 +90,6 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/warehousing")
     public R<Void> doWarehousing(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
-        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.FINISH);
         receiptOrderService.receive(bo);
         return R.ok();
     }
@@ -103,20 +102,7 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ReceiptOrderBo bo) {
-        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.PENDING);
         receiptOrderService.updateByBo(bo);
-        return R.ok();
-    }
-
-    /**
-     * 作废
-     */
-    @SaCheckPermission("wms:receiptOrder:edit")
-    @Log(title = "入库单", businessType = BusinessType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping("/invalid/{id}")
-    public R<Void> editToInvalid(@PathVariable Long id) {
-        receiptOrderService.editToInvalid(id);
         return R.ok();
     }
 
