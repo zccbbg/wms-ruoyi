@@ -38,21 +38,30 @@ public class InventoryController extends BaseController {
     private final InventoryService inventoryService;
 
     /**
-     * 查询库存列表
+     * 查询库存列表库区维度
      */
     @SaCheckPermission("wms:inventory:list")
-    @GetMapping("/list")
-    public TableDataInfo<InventoryVo> list(InventoryBo bo, PageQuery pageQuery) {
-        return inventoryService.queryPageList(bo, pageQuery);
+    @GetMapping(value = {"/list", "/boardList/area"})
+    public TableDataInfo<InventoryVo> queryAreaBoardList(InventoryBo bo, PageQuery pageQuery) {
+        return inventoryService.queryAreaBoardList(bo, pageQuery);
     }
 
     /**
-     * 查询库存列表
+     * 查询库存列表商品维度
      */
     @SaCheckPermission("wms:inventory:list")
-    @GetMapping("/boardList")
-    public TableDataInfo<InventoryVo> queryBoradList(InventoryBo bo, PageQuery pageQuery) {
-        return inventoryService.queryBoardList(bo, pageQuery);
+    @GetMapping(value = {"/boardList/item"})
+    public TableDataInfo<InventoryVo> queryItemBoardList(InventoryBo bo, PageQuery pageQuery) {
+        return inventoryService.queryItemBoardList(bo, pageQuery);
+    }
+
+    /**
+     * 查询库存列表仓库维度
+     */
+    @SaCheckPermission("wms:inventory:list")
+    @GetMapping("/boardList/warehouse")
+    public TableDataInfo<InventoryVo> queryWarehouseBoardList(InventoryBo bo, PageQuery pageQuery) {
+        return inventoryService.queryWarehouseBoardList(bo, pageQuery);
     }
 
     /**

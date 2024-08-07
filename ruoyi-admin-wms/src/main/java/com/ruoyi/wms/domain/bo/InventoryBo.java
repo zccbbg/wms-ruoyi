@@ -6,7 +6,6 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.Inventory;
 import io.github.linpeilie.annotations.AutoMapper;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,11 +69,4 @@ public class InventoryBo extends BaseEntity implements PlaceAndItem {
     private String skuName;
     private String skuCode;
     private Long itemCategory;
-
-    /**
-     * 看板查看类型
-     * 1. 2. 仓库库区规格
-     * 3. 规格仓库库区
-     * */
-    private Integer type;
 }

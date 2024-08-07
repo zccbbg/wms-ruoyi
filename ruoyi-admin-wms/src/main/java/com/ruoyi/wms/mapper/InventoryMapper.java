@@ -4,11 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
 import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.entity.Inventory;
-import org.apache.ibatis.annotations.Param;
 import com.ruoyi.wms.domain.vo.InventoryVo;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 库存Mapper接口
@@ -18,7 +15,8 @@ import java.util.List;
  */
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
-    Page<InventoryVo> selectVoPageByBo(Page<Object> page, @Param("bo") InventoryBo bo);
+    Page<InventoryVo> queryItemBoardList(Page<Object> page, @Param("bo") InventoryBo bo);
+    Page<InventoryVo> queryAreaBoardList(Page<Object> page, @Param("bo") InventoryBo bo);
 
     Page<InventoryVo> selectBoardPageByWarehouse(Page<Object> page, @Param("bo") InventoryBo bo);
 }

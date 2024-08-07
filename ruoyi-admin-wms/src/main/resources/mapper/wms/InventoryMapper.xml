@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
     </resultMap>
 
-    <select id="selectVoPageByBo" resultMap="inventoryVoMap">
+    <sql id="selectVoListByBo">
         select
         inventory.*,
         sku.*,
@@ -43,12 +43,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and inventory.quantity>=#{bo.minQuantity}
             </if>
         </where>
-        <if test="bo.type == null or bo.type == 2">
-            order by inventory.warehouse_id,inventory.area_id,sku.item_id,sku.id
-        </if>
-        <if test="bo.type == 3">
-            order by sku.item_id,sku.id,inventory.warehouse_id,inventory.area_id
-        </if>
+    </sql>
+
+    <select id="queryAreaBoardList" resultMap="inventoryVoMap">
+        <include refid="selectVoListByBo"/>
+        order by inventory.warehouse_id,inventory.area_id,sku.item_id,sku.id
+    </select>
+
+    <select id="queryItemBoardList" resultMap="inventoryVoMap">
+        <include refid="selectVoListByBo"/>
+        order by sku.item_id,sku.id,inventory.warehouse_id,inventory.area_id
     </select>
 
     <select id="selectBoardPageByWarehouse" resultType="com.ruoyi.wms.domain.vo.InventoryVo">

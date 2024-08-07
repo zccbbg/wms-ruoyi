@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
@@ -13,7 +12,9 @@ import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.*;
+import com.ruoyi.wms.domain.bo.InventoryBo;
+import com.ruoyi.wms.domain.bo.InventoryDetailBo;
+import com.ruoyi.wms.domain.bo.ShipmentDataBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
@@ -48,14 +49,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      */
     public InventoryVo queryById(Long id){
         return inventoryMapper.selectVoById(id);
-    }
-
-    /**
-     * 查询库存列表
-     */
-    public TableDataInfo<InventoryVo> queryPageList(InventoryBo bo, PageQuery pageQuery) {
-        Page<InventoryVo> result = inventoryMapper.selectVoPageByBo(pageQuery.build(), bo);
-        return TableDataInfo.build(result);
     }
 
     /**
@@ -190,8 +183,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         return shipmentData;
     }
 
-    public TableDataInfo<InventoryVo> queryBoardList(InventoryBo bo, PageQuery pageQuery) {
-        if (ServiceConstants.InventoryBoardType.WAREHOUSE.equals(bo.getType())) {
+    public TableDataInfo<InventoryVo> queryWarehouseBoardList(InventoryBo bo, PageQuery pageQuery) {
             TableDataInfo<InventoryVo> tableDataInfo = TableDataInfo.build(inventoryMapper.selectBoardPageByWarehouse(pageQuery.build(), bo));
             if (CollUtil.isEmpty(tableDataInfo.getRows())) {
                 return tableDataInfo;
@@ -204,7 +196,18 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                 it.setItem(itemSku.getItem());
             });
             return tableDataInfo;
-        }
-        return queryPageList(bo, pageQuery);
+    }
+
+    /**
+     * 查询库存列表
+     */
+    public TableDataInfo<InventoryVo> queryAreaBoardList(InventoryBo bo, PageQuery pageQuery) {
+        Page<InventoryVo> result = inventoryMapper.queryAreaBoardList(pageQuery.build(), bo);
+        return TableDataInfo.build(result);
+    }
+
+    public TableDataInfo<InventoryVo> queryItemBoardList(InventoryBo bo, PageQuery pageQuery) {
+        Page<InventoryVo> result = inventoryMapper.queryItemBoardList(pageQuery.build(), bo);
+        return TableDataInfo.build(result);
     }
 }
