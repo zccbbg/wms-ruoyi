@@ -90,6 +90,7 @@ public class ReceiptOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/warehousing")
     public R<Void> doWarehousing(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
+        bo.setReceiptOrderStatus(ServiceConstants.ReceiptOrderStatus.FINISH);
         receiptOrderService.receive(bo);
         return R.ok();
     }
