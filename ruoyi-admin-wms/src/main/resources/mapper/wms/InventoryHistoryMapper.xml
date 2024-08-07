@@ -4,4 +4,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.InventoryHistoryMapper">
 
+    <resultMap id="inventoryHistoryVoMap" type="com.ruoyi.wms.domain.vo.InventoryHistoryVo">
+        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo" />
+        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
+    </resultMap>
+
+    <select id="selectVoPageByBo" resultMap="inventoryHistoryVoMap">
+        select
+        history.*,
+        sku.*,
+        item.*
+        from wms_inventory_history history
+        left join wms_item_sku sku on history.sku_id=sku.id
+        left join wms_item item on sku.item_id=item.id
+        <where>
+            <if test="bo.formType != null">
+                history.form_type=#{bo.formType}
+            </if>
+            <if test="bo.itemName != null and bo.itemName != ''">
+                and item.item_name like concat('%', #{bo.itemName}, '%')
+            </if>
+            <if test="bo.itemCode != null and bo.itemCode != ''">
+                and item.item_code like concat('%', #{bo.itemCode}, '%')
+            </if>
+            <if test="bo.skuName != null and bo.skuName != ''">
+                and sku.sku_name like concat('%', #{bo.skuName}, '%')
+            </if>
+            <if test="bo.skuCode != null and bo.skuCode != ''">
+                and sku.sku_code like concat('%', #{bo.skuCode}, '%')
+            </if>
+            <if test="bo.warehouseId != null">
+                and history.warehouse_id=#{bo.warehouseId}
+            </if>
+            <if test="bo.areaId != null">
+                and history.area_id=#{bo.areaId}
+            </if>
+            <if test="bo.startTime != null and bo.startTime != '' and bo.endTime != null and bo.endTime != ''">
+                and (history.create_time between #{bo.startTime} and #{bo.endTime})
+            </if>
+        </where>
+        order by history.create_time desc
+    </select>
 </mapper>

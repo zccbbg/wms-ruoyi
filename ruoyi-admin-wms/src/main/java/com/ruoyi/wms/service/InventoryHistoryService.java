@@ -41,8 +41,7 @@ public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper,
      * 查询库存记录列表
      */
     public TableDataInfo<InventoryHistoryVo> queryPageList(InventoryHistoryBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<InventoryHistory> lqw = buildQueryWrapper(bo);
-        Page<InventoryHistoryVo> result = inventoryHistoryMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<InventoryHistoryVo> result = inventoryHistoryMapper.selectVoPageByBo(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }
 

@@ -36,7 +36,7 @@ public class InventoryHistory extends BaseEntity {
     /**
      * 操作类型
      */
-    private Long formType;
+    private Integer formType;
     /**
      * 物料ID
      */

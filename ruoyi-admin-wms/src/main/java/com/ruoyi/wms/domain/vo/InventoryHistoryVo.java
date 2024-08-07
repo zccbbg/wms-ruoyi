@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = InventoryHistory.class)
-public class InventoryHistoryVo implements Serializable {
+public class InventoryHistoryVo extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -44,7 +45,7 @@ public class InventoryHistoryVo implements Serializable {
      * 操作类型
      */
     @ExcelProperty(value = "操作类型")
-    private Long formType;
+    private Integer formType;
 
     /**
      * 物料ID
@@ -100,5 +101,8 @@ public class InventoryHistoryVo implements Serializable {
     @ExcelProperty(value = "所属库区")
     private Long areaId;
 
+    private ItemSkuVo itemSku;
+
+    private ItemVo item;
 
 }

@@ -41,7 +41,7 @@ public class InventoryHistoryBo extends BaseEntity {
      * 操作类型
      */
     @NotNull(message = "操作类型不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long formType;
+    private Integer formType;
 
     /**
      * 物料ID
@@ -93,5 +93,12 @@ public class InventoryHistoryBo extends BaseEntity {
     @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long areaId;
 
+    private String itemName;
+    private String itemCode;
+    private String skuName;
+    private String skuCode;
+
+    private String startTime;
+    private String endTime;
 
 }
