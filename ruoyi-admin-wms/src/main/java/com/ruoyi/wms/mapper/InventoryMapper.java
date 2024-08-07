@@ -19,4 +19,6 @@ import java.util.List;
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
     Page<InventoryVo> selectVoPageByBo(Page<Object> page, @Param("bo") InventoryBo bo);
+
+    Page<InventoryVo> selectBoardPageByWarehouse(Page<Object> page, @Param("bo") InventoryBo bo);
 }

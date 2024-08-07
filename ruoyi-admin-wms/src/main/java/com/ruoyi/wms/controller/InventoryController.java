@@ -47,6 +47,15 @@ public class InventoryController extends BaseController {
     }
 
     /**
+     * 查询库存列表
+     */
+    @SaCheckPermission("wms:inventory:list")
+    @GetMapping("/boardList")
+    public TableDataInfo<InventoryVo> queryBoradList(InventoryBo bo, PageQuery pageQuery) {
+        return inventoryService.queryBoardList(bo, pageQuery);
+    }
+
+    /**
      * 导出库存列表
      */
     @SaCheckPermission("wms:inventory:export")

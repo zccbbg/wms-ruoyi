@@ -11,10 +11,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectVoPageByBo" resultMap="inventoryVoMap">
         select
-            inventory.*,
-            sku.*,
-            item.*
-            from wms_inventory inventory
+        inventory.*,
+        sku.*,
+        item.*
+        from wms_inventory inventory
         inner join wms_item_sku sku on inventory.sku_id=sku.id
         inner join wms_item item on sku.item_id=item.id
         <where>
@@ -43,6 +43,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and inventory.quantity>=#{bo.minQuantity}
             </if>
         </where>
-        order by inventory.warehouse_id,inventory.area_id,sku.item_id
+        <if test="bo.type == null or bo.type == 2">
+            order by inventory.warehouse_id,inventory.area_id,sku.item_id,sku.id
+        </if>
+        <if test="bo.type == 3">
+            order by sku.item_id,sku.id,inventory.warehouse_id,inventory.area_id
+        </if>
+    </select>
+
+    <select id="selectBoardPageByWarehouse" resultType="com.ruoyi.wms.domain.vo.InventoryVo">
+        select
+        inventory.warehouse_id,
+        inventory.sku_id,
+        sum(inventory.quantity) quantity
+        from wms_inventory inventory
+        inner join wms_item_sku sku on inventory.sku_id=sku.id
+        inner join wms_item item on sku.item_id=item.id
+        <where>
+            <if test="bo.itemName != null and bo.itemName != ''">
+                item.item_name like concat('%', #{bo.itemName}, '%')
+            </if>
+            <if test="bo.itemCode != null and bo.itemCode != ''">
+                and item.item_code like concat('%', #{bo.itemCode}, '%')
+            </if>
+            <if test="bo.skuName != null and bo.skuName != ''">
+                and sku.sku_name like concat('%', #{bo.skuName}, '%')
+            </if>
+            <if test="bo.skuCode != null and bo.skuCode != ''">
+                and sku.sku_code like concat('%', #{bo.skuCode}, '%')
+            </if>
+            <if test="bo.itemCategory != null">
+                and item.item_category=#{bo.itemCategory}
+            </if>
+            <if test="bo.warehouseId != null">
+                and inventory.warehouse_id=#{bo.warehouseId}
+            </if>
+        </where>
+        group by inventory.warehouse_id,inventory.sku_id
+        <if test="bo.minQuantity != null">
+            having sum(inventory.quantity)>=#{bo.minQuantity}
+        </if>
+        order by inventory.warehouse_id,item.id,inventory.sku_id
     </select>
 </mapper>

@@ -28,4 +28,10 @@ public class ServiceConstants {
         public static final Integer PENDING = 0;
         public static final Integer FINISH = 1;
     }
+
+    public class InventoryBoardType {
+        public static final Integer WAREHOUSE = 1;
+        public static final Integer AREA = 2;
+        public static final Integer ITEM = 3;
+    }
 }

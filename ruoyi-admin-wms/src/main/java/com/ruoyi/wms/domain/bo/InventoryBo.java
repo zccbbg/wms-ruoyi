@@ -71,4 +71,10 @@ public class InventoryBo extends BaseEntity implements PlaceAndItem {
     private String skuCode;
     private Long itemCategory;
 
+    /**
+     * 看板查看类型
+     * 1. 2. 仓库库区规格
+     * 3. 规格仓库库区
+     * */
+    private Integer type;
 }

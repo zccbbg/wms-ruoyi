@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
@@ -15,6 +16,7 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.*;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.mapper.InventoryMapper;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,10 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
 
     private final InventoryMapper inventoryMapper;
     private final InventoryDetailService inventoryDetailService;
+    private final ItemSkuService itemSkuService;
 
     /**
      * 查询库存
@@ -188,5 +188,23 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             shipmentData.add(addData);
         }
         return shipmentData;
+    }
+
+    public TableDataInfo<InventoryVo> queryBoardList(InventoryBo bo, PageQuery pageQuery) {
+        if (ServiceConstants.InventoryBoardType.WAREHOUSE.equals(bo.getType())) {
+            TableDataInfo<InventoryVo> tableDataInfo = TableDataInfo.build(inventoryMapper.selectBoardPageByWarehouse(pageQuery.build(), bo));
+            if (CollUtil.isEmpty(tableDataInfo.getRows())) {
+                return tableDataInfo;
+            }
+            Set<Long> skuIds = tableDataInfo.getRows().stream().map(InventoryVo::getSkuId).collect(Collectors.toSet());
+            Map<Long, ItemSkuVo> skuMap = itemSkuService.queryVosByIds(skuIds).stream().collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+            tableDataInfo.getRows().forEach(it -> {
+                ItemSkuVo itemSku = skuMap.get(it.getSkuId());
+                it.setItemSku(itemSku);
+                it.setItem(itemSku.getItem());
+            });
+            return tableDataInfo;
+        }
+        return queryPageList(bo, pageQuery);
     }
 }
