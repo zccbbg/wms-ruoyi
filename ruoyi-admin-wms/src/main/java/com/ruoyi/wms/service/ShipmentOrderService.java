@@ -174,7 +174,7 @@ public class ShipmentOrderService {
         list.forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setFormId(bo.getId());
-            inventoryHistory.setFormType(bo.getShipmentOrderType());
+            inventoryHistory.setFormType(ServiceConstants.InventoryHistoryFormType.SHIPMENT);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());

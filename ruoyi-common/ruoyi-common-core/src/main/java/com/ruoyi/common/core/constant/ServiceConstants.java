@@ -28,4 +28,14 @@ public class ServiceConstants {
         public static final Integer PENDING = 0;
         public static final Integer FINISH = 1;
     }
+
+    /**
+     * 入库单状态
+     */
+    public class InventoryHistoryFormType {
+        public static final Integer RECEIPT = 1;
+        public static final Integer SHIPMENT = 2;
+        public static final Integer MOVEMENT = 3;
+        public static final Integer CHECK = 4;
+    }
 }

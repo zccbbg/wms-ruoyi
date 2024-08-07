@@ -153,7 +153,7 @@ public class ReceiptOrderService {
         bo.getDetails().forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setFormId(bo.getId());
-            inventoryHistory.setFormType(bo.getReceiptOrderType());
+            inventoryHistory.setFormType(ServiceConstants.InventoryHistoryFormType.RECEIPT);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
