@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 移库单业务对象 wms_movement_order
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 public class MovementOrderBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -77,5 +78,6 @@ public class MovementOrderBo extends BaseEntity {
     @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
+    List<MovementOrderDetailBo> details;
 
 }

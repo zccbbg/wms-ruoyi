@@ -95,14 +95,14 @@ public class MovementOrderController extends BaseController {
     /**
      * 删除移库单
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @SaCheckPermission("wms:movementOrder:remove")
     @Log(title = "移库单", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        movementOrderService.deleteByIds(List.of(ids));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        movementOrderService.deleteById(id);
         return R.ok();
     }
 }

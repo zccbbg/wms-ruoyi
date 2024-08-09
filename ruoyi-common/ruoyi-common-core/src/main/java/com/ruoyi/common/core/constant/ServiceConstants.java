@@ -21,7 +21,7 @@ public class ServiceConstants {
     }
 
     /**
-     * 入库单状态
+     * 出库单状态
      */
     public class ShipmentOrderStatus {
         public static final Integer INVALID = -1;
@@ -30,12 +30,21 @@ public class ServiceConstants {
     }
 
     /**
-     * 入库单状态
+     * 库存记录操作类型
      */
     public class InventoryHistoryFormType {
         public static final Integer RECEIPT = 1;
         public static final Integer SHIPMENT = 2;
         public static final Integer MOVEMENT = 3;
         public static final Integer CHECK = 4;
+    }
+
+    /**
+     * 移库单状态
+     */
+    public class MovementOrderStatus {
+        public static final Integer INVALID = -1;
+        public static final Integer PENDING = 0;
+        public static final Integer FINISH = 1;
     }
 }

@@ -1,5 +1,7 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -13,6 +15,7 @@ import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
 import com.ruoyi.wms.domain.vo.MovementOrderDetailVo;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.mapper.MovementOrderDetailMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +29,7 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class MovementOrderDetailService {
+public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailMapper, MovementOrderDetail> {
 
     private final MovementOrderDetailMapper movementOrderDetailMapper;
 
@@ -89,5 +92,13 @@ public class MovementOrderDetailService {
      */
     public void deleteByIds(Collection<Long> ids) {
         movementOrderDetailMapper.deleteBatchIds(ids);
+    }
+
+    @Transactional
+    public void saveDetails(List<MovementOrderDetail> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        saveOrUpdateBatch(list);
     }
 }
