@@ -40,7 +40,12 @@ public class MovementOrderService {
      * 查询移库单
      */
     public MovementOrderVo queryById(Long id) {
-        return movementOrderMapper.selectVoById(id);
+        MovementOrderVo movementOrderVo = movementOrderMapper.selectVoById(id);
+        if (movementOrderVo == null) {
+            throw new BaseException("移库单不存在");
+        }
+        movementOrderVo.setDetails(movementOrderDetailService.queryByMovementOrderId(id));
+        return movementOrderVo;
     }
 
     /**

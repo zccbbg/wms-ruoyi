@@ -11,6 +11,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 移库单视图对象 wms_movement_order
@@ -27,7 +28,7 @@ public class MovementOrderVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -80,5 +81,5 @@ public class MovementOrderVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
+    List<MovementOrderDetailVo> details;
 }

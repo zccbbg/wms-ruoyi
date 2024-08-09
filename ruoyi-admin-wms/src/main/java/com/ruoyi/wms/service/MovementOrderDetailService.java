@@ -9,6 +9,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
@@ -17,9 +18,9 @@ import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.mapper.MovementOrderDetailMapper;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 库存移动详情Service业务层处理
@@ -32,6 +33,7 @@ import java.util.Collection;
 public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailMapper, MovementOrderDetail> {
 
     private final MovementOrderDetailMapper movementOrderDetailMapper;
+    private final ItemSkuService itemSkuService;
 
     /**
      * 查询库存移动详情
@@ -100,5 +102,28 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
             return;
         }
         saveOrUpdateBatch(list);
+    }
+
+    /**
+     * 根据移库单id查询移库单详情
+     * @param movementOrderId
+     * @return
+     */
+    public List<MovementOrderDetailVo> queryByMovementOrderId(Long movementOrderId) {
+        MovementOrderDetailBo bo = new MovementOrderDetailBo();
+        bo.setMovementOrderId(movementOrderId);
+        List<MovementOrderDetailVo> details = queryList(bo);
+        if (CollUtil.isEmpty(details)) {
+            return Collections.emptyList();
+        }
+        Set<Long> skuIds = details
+            .stream()
+            .map(MovementOrderDetailVo::getSkuId)
+            .collect(Collectors.toSet());
+        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+            .stream()
+            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        details.forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
+        return details;
     }
 }

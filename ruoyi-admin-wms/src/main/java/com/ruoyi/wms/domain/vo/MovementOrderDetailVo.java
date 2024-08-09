@@ -27,7 +27,7 @@ public class MovementOrderDetailVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -86,5 +86,5 @@ public class MovementOrderDetailVo implements Serializable {
     @ExcelProperty(value = "入库记录id")
     private Long inventoryDetailId;
 
-
+    private ItemSkuVo itemSku;
 }

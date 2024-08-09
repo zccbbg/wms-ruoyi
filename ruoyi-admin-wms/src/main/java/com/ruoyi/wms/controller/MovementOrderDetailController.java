@@ -105,4 +105,13 @@ public class MovementOrderDetailController extends BaseController {
         movementOrderDetailService.deleteByIds(List.of(ids));
         return R.ok();
     }
+
+    /**
+     * 根据移库单id查询移库单详情列表
+     */
+    @SaCheckPermission("wms:movementOrderDetail:query")
+    @GetMapping("/list/{movementOrderId}")
+    public R<List<MovementOrderDetailVo>> listByMovementOrderId(@NotNull @PathVariable Long movementOrderId) {
+        return R.ok(movementOrderDetailService.queryByMovementOrderId(movementOrderId));
+    }
 }
