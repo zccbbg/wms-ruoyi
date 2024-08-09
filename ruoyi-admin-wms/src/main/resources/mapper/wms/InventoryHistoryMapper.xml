@@ -21,6 +21,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bo.formType != null">
                 history.form_type=#{bo.formType}
             </if>
+            <if test="bo.formNo != null and bo.formNo != ''">
+                and history.form_no=#{bo.formNo}
+            </if>
             <if test="bo.itemName != null and bo.itemName != ''">
                 and item.item_name like concat('%', #{bo.itemName}, '%')
             </if>
