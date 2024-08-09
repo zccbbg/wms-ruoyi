@@ -116,4 +116,14 @@ public class InventoryDetailBo extends BaseEntity {
     /** 出库数量 */
     private BigDecimal shipmentQuantity;
 
+    /**
+     * 最小数量
+     */
+    private BigDecimal minQuantity;
+
+    private String itemName;
+    private String itemCode;
+    private String skuName;
+    private String skuCode;
+
 }

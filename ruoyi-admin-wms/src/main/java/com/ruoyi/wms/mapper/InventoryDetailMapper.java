@@ -1,5 +1,6 @@
 package com.ruoyi.wms.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
 import com.ruoyi.wms.domain.bo.InventoryDetailBo;
 import com.ruoyi.wms.domain.entity.InventoryDetail;
@@ -17,4 +18,6 @@ import java.util.List;
  */
 public interface InventoryDetailMapper extends BaseMapperPlus<InventoryDetail, InventoryDetailVo> {
     void updateRemainQuantity(@Param("list")List<InventoryDetailBo> list, @Param("updateBy") String updateBy, @Param("updateTime") LocalDateTime updateTime);
+
+    Page<InventoryDetailVo> selectPageByBo(Page<Object> page, @Param("bo") InventoryDetailBo bo);
 }

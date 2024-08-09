@@ -3,6 +3,12 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.InventoryDetailMapper">
+
+    <resultMap id="inventoryDetailVoMap" type="com.ruoyi.wms.domain.vo.InventoryDetailVo">
+        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo" />
+        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
+    </resultMap>
+
     <update id="updateRemainQuantity">
         update wms_inventory_detail
         set remain_quantity = remain_quantity -
@@ -21,4 +27,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{it.id}
         </foreach>
     </update>
+    <select id="selectPageByBo" resultMap="inventoryDetailVoMap">
+        select
+        detail.*,
+        sku.*,
+        item.*
+        from wms_inventory_detail detail
+        inner join wms_item_sku sku on detail.sku_id=sku.id
+        inner join wms_item item on sku.item_id=item.id
+        <where>
+            <if test="bo.batchNumber != null and bo.batchNumber != ''">
+                detail.batch_number like concat('%', #{bo.batchNumber}, '%')
+            </if>
+            <if test="bo.itemName != null and bo.itemName != ''">
+                and item.item_name like concat('%', #{bo.itemName}, '%')
+            </if>
+            <if test="bo.itemCode != null and bo.itemCode != ''">
+                and item.item_code like concat('%', #{bo.itemCode}, '%')
+            </if>
+            <if test="bo.skuName != null and bo.skuName != ''">
+                and sku.sku_name like concat('%', #{bo.skuName}, '%')
+            </if>
+            <if test="bo.skuCode != null and bo.skuCode != ''">
+                and sku.sku_code like concat('%', #{bo.skuCode}, '%')
+            </if>
+            <if test="bo.warehouseId != null">
+                and detail.warehouse_id=#{bo.warehouseId}
+            </if>
+            <if test="bo.areaId != null">
+                and detail.area_id=#{bo.areaId}
+            </if>
+            <if test="bo.minQuantity != null">
+                and detail.remain_quantity>=#{bo.minQuantity}
+            </if>
+        </where>
+        order by detail.create_time desc
+    </select>
 </mapper>

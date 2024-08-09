@@ -176,7 +176,7 @@ public class ShipmentOrderService {
             inventoryHistory.setFormId(bo.getId());
             inventoryHistory.setFormType(ServiceConstants.InventoryHistoryFormType.SHIPMENT);
             inventoryHistory.setSkuId(detail.getSkuId());
-            inventoryHistory.setQuantity(detail.getQuantity().negate());
+            inventoryHistory.setQuantity(detail.getShipmentQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAreaId(detail.getAreaId());
             inventoryHistory.setBatchNumber(detail.getBatchNumber());
