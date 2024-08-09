@@ -42,6 +42,12 @@ public class InventoryHistoryVo extends BaseEntity implements Serializable {
     private Long formId;
 
     /**
+     * 操作单号（入库、出库、移库、盘库单号）
+     */
+    @ExcelProperty(value = "操作单号")
+    private String formNo;
+
+    /**
      * 操作类型
      */
     @ExcelProperty(value = "操作类型")

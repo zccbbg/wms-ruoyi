@@ -34,6 +34,10 @@ public class InventoryHistory extends BaseEntity {
      */
     private Long formId;
     /**
+     * 操作单号（入库、出库、移库、盘库单号）
+     */
+    private String formNo;
+    /**
      * 操作类型
      */
     private Integer formType;

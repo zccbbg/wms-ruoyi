@@ -6,13 +6,12 @@ import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import lombok.Data;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.time.LocalDateTime;
 
 /**
  * 出库单详情视图对象 wms_shipment_order_detail
@@ -71,6 +70,30 @@ public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
     private Long areaId;
 
     /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNumber;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
+     * 过期时间
+     */
+    @ExcelProperty(value = "过期时间")
+    private LocalDateTime expirationTime;
+
+    /**
+     * 入库记录id
+     */
+    @ExcelProperty(value = "入库记录id")
+    private Long inventoryDetailId;
+
+    /**
      * 备注
      */
     @ExcelProperty(value = "备注")
@@ -78,5 +101,5 @@ public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
 
     private ItemSkuVo itemSku;
 
-    private BigDecimal maxQuantity;
+    private BigDecimal remainQuantity;
 }

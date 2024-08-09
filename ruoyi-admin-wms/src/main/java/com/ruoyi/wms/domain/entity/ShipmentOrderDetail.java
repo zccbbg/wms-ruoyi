@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 
 /**
  * 出库单详情对象 wms_shipment_order_detail
@@ -52,6 +53,22 @@ public class ShipmentOrderDetail extends BaseEntity {
      * 所属库区
      */
     private Long areaId;
+    /**
+     * 批号
+     */
+    private String batchNumber;
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+    /**
+     * 过期时间
+     */
+    private LocalDateTime expirationTime;
+    /**
+     * 入库记录id
+     */
+    private Long inventoryDetailId;
     /**
      * 备注
      */

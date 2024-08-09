@@ -21,6 +21,7 @@ import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class ShipmentOrderService {
     private final InventoryService inventoryService;
     private final InventoryDetailMapper inventoryDetailMapper;
     private final InventoryHistoryService inventoryHistoryService;
+    private final InventoryDetailService inventoryDetailService;
 
     /**
      * 查询出库单
@@ -153,30 +155,73 @@ public class ShipmentOrderService {
     public void shipment(ShipmentOrderBo bo) {
         // 1.校验
         validateBeforeShipment(bo);
-        // 2. 保存入库单和入库单明细
+        // 2.按仓库库区规格合并商品明细数量
+        List<InventoryBo> mergedInventoryBoList = mergeShipmentOrderDetailByPlaceAndItem(bo.getDetails());
+        // 3.校验库存
+        inventoryService.validateInventory(bo.getWarehouseId(), mergedInventoryBoList);
+        // 4.校验库存记录
+        List<InventoryDetailBo> inventoryDetailBoList = convertShipmentOrderDetailToInventoryDetail(bo.getDetails());
+        inventoryDetailService.validateRemainQuantity(inventoryDetailBoList);
+        // 5. 保存入库单和入库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
-        // 3.计算出库数据
-        ShipmentDataBo shipmentDataBo = inventoryService.validateInventoryAndCalcShipmentData(bo.getWarehouseId(), MapstructUtils.convert(bo.getDetails(), InventoryBo.class));
-        // 4.更新库存
-        inventoryService.updateInventoryQuantity(shipmentDataBo.getShipmentInventoryList());
-        // 5.更新入库记录剩余数
-        inventoryDetailMapper.updateRemainQuantity(shipmentDataBo.getShipmentInventoryDetailList(), LoginHelper.getUsername(), LocalDateTime.now());
-        // 6.创建出库记录
-        saveInventoryHistory(shipmentDataBo.getShipmentInventoryDetailList(), bo);
+        // 6.更新库存
+        mergedInventoryBoList.forEach(mergedInventoryBo -> mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().negate()));
+        inventoryService.updateInventoryQuantity(mergedInventoryBoList);
+        // 7.更新入库记录剩余数
+        inventoryDetailMapper.updateRemainQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
+        // 8.创建库存记录
+        saveInventoryHistory(bo);
     }
 
-    private void saveInventoryHistory(List<InventoryDetailBo> list, ShipmentOrderBo bo){
+    /**
+     * 按仓库库区规格合并商品明细的数量
+     * @param shipmentOrderDetailBoList
+     * @return
+     */
+    public List<InventoryBo> mergeShipmentOrderDetailByPlaceAndItem(@NotEmpty List<ShipmentOrderDetailBo> shipmentOrderDetailBoList) {
+        Map<String, InventoryBo> mergedMap = new HashMap<>();
+        shipmentOrderDetailBoList.forEach(detail -> {
+            String mergedKey = detail.getKey();
+            if (mergedMap.containsKey(mergedKey)) {
+                InventoryBo mergedInventoryBo = mergedMap.get(mergedKey);
+                mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().add(detail.getQuantity()));
+                return;
+            }
+            InventoryBo mergedInventoryBo = new InventoryBo();
+            mergedInventoryBo.setWarehouseId(detail.getWarehouseId());
+            mergedInventoryBo.setAreaId(detail.getAreaId());
+            mergedInventoryBo.setSkuId(detail.getSkuId());
+            mergedInventoryBo.setQuantity(detail.getQuantity());
+            mergedMap.put(mergedKey, mergedInventoryBo);
+        });
+        return new ArrayList<>(mergedMap.values());
+    }
+
+
+    public List<InventoryDetailBo> convertShipmentOrderDetailToInventoryDetail(List<ShipmentOrderDetailBo> shipmentOrderDetailBoList) {
+        return shipmentOrderDetailBoList
+            .stream()
+            .map(detail -> {
+                InventoryDetailBo inventoryDetailBo = new InventoryDetailBo();
+                inventoryDetailBo.setId(detail.getInventoryDetailId());
+                inventoryDetailBo.setShipmentQuantity(detail.getQuantity());
+                return inventoryDetailBo;
+            }).toList();
+    }
+
+    private void saveInventoryHistory(ShipmentOrderBo bo){
         List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
-        list.forEach(detail -> {
+        bo.getDetails().forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setFormId(bo.getId());
+            inventoryHistory.setFormNo(bo.getShipmentOrderNo());
             inventoryHistory.setFormType(ServiceConstants.InventoryHistoryFormType.SHIPMENT);
             inventoryHistory.setSkuId(detail.getSkuId());
-            inventoryHistory.setQuantity(detail.getShipmentQuantity().negate());
+            inventoryHistory.setQuantity(detail.getQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAreaId(detail.getAreaId());
             inventoryHistory.setBatchNumber(detail.getBatchNumber());

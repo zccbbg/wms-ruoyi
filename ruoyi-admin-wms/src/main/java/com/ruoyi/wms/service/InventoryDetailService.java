@@ -102,66 +102,28 @@ public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, I
     }
 
     /**
-     * 计算出库数据
-     * @param warehouseId
-     * @param inventoryBoList
+     * 校验入库记录剩余数
+     * @param inventoryDetailBoList
      */
-    public List<InventoryDetailBo> calcShipmentInventoryDetailData(@NotNull Long warehouseId, @NotEmpty List<InventoryBo> inventoryBoList) {
-        LambdaQueryWrapper<InventoryDetail> inventoryDetailLambdaQueryWrapper = Wrappers.lambdaQuery();
-        inventoryDetailLambdaQueryWrapper.eq(InventoryDetail::getWarehouseId, warehouseId);
-        inventoryDetailLambdaQueryWrapper.in(InventoryDetail::getAreaId, inventoryBoList.stream().map(InventoryBo::getAreaId).toList());
-        inventoryDetailLambdaQueryWrapper.gt(InventoryDetail::getRemainQuantity, 0);
-        inventoryDetailLambdaQueryWrapper.orderByAsc(InventoryDetail::getSkuId, InventoryDetail::getWarehouseId, InventoryDetail::getAreaId, BaseEntity::getCreateTime);
-        List<InventoryDetail> inventoryDetailList = inventoryDetailMapper.selectList(inventoryDetailLambdaQueryWrapper);
+    public void validateRemainQuantity(List<InventoryDetailBo> inventoryDetailBoList) {
+        if (CollUtil.isEmpty(inventoryDetailBoList)) {
+            return;
+        }
+        List<InventoryDetail> inventoryDetailList = inventoryDetailMapper.selectBatchIds(inventoryDetailBoList.stream().map(InventoryDetailBo::getId).toList());
         if (CollUtil.isEmpty(inventoryDetailList)) {
             throw new BaseException("库存不足");
         }
-        Set<String> inventoryDetailSizeGroupByKey = inventoryDetailList.stream().map(PlaceAndItem::getKey).collect(Collectors.toSet());
-        if (inventoryDetailSizeGroupByKey.size() < inventoryBoList.size()) {
+        Map<Long, BigDecimal> remainQuantityMap = inventoryDetailList
+            .stream()
+            .collect(Collectors.toMap(InventoryDetail::getId, InventoryDetail::getRemainQuantity));
+        boolean validResult = inventoryDetailBoList
+            .stream()
+            .anyMatch(inventoryDetailBo ->
+                !remainQuantityMap.containsKey(inventoryDetailBo.getId())
+                    || remainQuantityMap.get(inventoryDetailBo.getId()).compareTo(inventoryDetailBo.getShipmentQuantity()) < 0
+            );
+        if (validResult) {
             throw new BaseException("库存不足");
         }
-        // 计算得到的出库数据集合
-        List<InventoryDetailBo> shipmentList = new LinkedList<>();
-        // 本次需出库数map
-        Map<String, BigDecimal> needMap = inventoryBoList.stream().collect(Collectors.toMap(PlaceAndItem::getKey, InventoryBo::getQuantity));
-        String lastKey = "";
-        for (InventoryDetail detail : inventoryDetailList) {
-            String currentKey = detail.getKey();
-            if (!needMap.containsKey(currentKey)) {
-                continue;
-            }
-            BigDecimal needQuantity = needMap.get(currentKey);
-            if (lastKey.equals(currentKey) && needQuantity.compareTo(BigDecimal.ZERO) > 0) {
-                // 该位置下商品还有入库明细，看下需要出库的数量是否为0，大于0继续出，小于等于0直接跳过
-                allocateShipmentData(needMap, needQuantity, currentKey, MapstructUtils.convert(detail, InventoryDetailBo.class), shipmentList);
-            } else if (!lastKey.equals(currentKey)) {
-                // 如果不一样，看下上一个位置下的商品剩余数是否为0，不为0则库存不足了
-                if (!"".equals(lastKey) && needMap.get(lastKey).compareTo(BigDecimal.ZERO) > 0) {
-                    throw new BaseException("库存不足");
-                }
-                // 上一个足够，继续下一个
-                allocateShipmentData(needMap, needQuantity, currentKey, MapstructUtils.convert(detail, InventoryDetailBo.class), shipmentList);
-            }
-            lastKey = currentKey;
-        }
-        return shipmentList;
-    }
-
-    /**
-     * 分配出库的inventoryDetail
-     * @param needMap 所需出库数据map
-     * @param needQuantity 所需出库数
-     * @param currentKey 当前key
-     * @param detail 当前入库记录
-     * @param shipmentInventoryDetailDataBoList 最终分配数据集
-     */
-    private void allocateShipmentData(Map<String, BigDecimal> needMap, BigDecimal needQuantity, String currentKey, InventoryDetailBo detail, List<InventoryDetailBo> shipmentInventoryDetailDataBoList) {
-        // 计算这条入库明细可出多少数量
-        BigDecimal shipmentQuantity = needQuantity.compareTo(detail.getRemainQuantity()) > 0 ? detail.getRemainQuantity() : needQuantity;
-        // 更新所需出库数据map
-        needMap.put(currentKey, needQuantity.subtract(shipmentQuantity));
-        // 放入最终出库数据集
-        detail.setShipmentQuantity(shipmentQuantity);
-        shipmentInventoryDetailDataBoList.add(detail);
     }
 }

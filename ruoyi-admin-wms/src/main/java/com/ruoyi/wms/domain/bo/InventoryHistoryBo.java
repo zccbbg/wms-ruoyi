@@ -38,6 +38,12 @@ public class InventoryHistoryBo extends BaseEntity {
     private Long formId;
 
     /**
+     * 操作单号（入库、出库、移库、盘库单号）
+     */
+    @NotNull(message = "操作单号（入库、出库、移库、盘库单号）不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String formNo;
+
+    /**
      * 操作类型
      */
     @NotNull(message = "操作类型不能为空", groups = { AddGroup.class, EditGroup.class })

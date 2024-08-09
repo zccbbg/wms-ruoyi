@@ -3,16 +3,14 @@ package com.ruoyi.wms.service;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.ruoyi.wms.domain.entity.Inventory;
+import com.ruoyi.wms.domain.entity.InventoryDetail;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
-import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
+import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import com.ruoyi.wms.mapper.InventoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +38,7 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
     private final ShipmentOrderDetailMapper shipmentOrderDetailMapper;
     private final ItemSkuService itemSkuService;
     private final InventoryMapper inventoryMapper;
+    private final InventoryDetailMapper inventoryDetailMapper;
 
     /**
      * 查询出库单详情
@@ -124,16 +123,16 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
             .stream()
             .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
         // 查剩余库存
-        LambdaQueryWrapper<Inventory> inventoryLambdaQueryWrapper = Wrappers.lambdaQuery();
-        inventoryLambdaQueryWrapper.eq(Inventory::getWarehouseId, details.get(0).getWarehouseId());
-        inventoryLambdaQueryWrapper.in(Inventory::getAreaId, details.stream().map(ShipmentOrderDetailVo::getAreaId).toList());
-        inventoryLambdaQueryWrapper.in(Inventory::getSkuId, details.stream().map(ShipmentOrderDetailVo::getSkuId).toList());
-        Map<String, BigDecimal> maxQuantityMap = inventoryMapper.selectList(inventoryLambdaQueryWrapper)
+        List<Long> inventoryDetailIds = details
             .stream()
-            .collect(Collectors.toMap(PlaceAndItem::getKey, Inventory::getQuantity));
+            .map(ShipmentOrderDetailVo::getInventoryDetailId)
+            .toList();
+        Map<Long, BigDecimal> remainQuantityMap = inventoryDetailMapper.selectBatchIds(inventoryDetailIds)
+            .stream()
+            .collect(Collectors.toMap(InventoryDetail::getId, InventoryDetail::getRemainQuantity));
         details.forEach(detail -> {
             detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-            detail.setMaxQuantity(maxQuantityMap.get(detail.getKey()));
+            detail.setRemainQuantity(remainQuantityMap.get(detail.getInventoryDetailId()));
         });
         return details;
     }
