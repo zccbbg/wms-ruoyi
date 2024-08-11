@@ -2,7 +2,7 @@ package com.ruoyi.wms.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseHistoryEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("wms_inventory_history")
-public class InventoryHistory extends BaseEntity {
+public class InventoryHistory extends BaseHistoryEntity {
 
     @Serial
     private static final long serialVersionUID=1L;
@@ -32,15 +32,15 @@ public class InventoryHistory extends BaseEntity {
     /**
      * 操作id（出库、入库、库存移动表单id）
      */
-    private Long formId;
+    private Long orderId;
     /**
      * 操作单号（入库、出库、移库、盘库单号）
      */
-    private String formNo;
+    private String orderNo;
     /**
      * 操作类型
      */
-    private Integer formType;
+    private Integer orderType;
     /**
      * 物料ID
      */

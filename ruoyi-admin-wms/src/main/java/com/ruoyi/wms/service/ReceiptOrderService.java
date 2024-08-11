@@ -152,9 +152,9 @@ public class ReceiptOrderService {
         List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
         bo.getDetails().forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
-            inventoryHistory.setFormId(bo.getId());
-            inventoryHistory.setFormNo(bo.getReceiptOrderNo());
-            inventoryHistory.setFormType(ServiceConstants.InventoryHistoryFormType.RECEIPT);
+            inventoryHistory.setOrderId(bo.getId());
+            inventoryHistory.setOrderNo(bo.getReceiptOrderNo());
+            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryFormType.RECEIPT);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());

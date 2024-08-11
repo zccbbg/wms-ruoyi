@@ -2,9 +2,9 @@ package com.ruoyi.wms.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = InventoryHistory.class)
-public class InventoryHistoryVo extends BaseEntity implements Serializable {
+public class InventoryHistoryVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,19 +39,19 @@ public class InventoryHistoryVo extends BaseEntity implements Serializable {
      */
     @ExcelProperty(value = "操作id", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "出=库、入库、库存移动表单id")
-    private Long formId;
+    private Long orderId;
 
     /**
      * 操作单号（入库、出库、移库、盘库单号）
      */
     @ExcelProperty(value = "操作单号")
-    private String formNo;
+    private String orderNo;
 
     /**
      * 操作类型
      */
     @ExcelProperty(value = "操作类型")
-    private Integer formType;
+    private Integer orderType;
 
     /**
      * 物料ID
@@ -110,5 +110,8 @@ public class InventoryHistoryVo extends BaseEntity implements Serializable {
     private ItemSkuVo itemSku;
 
     private ItemVo item;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 
 }

@@ -18,11 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join wms_item_sku sku on history.sku_id=sku.id
         left join wms_item item on sku.item_id=item.id
         <where>
-            <if test="bo.formType != null">
-                history.form_type=#{bo.formType}
+            <if test="bo.orderType != null">
+                history.order_type=#{bo.orderType}
             </if>
-            <if test="bo.formNo != null and bo.formNo != ''">
-                and history.form_no=#{bo.formNo}
+            <if test="bo.orderNo != null and bo.orderNo != ''">
+                and history.order_no=#{bo.orderNo}
             </if>
             <if test="bo.itemName != null and bo.itemName != ''">
                 and item.item_name like concat('%', #{bo.itemName}, '%')
