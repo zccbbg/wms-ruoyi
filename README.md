@@ -13,9 +13,9 @@
 > 参考：[UpdateHistory.md](docs/UpdateHistory.md)
 
 ## 提交issue和PR
-> 提交issue前请先阅读：[ISSUE_TEMPLATE.zh-CN.md](docs%2FISSUE_TEMPLATE.zh-CN.md)
+> 提交issue前请先阅读：[ISSUE_TEMPLATE.zh-CN.md](docs/ISSUE_TEMPLATE.zh-CN.md)
 > 
-> 提交PR前请先阅读：[PULL_REQUEST_TEMPLATE.zh-CN.md](docs%2FPULL_REQUEST_TEMPLATE.zh-CN.md)
+> 提交PR前请先阅读：[PULL_REQUEST_TEMPLATE.zh-CN.md](docs/PULL_REQUEST_TEMPLATE.zh-CN.md)
 
 ## 前端项目地址
 #### gitee
