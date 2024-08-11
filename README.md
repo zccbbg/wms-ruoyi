@@ -42,6 +42,11 @@ https://docs.ichengle.top/wms/open/run.html
 ## 系统部署文档
 https://docs.ichengle.top/wms/open/ops.html
 
+## 提交issue和PR
+> 提交issue前请先阅读：[ISSUE_TEMPLATE.zh-CN.md](docs%2FISSUE_TEMPLATE.zh-CN.md)
+>
+> 提交PR前请先阅读：[PULL_REQUEST_TEMPLATE.zh-CN.md](docs%2FPULL_REQUEST_TEMPLATE.zh-CN.md)
+
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
 2. 仓库/库区：管理维护仓库基础数据
