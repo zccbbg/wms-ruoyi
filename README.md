@@ -79,7 +79,7 @@ https://docs.ichengle.top/wms/open/ops.html
 
 ## 加群/技术支持
 
-|                    公众号                     |
-|:------------------------------------------:|
-| <img src="doc/datacall.jpg" width="200px"> |
+|                     公众号                     |
+|:-------------------------------------------:|
+| <img src="docs/datacall.jpg" width="200px"> |
 扫公众号二维码，回复：“加群”或“支持”
