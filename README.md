@@ -10,7 +10,12 @@
 活到老写到老 为兴趣而开源 为学习而开源 为让大家真正可以学到技术而开源
 
 ## 更新记录
-参考：[UpdateHistory.md](UpdateHistory.md)
+> 参考：[UpdateHistory.md](docs/UpdateHistory.md)
+
+## 提交issue和PR
+> 提交issue前请先阅读：[ISSUE_TEMPLATE.zh-CN.md](docs%2FISSUE_TEMPLATE.zh-CN.md)
+> 
+> 提交PR前请先阅读：[PULL_REQUEST_TEMPLATE.zh-CN.md](docs%2FPULL_REQUEST_TEMPLATE.zh-CN.md)
 
 ## 前端项目地址
 #### gitee
