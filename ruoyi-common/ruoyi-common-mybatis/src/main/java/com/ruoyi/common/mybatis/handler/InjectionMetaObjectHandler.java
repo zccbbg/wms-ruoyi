@@ -5,14 +5,14 @@ import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ruoyi.common.core.domain.bo.LoginUser;
 import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseHistoryEntity;
+import com.ruoyi.common.satoken.utils.LoginHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * MP注入处理器
@@ -39,6 +39,12 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                     // 当前已登录 且 更新人为空 则填充
                     baseEntity.setUpdateBy(username);
                 }
+            }
+
+            if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseHistoryEntity baseHistoryEntity) {
+                LocalDateTime current = ObjectUtil.isNotNull(baseHistoryEntity.getCreateTime())
+                    ? baseHistoryEntity.getCreateTime() : LocalDateTime.now();;
+                baseHistoryEntity.setCreateTime(current);
             }
         } catch (Exception e) {
             throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
