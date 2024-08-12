@@ -3,12 +3,11 @@ package com.ruoyi.wms.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.mybatis.core.domain.BaseVo;
+import com.ruoyi.wms.domain.entity.InventoryDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
-import com.ruoyi.wms.domain.entity.InventoryDetail;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = InventoryDetail.class)
-public class InventoryDetailVo extends BaseVo implements Serializable {
+public class InventoryDetailVo extends BaseVo {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,16 +1,12 @@
 package com.ruoyi.wms.domain.vo;
 
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.domain.BaseVo;
-import com.ruoyi.wms.domain.entity.ItemBrand;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import lombok.Data;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
+import com.ruoyi.wms.domain.entity.ItemBrand;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
-import java.io.Serializable;
 import java.io.Serial;
 
 /**
@@ -22,7 +18,7 @@ import java.io.Serial;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ItemBrand.class)
-public class ItemBrandVo extends BaseVo implements Serializable {
+public class ItemBrandVo extends BaseVo {
 
     @Serial
     private static final long serialVersionUID = 1L;
