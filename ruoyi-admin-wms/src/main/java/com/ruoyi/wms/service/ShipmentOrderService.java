@@ -219,7 +219,7 @@ public class ShipmentOrderService {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setOrderId(bo.getId());
             inventoryHistory.setOrderNo(bo.getShipmentOrderNo());
-            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryFormType.SHIPMENT);
+            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.SHIPMENT);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());

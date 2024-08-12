@@ -9,7 +9,9 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.vo.InventoryDetailVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
+import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
@@ -18,6 +20,7 @@ import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.mapper.MovementOrderDetailMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,6 +37,7 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
 
     private final MovementOrderDetailMapper movementOrderDetailMapper;
     private final ItemSkuService itemSkuService;
+    private final InventoryDetailMapper inventoryDetailMapper;
 
     /**
      * 查询库存移动详情
@@ -123,7 +127,13 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
         Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
             .stream()
             .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-        details.forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
+        List<Long> inventoryDetailIds = details.stream().map(MovementOrderDetailVo::getInventoryDetailId).toList();
+        Map<Long, BigDecimal> remainQuantityMap = inventoryDetailMapper.selectVoBatchIds(inventoryDetailIds)
+            .stream().collect(Collectors.toMap(InventoryDetailVo::getId, InventoryDetailVo::getRemainQuantity));
+        details.forEach(detail -> {
+            detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
+            detail.setRemainQuantity(remainQuantityMap.get(detail.getInventoryDetailId()));
+        });
         return details;
     }
 }

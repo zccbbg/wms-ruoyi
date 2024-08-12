@@ -32,7 +32,7 @@ public class ServiceConstants {
     /**
      * 库存记录操作类型
      */
-    public class InventoryHistoryFormType {
+    public class InventoryHistoryOrderType {
         public static final Integer RECEIPT = 1;
         public static final Integer SHIPMENT = 2;
         public static final Integer MOVEMENT = 3;

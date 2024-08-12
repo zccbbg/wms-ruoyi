@@ -11,6 +11,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.time.LocalDateTime;
 
 /**
  * 库存移动详情视图对象 wms_movement_order_detail
@@ -57,6 +58,24 @@ public class MovementOrderDetailVo implements Serializable {
     private String remark;
 
     /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNo;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
+     * 过期时间
+     */
+    @ExcelProperty(value = "过期时间")
+    private LocalDateTime expirationDate;
+
+    /**
      * 源仓库
      */
     @ExcelProperty(value = "源仓库")
@@ -87,4 +106,8 @@ public class MovementOrderDetailVo implements Serializable {
     private Long inventoryDetailId;
 
     private ItemSkuVo itemSku;
+
+    private InventoryDetailVo inventoryDetail;
+
+    private BigDecimal remainQuantity;
 }

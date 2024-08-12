@@ -31,9 +31,9 @@ public class MovementOrderBo extends BaseEntity {
     private Long id;
 
     /**
-     * 编号
+     * 移库单号
      */
-    @NotBlank(message = "编号不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "移库单号不能为空", groups = { AddGroup.class, EditGroup.class })
     private String movementOrderNo;
 
     /**
@@ -45,7 +45,6 @@ public class MovementOrderBo extends BaseEntity {
     /**
      * 源库区
      */
-    @NotNull(message = "源库区不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long sourceAreaId;
 
     /**
@@ -57,25 +56,21 @@ public class MovementOrderBo extends BaseEntity {
     /**
      * 目标库区
      */
-    @NotNull(message = "目标库区不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long targetAreaId;
 
     /**
      * 状态
      */
-    @NotNull(message = "状态不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer movementOrderStatus;
 
     /**
      * 总数量
      */
-    @NotNull(message = "总数量不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal totalQuantity;
 
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
     List<MovementOrderDetailBo> details;

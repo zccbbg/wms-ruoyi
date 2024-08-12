@@ -2,6 +2,7 @@ package com.ruoyi.wms.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.core.constant.ServiceConstants;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -76,6 +77,7 @@ public class MovementOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody MovementOrderBo bo) {
+        bo.setMovementOrderStatus(ServiceConstants.MovementOrderStatus.PENDING);
         movementOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -89,6 +91,19 @@ public class MovementOrderController extends BaseController {
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody MovementOrderBo bo) {
         movementOrderService.updateByBo(bo);
+        return R.ok();
+    }
+
+    /**
+     * 移库
+     */
+    @SaCheckPermission("wms:movementOrder:edit")
+    @Log(title = "移库单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/move")
+    public R<Void> move(@Validated(AddGroup.class) @RequestBody MovementOrderBo bo) {
+        bo.setMovementOrderStatus(ServiceConstants.MovementOrderStatus.FINISH);
+        movementOrderService.move(bo);
         return R.ok();
     }
 

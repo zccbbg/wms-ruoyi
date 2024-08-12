@@ -154,7 +154,7 @@ public class ReceiptOrderService {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setOrderId(bo.getId());
             inventoryHistory.setOrderNo(bo.getReceiptOrderNo());
-            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryFormType.RECEIPT);
+            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.RECEIPT);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());

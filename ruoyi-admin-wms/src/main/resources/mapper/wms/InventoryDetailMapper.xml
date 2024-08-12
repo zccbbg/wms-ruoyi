@@ -36,8 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         inner join wms_item_sku sku on detail.sku_id=sku.id
         inner join wms_item item on sku.item_id=item.id
         <where>
-            <if test="bo.batchNumber != null and bo.batchNumber != ''">
-                detail.batch_number like concat('%', #{bo.batchNumber}, '%')
+            <if test="bo.batchNo != null and bo.batchNo != ''">
+                detail.batch_no like concat('%', #{bo.batchNo}, '%')
             </if>
             <if test="bo.itemName != null and bo.itemName != ''">
                 and item.item_name like concat('%', #{bo.itemName}, '%')
