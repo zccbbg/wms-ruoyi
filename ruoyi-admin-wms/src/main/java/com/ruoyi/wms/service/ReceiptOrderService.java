@@ -159,9 +159,9 @@ public class ReceiptOrderService {
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAreaId(detail.getAreaId());
-            inventoryHistory.setBatchNumber(detail.getBatchNumber());
+            inventoryHistory.setBatchNo(detail.getBatchNo());
             inventoryHistory.setProductionDate(detail.getProductionDate());
-            inventoryHistory.setExpirationTime(detail.getExpirationTime());
+            inventoryHistory.setExpirationDate(detail.getExpirationDate());
             inventoryHistory.setAmount(detail.getAmount());
             inventoryHistoryList.add(inventoryHistory);
         });

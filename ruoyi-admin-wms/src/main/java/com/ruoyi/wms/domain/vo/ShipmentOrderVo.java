@@ -3,6 +3,7 @@ package com.ruoyi.wms.domain.vo;
 import java.math.BigDecimal;
 
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -24,7 +25,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ShipmentOrder.class)
-public class ShipmentOrderVo extends BaseEntity implements Serializable {
+public class ShipmentOrderVo extends BaseVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

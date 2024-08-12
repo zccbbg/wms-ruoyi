@@ -58,7 +58,7 @@ public class InventoryHistoryBo extends BaseHistoryEntity {
     /**
      * 批号
      */
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -68,7 +68,7 @@ public class InventoryHistoryBo extends BaseHistoryEntity {
     /**
      * 过期时间
      */
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 金额

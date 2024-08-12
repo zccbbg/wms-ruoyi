@@ -56,7 +56,7 @@ public class ShipmentOrderDetail extends BaseEntity {
     /**
      * 批号
      */
-    private String batchNumber;
+    private String batchNo;
     /**
      * 生产日期
      */
@@ -64,7 +64,7 @@ public class ShipmentOrderDetail extends BaseEntity {
     /**
      * 过期时间
      */
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
     /**
      * 入库记录id
      */

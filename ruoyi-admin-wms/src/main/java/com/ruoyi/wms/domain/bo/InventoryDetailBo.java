@@ -82,7 +82,7 @@ public class InventoryDetailBo extends BaseEntity {
     /**
      * 批号
      */
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -93,7 +93,7 @@ public class InventoryDetailBo extends BaseEntity {
      * 过期时间
      */
     @NotNull(message = "过期时间不能为空", groups = { AddGroup.class, EditGroup.class })
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 金额

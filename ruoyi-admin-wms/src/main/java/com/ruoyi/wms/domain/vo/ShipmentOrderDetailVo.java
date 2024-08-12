@@ -73,7 +73,7 @@ public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
      * 批号
      */
     @ExcelProperty(value = "批号")
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -85,7 +85,7 @@ public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 入库记录id

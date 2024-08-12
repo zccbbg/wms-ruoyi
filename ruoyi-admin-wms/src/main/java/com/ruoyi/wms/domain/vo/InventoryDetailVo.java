@@ -2,7 +2,7 @@ package com.ruoyi.wms.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import com.ruoyi.wms.domain.entity.InventoryDetail;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = InventoryDetail.class)
-public class InventoryDetailVo extends BaseEntity implements Serializable {
+public class InventoryDetailVo extends BaseVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -84,7 +84,7 @@ public class InventoryDetailVo extends BaseEntity implements Serializable {
      * 批号
      */
     @ExcelProperty(value = "批号")
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -96,7 +96,7 @@ public class InventoryDetailVo extends BaseEntity implements Serializable {
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 金额

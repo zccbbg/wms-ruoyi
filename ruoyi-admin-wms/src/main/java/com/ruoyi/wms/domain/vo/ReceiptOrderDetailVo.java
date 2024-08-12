@@ -59,7 +59,7 @@ public class ReceiptOrderDetailVo implements Serializable {
      * 批号
      */
     @ExcelProperty(value = "批号")
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -71,7 +71,7 @@ public class ReceiptOrderDetailVo implements Serializable {
      * 过期时间
      */
     @ExcelProperty(value = "过期时间")
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 备注

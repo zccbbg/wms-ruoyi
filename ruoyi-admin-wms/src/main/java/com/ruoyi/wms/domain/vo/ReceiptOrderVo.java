@@ -3,6 +3,7 @@ package com.ruoyi.wms.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -21,7 +22,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ReceiptOrder.class)
-public class ReceiptOrderVo extends BaseEntity implements Serializable {
+public class ReceiptOrderVo extends BaseVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

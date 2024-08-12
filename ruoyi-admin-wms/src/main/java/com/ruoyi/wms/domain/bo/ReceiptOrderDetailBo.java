@@ -63,7 +63,7 @@ public class ReceiptOrderDetailBo extends BaseEntity {
     /**
      * 批号
      */
-    private String batchNumber;
+    private String batchNo;
 
     /**
      * 生产日期
@@ -73,7 +73,7 @@ public class ReceiptOrderDetailBo extends BaseEntity {
     /**
      * 过期时间
      */
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDate;
 
     /**
      * 备注

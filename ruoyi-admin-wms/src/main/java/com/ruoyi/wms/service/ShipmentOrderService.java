@@ -224,9 +224,9 @@ public class ShipmentOrderService {
             inventoryHistory.setQuantity(detail.getQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAreaId(detail.getAreaId());
-            inventoryHistory.setBatchNumber(detail.getBatchNumber());
+            inventoryHistory.setBatchNo(detail.getBatchNo());
             inventoryHistory.setProductionDate(detail.getProductionDate());
-            inventoryHistory.setExpirationTime(detail.getExpirationTime());
+            inventoryHistory.setExpirationDate(detail.getExpirationDate());
             inventoryHistory.setAmount(detail.getAmount());
             inventoryHistoryList.add(inventoryHistory);
         });
