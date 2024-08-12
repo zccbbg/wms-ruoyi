@@ -157,23 +157,21 @@ public class ShipmentOrderService {
         validateBeforeShipment(bo);
         // 2.按仓库库区规格合并商品明细数量
         List<InventoryBo> mergedInventoryBoList = mergeShipmentOrderDetailByPlaceAndItem(bo.getDetails());
-        // 3.校验库存
-        inventoryService.validateInventory(bo.getWarehouseId(), mergedInventoryBoList);
-        // 4.校验库存记录
+        // 3.校验库存记录
         List<InventoryDetailBo> inventoryDetailBoList = convertShipmentOrderDetailToInventoryDetail(bo.getDetails());
         inventoryDetailService.validateRemainQuantity(inventoryDetailBoList);
-        // 5. 保存入库单和入库单明细
+        // 4. 保存入库单和入库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
-        // 6.更新库存
+        // 5.更新库存
         mergedInventoryBoList.forEach(mergedInventoryBo -> mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().negate()));
         inventoryService.updateInventoryQuantity(mergedInventoryBoList);
-        // 7.更新入库记录剩余数
+        // 6.更新入库记录剩余数
         inventoryDetailMapper.updateRemainQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
-        // 8.创建库存记录
+        // 7.创建库存记录
         saveInventoryHistory(bo);
     }
 

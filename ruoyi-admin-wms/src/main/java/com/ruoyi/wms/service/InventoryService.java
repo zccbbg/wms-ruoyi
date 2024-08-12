@@ -148,24 +148,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         return inventoryMapper.exists(lqw);
     }
 
-    public void validateInventory(@NotNull Long warehouseId, @NotEmpty List<InventoryBo> inventoryBoList) {
-        LambdaQueryWrapper<Inventory> inventoryLambdaQueryWrapper = Wrappers.lambdaQuery();
-        inventoryLambdaQueryWrapper.eq(Inventory::getWarehouseId, warehouseId);
-        inventoryLambdaQueryWrapper.in(Inventory::getAreaId, inventoryBoList.stream().map(InventoryBo::getAreaId).toList());
-        inventoryLambdaQueryWrapper.gt(Inventory::getQuantity, 0);
-        List<Inventory> inventoryList = inventoryMapper.selectList(inventoryLambdaQueryWrapper);
-        if (CollUtil.isEmpty(inventoryList)) {
-            throw new BaseException("库存不足");
-        }
-        Map<String, Inventory> inventoryMap = inventoryList.stream().collect(Collectors.toMap(PlaceAndItem::getKey, Function.identity()));
-        for (InventoryBo bo : inventoryBoList) {
-            Inventory inventory = inventoryMap.get(bo.getKey());
-            if (inventory == null || inventory.getQuantity().compareTo(bo.getQuantity()) < 0) {
-                throw new BaseException("库存不足");
-            }
-        }
-    }
-
     public TableDataInfo<InventoryVo> queryWarehouseBoardList(InventoryBo bo, PageQuery pageQuery) {
             TableDataInfo<InventoryVo> tableDataInfo = TableDataInfo.build(inventoryMapper.selectBoardPageByWarehouse(pageQuery.build(), bo));
             if (CollUtil.isEmpty(tableDataInfo.getRows())) {

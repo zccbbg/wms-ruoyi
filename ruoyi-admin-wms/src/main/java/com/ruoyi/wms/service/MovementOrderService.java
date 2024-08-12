@@ -170,27 +170,25 @@ public class MovementOrderService {
         validateBeforeMove(bo);
         // 2.按源仓库库区规格合并商品明细数量
         List<List<InventoryBo>> mergedInventoryList = mergeMovementOrderDetailByPlaceAndItem(bo.getDetails());
-        // 3.校验库存
-        List<InventoryBo> mergedShipmentInventoryList = mergedInventoryList.get(0);
-        inventoryService.validateInventory(bo.getSourceWarehouseId(), mergedShipmentInventoryList);
-        // 4.校验库存记录
+        // 3.校验库存记录
         List<InventoryDetailBo> inventoryDetailBoList = convertMovementOrderDetailToInventoryDetail(bo.getDetails());
         inventoryDetailService.validateRemainQuantity(inventoryDetailBoList);
-        // 5.保存移库单核移库单明细
+        // 4.保存移库单核移库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
-        // 6.更新库存
+        // 5.更新库存
+        List<InventoryBo> mergedShipmentInventoryList = mergedInventoryList.get(0);
         mergedShipmentInventoryList.forEach(mergedShipmentInventory -> mergedShipmentInventory.setQuantity(mergedShipmentInventory.getQuantity().negate()));
         inventoryService.updateInventoryQuantity(mergedShipmentInventoryList);
         inventoryService.updateInventoryQuantity(mergedInventoryList.get(1));
-        // 7.更新入库记录剩余数
+        // 6.更新入库记录剩余数
         inventoryDetailMapper.updateRemainQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
-        // 8.创建入库记录
+        // 7.创建入库记录
         createNewInventoryDetail(bo);
-        // 9.创建库存记录
+        // 8.创建库存记录
         saveInventoryHistory(bo);
     }
 
