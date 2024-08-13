@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2024-07-22
  */
 public interface InventoryDetailMapper extends BaseMapperPlus<InventoryDetail, InventoryDetailVo> {
-    void updateRemainQuantity(@Param("list")List<InventoryDetailBo> list, @Param("updateBy") String updateBy, @Param("updateTime") LocalDateTime updateTime);
+    void deductInventoryDetailQuantity(@Param("list")List<InventoryDetailBo> list, @Param("updateBy") String updateBy, @Param("updateTime") LocalDateTime updateTime);
 
     Page<InventoryDetailVo> selectPageByBo(Page<Object> page, @Param("bo") InventoryDetailBo bo);
 }

@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
     </resultMap>
 
-    <update id="updateRemainQuantity">
+    <update id="deductInventoryDetailQuantity">
         update wms_inventory_detail
         set remain_quantity = remain_quantity -
         (

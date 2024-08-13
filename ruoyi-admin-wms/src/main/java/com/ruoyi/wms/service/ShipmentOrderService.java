@@ -170,7 +170,7 @@ public class ShipmentOrderService {
         mergedInventoryBoList.forEach(mergedInventoryBo -> mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().negate()));
         inventoryService.updateInventoryQuantity(mergedInventoryBoList);
         // 6.更新入库记录剩余数
-        inventoryDetailMapper.updateRemainQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
+        inventoryDetailMapper.deductInventoryDetailQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
         // 7.创建库存记录
         saveInventoryHistory(bo);
     }
