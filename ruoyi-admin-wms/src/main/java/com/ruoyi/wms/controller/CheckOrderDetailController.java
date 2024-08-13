@@ -105,4 +105,13 @@ public class CheckOrderDetailController extends BaseController {
         checkOrderDetailService.deleteByIds(List.of(ids));
         return R.ok();
     }
+
+    /**
+     * 根据盘库单id查询盘库单详情列表
+     */
+    @SaCheckPermission("wms:checkOrderDetail:query")
+    @GetMapping("/list/{checkOrderId}")
+    public R<List<CheckOrderDetailVo>> listByCheckOrderId(@NotNull @PathVariable Long checkOrderId) {
+        return R.ok(checkOrderDetailService.queryByCheckOrderId(checkOrderId));
+    }
 }

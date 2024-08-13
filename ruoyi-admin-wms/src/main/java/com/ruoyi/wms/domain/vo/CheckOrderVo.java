@@ -11,6 +11,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 库存盘点单据视图对象 wms_check_order
@@ -27,7 +28,7 @@ public class CheckOrderVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     @ExcelProperty(value = "")
     private Long id;
@@ -68,5 +69,5 @@ public class CheckOrderVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
+    private List<CheckOrderDetailVo> details;
 }

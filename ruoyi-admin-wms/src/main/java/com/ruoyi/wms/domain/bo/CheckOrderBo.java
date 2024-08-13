@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 库存盘点单据业务对象 wms_check_order
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 public class CheckOrderBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -38,7 +39,6 @@ public class CheckOrderBo extends BaseEntity {
     /**
      * 库存盘点单状态 -1：作废 0：未盘库 1：已盘库
      */
-    @NotNull(message = "库存盘点单状态 -1：作废 0：未盘库 1：已盘库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer checkOrderStatus;
 
     /**
@@ -56,14 +56,13 @@ public class CheckOrderBo extends BaseEntity {
     /**
      * 所属库区
      */
-    @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long areaId;
 
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
+    private List<CheckOrderDetailBo> details;
 
 }

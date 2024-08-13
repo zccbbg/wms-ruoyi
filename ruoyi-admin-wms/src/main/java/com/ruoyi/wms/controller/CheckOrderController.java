@@ -2,6 +2,7 @@ package com.ruoyi.wms.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.core.constant.ServiceConstants;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -76,6 +77,7 @@ public class CheckOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody CheckOrderBo bo) {
+        bo.setCheckOrderStatus(ServiceConstants.CheckOrderStatus.PENDING);
         checkOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -95,14 +97,14 @@ public class CheckOrderController extends BaseController {
     /**
      * 删除库存盘点单据
      *
-     * @param ids 主键串
+     * @param id 主键
      */
     @SaCheckPermission("wms:checkOrder:remove")
     @Log(title = "库存盘点单据", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        checkOrderService.deleteByIds(List.of(ids));
+    @DeleteMapping("/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        checkOrderService.deleteById(id);
         return R.ok();
     }
 }

@@ -1,5 +1,7 @@
 package com.ruoyi.wms.service;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
@@ -7,16 +9,22 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.wms.domain.entity.MovementOrderDetail;
+import com.ruoyi.wms.domain.vo.InventoryDetailVo;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
+import com.ruoyi.wms.domain.vo.MovementOrderDetailVo;
+import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.vo.CheckOrderDetailVo;
 import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import com.ruoyi.wms.mapper.CheckOrderDetailMapper;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 库存盘点单据详情Service业务层处理
@@ -26,9 +34,11 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class CheckOrderDetailService {
+public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper, CheckOrderDetail> {
 
     private final CheckOrderDetailMapper checkOrderDetailMapper;
+    private final ItemSkuService itemSkuService;
+    private final InventoryDetailMapper inventoryDetailMapper;
 
     /**
      * 查询库存盘点单据详情
@@ -88,5 +98,37 @@ public class CheckOrderDetailService {
      */
     public void deleteByIds(Collection<Long> ids) {
         checkOrderDetailMapper.deleteBatchIds(ids);
+    }
+
+    @Transactional
+    public void saveDetails(List<CheckOrderDetail> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        saveOrUpdateBatch(list);
+    }
+
+    public List<CheckOrderDetailVo> queryByCheckOrderId(Long checkOrderId) {
+        CheckOrderDetailBo bo = new CheckOrderDetailBo();
+        bo.setCheckOrderId(checkOrderId);
+        List<CheckOrderDetailVo> details = queryList(bo);
+        if (CollUtil.isEmpty(details)) {
+            return Collections.emptyList();
+        }
+        Set<Long> skuIds = details
+            .stream()
+            .map(CheckOrderDetailVo::getSkuId)
+            .collect(Collectors.toSet());
+        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+            .stream()
+            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        List<Long> inventoryDetailIds = details.stream().map(CheckOrderDetailVo::getInventoryDetailId).toList();
+        Map<Long, InventoryDetailVo> inventoryDetailMap = inventoryDetailMapper.selectVoBatchIds(inventoryDetailIds)
+            .stream().collect(Collectors.toMap(InventoryDetailVo::getId, Function.identity()));
+        details.forEach(it -> {
+            it.setItemSku(itemSkuMap.get(it.getSkuId()));
+            it.setInventoryDetail(inventoryDetailMap.get(it.getInventoryDetailId()));
+        });
+        return details;
     }
 }
