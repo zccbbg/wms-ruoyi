@@ -153,11 +153,11 @@ public class ShipmentOrderService {
      */
     @Transactional
     public void shipment(ShipmentOrderBo bo) {
-        // 1.校验
+        // 1.校验商品明细不能为空！
         validateBeforeShipment(bo);
         // 2.按仓库库区规格合并商品明细数量
         List<InventoryBo> mergedInventoryBoList = mergeShipmentOrderDetailByPlaceAndItem(bo.getDetails());
-        // 3.校验库存记录
+        // 3.校验库存明细
         List<InventoryDetailBo> inventoryDetailBoList = convertShipmentOrderDetailToInventoryDetail(bo.getDetails());
         inventoryDetailService.validateRemainQuantity(inventoryDetailBoList);
         // 4. 保存入库单和入库单明细
@@ -166,10 +166,10 @@ public class ShipmentOrderService {
         } else {
             updateByBo(bo);
         }
-        // 5.更新库存
+        // 5.更新库存：Inventory表
         mergedInventoryBoList.forEach(mergedInventoryBo -> mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().negate()));
         inventoryService.updateInventoryQuantity(mergedInventoryBoList);
-        // 6.更新入库记录剩余数
+        // 6.更新库存明细：InventoryHistory表
         inventoryDetailMapper.deductInventoryDetailQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
         // 7.创建库存记录
         saveInventoryHistory(bo);
