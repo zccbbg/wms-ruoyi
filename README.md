@@ -74,6 +74,11 @@ https://docs.ichengle.top/wms/open/ops.html
 ![仓库列表](https://oscimg.oschina.net/oscnet/up-a00eb79bee48e481249a12cb5e6c476aaa3.jpg)
 ![库存看板](https://oscimg.oschina.net/oscnet/up-78990915dfba902384ed4b09e3dc0f0fe05.jpg)
 
+## 招聘
+参与开发基于jdk17和vue3的ruoyi-mall、ruoyi-erp-进销存。
+要求：对若依框架和ruoyi-wms、ruoyi-mall 有一定的认知。并且有一定的空余时间。
+全职、兼职、实习都可。我们在苏州，远程或现场参与开发都可。
+
 ## 大厂、外企内推
 关注“程序员诚哥”公众号：每月记录一篇编程、创业、生活中踩坑的文章，陆续会开放一些微软、阿里、京东、拼多多等大厂或外企的内推岗位！
 
