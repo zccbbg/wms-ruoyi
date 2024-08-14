@@ -8,6 +8,7 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import java.math.BigDecimal;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 
 /**
  * 库存盘点单据详情对象 wms_check_order_detail
@@ -24,7 +25,7 @@ public class CheckOrderDetail extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     /**
-     * 
+     *
      */
     @TableId(value = "id")
     private Long id;
@@ -45,6 +46,10 @@ public class CheckOrderDetail extends BaseEntity {
      */
     private BigDecimal checkQuantity;
     /**
+     * 入库时间
+     */
+    private LocalDateTime receiptTime;
+    /**
      * 所属仓库
      */
     private Long warehouseId;
@@ -52,6 +57,18 @@ public class CheckOrderDetail extends BaseEntity {
      * 所属库区
      */
     private Long areaId;
+    /**
+     * 批号
+     */
+    private String batchNo;
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+    /**
+     * 过期日期
+     */
+    private LocalDateTime expirationDate;
     /**
      * 入库记录id
      */

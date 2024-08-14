@@ -22,6 +22,7 @@ import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import com.ruoyi.wms.mapper.CheckOrderDetailMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -123,11 +124,11 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
             .stream()
             .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
         List<Long> inventoryDetailIds = details.stream().map(CheckOrderDetailVo::getInventoryDetailId).toList();
-        Map<Long, InventoryDetailVo> inventoryDetailMap = inventoryDetailMapper.selectVoBatchIds(inventoryDetailIds)
-            .stream().collect(Collectors.toMap(InventoryDetailVo::getId, Function.identity()));
+        Map<Long, BigDecimal> remainQuantityMap = inventoryDetailMapper.selectVoBatchIds(inventoryDetailIds)
+            .stream().collect(Collectors.toMap(InventoryDetailVo::getId, InventoryDetailVo::getRemainQuantity));
         details.forEach(it -> {
             it.setItemSku(itemSkuMap.get(it.getSkuId()));
-            it.setInventoryDetail(inventoryDetailMap.get(it.getInventoryDetailId()));
+            it.setRemainQuantity(remainQuantityMap.getOrDefault(it.getInventoryDetailId(), BigDecimal.ZERO));
         });
         return details;
     }

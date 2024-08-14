@@ -11,6 +11,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 
 import java.io.Serializable;
 import java.io.Serial;
+import java.time.LocalDateTime;
 
 /**
  * 库存盘点单据详情视图对象 wms_check_order_detail
@@ -69,6 +70,30 @@ public class CheckOrderDetailVo implements Serializable {
     private Long areaId;
 
     /**
+     * 批号
+     */
+    @ExcelProperty(value = "批号")
+    private String batchNo;
+
+    /**
+     * 生产日期
+     */
+    @ExcelProperty(value = "生产日期")
+    private LocalDateTime productionDate;
+
+    /**
+     * 过期日期
+     */
+    @ExcelProperty(value = "过期日期")
+    private LocalDateTime expirationDate;
+
+    /**
+     * 入库时间
+     */
+    @ExcelProperty(value = "入库时间")
+    private LocalDateTime receiptTime;
+
+    /**
      * 入库记录id
      */
     @ExcelProperty(value = "入库记录id")
@@ -82,6 +107,6 @@ public class CheckOrderDetailVo implements Serializable {
 
     private ItemSkuVo itemSku;
 
-    private InventoryDetailVo inventoryDetail;
+    private BigDecimal remainQuantity;
 
 }

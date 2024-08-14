@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 import io.github.linpeilie.annotations.AutoMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 库存盘点单据详情业务对象 wms_check_order_detail
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 public class CheckOrderDetailBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
@@ -64,6 +65,25 @@ public class CheckOrderDetailBo extends BaseEntity {
      */
     @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long areaId;
+    /**
+     * 批号
+     */
+    private String batchNo;
+
+    /**
+     * 生产日期
+     */
+    private LocalDateTime productionDate;
+
+    /**
+     * 过期日期
+     */
+    private LocalDateTime expirationDate;
+
+    /**
+     * 入库时间
+     */
+    private LocalDateTime receiptTime;
 
     /**
      * 入库记录id
