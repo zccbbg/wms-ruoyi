@@ -95,6 +95,19 @@ public class CheckOrderController extends BaseController {
     }
 
     /**
+     * 盘库结束
+     */
+    @SaCheckPermission("wms:checkOrder:edit")
+    @Log(title = "库存盘点单据", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/check")
+    public R<Void> check(@Validated(AddGroup.class) @RequestBody CheckOrderBo bo) {
+        bo.setCheckOrderStatus(ServiceConstants.CheckOrderStatus.FINISH);
+        checkOrderService.check(bo);
+        return R.ok();
+    }
+
+    /**
      * 删除库存盘点单据
      *
      * @param id 主键

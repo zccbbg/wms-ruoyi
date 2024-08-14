@@ -3,8 +3,11 @@ package com.ruoyi.wms.domain.bo;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.InventoryDetail;
+import com.ruoyi.wms.domain.entity.InventoryHistory;
 import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -22,8 +25,11 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = InventoryDetail.class, reverseConvertGenerate = false)
-public class InventoryDetailBo extends BaseEntity {
+@AutoMappers({
+    @AutoMapper(target = InventoryDetail.class, reverseConvertGenerate = false),
+    @AutoMapper(target = InventoryHistory.class, reverseConvertGenerate = false),
+})
+public class InventoryDetailBo extends BaseEntity implements PlaceAndItem {
 
     /**
      *

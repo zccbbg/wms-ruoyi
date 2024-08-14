@@ -55,6 +55,11 @@ public class CheckOrderDetailBo extends BaseEntity {
     private BigDecimal checkQuantity;
 
     /**
+     * 盈亏数
+     */
+    private BigDecimal profitAndLoss;
+
+    /**
      * 所属仓库
      */
     @NotNull(message = "所属仓库不能为空", groups = { AddGroup.class, EditGroup.class })
