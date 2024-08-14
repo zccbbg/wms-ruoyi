@@ -10,6 +10,7 @@ import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.bo.InventoryDetailBo;
@@ -19,6 +20,7 @@ import com.ruoyi.wms.mapper.InventoryDetailMapper;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, InventoryDetail> {
 
     private final InventoryDetailMapper inventoryDetailMapper;
+    private final ItemSkuService itemSkuService;
 
     /**
      * 查询库存详情
@@ -53,7 +56,14 @@ public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, I
      */
     public List<InventoryDetailVo> queryList(InventoryDetailBo bo) {
         LambdaQueryWrapper<InventoryDetail> lqw = buildQueryWrapper(bo);
-        return inventoryDetailMapper.selectVoList(lqw);
+        List<InventoryDetailVo> vos = inventoryDetailMapper.selectVoList(lqw);
+        if (CollUtil.isEmpty(vos)) {
+            return vos;
+        }
+        Set<Long> skuIds = vos.stream().map(InventoryDetailVo::getSkuId).collect(Collectors.toSet());
+        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds).stream().collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        vos.forEach(it -> it.setItemSku(itemSkuMap.get(it.getSkuId())));
+        return vos;
     }
 
     private LambdaQueryWrapper<InventoryDetail> buildQueryWrapper(InventoryDetailBo bo) {

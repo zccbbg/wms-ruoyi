@@ -1,6 +1,8 @@
 package com.ruoyi.wms.domain.vo;
 
 import java.math.BigDecimal;
+
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
 import com.ruoyi.wms.domain.entity.CheckOrder;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -22,7 +24,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = CheckOrder.class)
-public class CheckOrderVo implements Serializable {
+public class CheckOrderVo extends BaseVo {
 
     @Serial
     private static final long serialVersionUID = 1L;
