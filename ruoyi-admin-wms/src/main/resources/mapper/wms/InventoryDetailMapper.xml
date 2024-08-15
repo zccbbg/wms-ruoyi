@@ -72,4 +72,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by detail.create_time desc
     </select>
+    <select id="selectListByBo" resultType="com.ruoyi.wms.domain.vo.InventoryDetailVo">
+        select
+            detail.*
+        from wms_inventory_detail detail
+                 inner join wms_item_sku sku on detail.sku_id=sku.id
+        <where>
+            <if test="bo.batchNo != null and bo.batchNo != ''">
+                detail.batch_no like concat('%', #{bo.batchNo}, '%')
+            </if>
+            <if test="bo.warehouseId != null">
+                and detail.warehouse_id=#{bo.warehouseId}
+            </if>
+            <if test="bo.areaId != null">
+                and detail.area_id=#{bo.areaId}
+            </if>
+            <if test="bo.minQuantity != null">
+                and detail.remain_quantity>=#{bo.minQuantity}
+            </if>
+            <if test="bo.batchNo != null and bo.batchNo != ''">
+                and detail.batch_no=#{bo.batchNo}
+            </if>
+        </where>
+        order by sku.item_id,sku.id,detail.create_time desc
+    </select>
 </mapper>

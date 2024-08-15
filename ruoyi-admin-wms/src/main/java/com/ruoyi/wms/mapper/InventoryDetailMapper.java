@@ -20,4 +20,6 @@ public interface InventoryDetailMapper extends BaseMapperPlus<InventoryDetail, I
     void deductInventoryDetailQuantity(@Param("list")List<InventoryDetailBo> list, @Param("updateBy") String updateBy, @Param("updateTime") LocalDateTime updateTime);
 
     Page<InventoryDetailVo> selectPageByBo(Page<Object> page, @Param("bo") InventoryDetailBo bo);
+
+    List<InventoryDetailVo> selectListByBo(@Param("bo") InventoryDetailBo bo);
 }

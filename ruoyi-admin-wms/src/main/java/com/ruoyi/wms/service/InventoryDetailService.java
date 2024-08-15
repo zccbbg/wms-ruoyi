@@ -64,8 +64,7 @@ public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, I
      * 查询库存详情列表
      */
     public List<InventoryDetailVo> queryList(InventoryDetailBo bo) {
-        LambdaQueryWrapper<InventoryDetail> lqw = buildQueryWrapper(bo);
-        List<InventoryDetailVo> vos = inventoryDetailMapper.selectVoList(lqw);
+        List<InventoryDetailVo> vos = inventoryDetailMapper.selectListByBo(bo);
         if (CollUtil.isEmpty(vos)) {
             return vos;
         }
