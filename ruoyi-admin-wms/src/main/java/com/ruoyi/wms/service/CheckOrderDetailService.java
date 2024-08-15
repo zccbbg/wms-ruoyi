@@ -54,6 +54,14 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
     public TableDataInfo<CheckOrderDetailVo> queryPageList(CheckOrderDetailBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<CheckOrderDetail> lqw = buildQueryWrapper(bo);
         Page<CheckOrderDetailVo> result = checkOrderDetailMapper.selectVoPage(pageQuery.build(), lqw);
+        if (CollUtil.isEmpty(result.getRecords())) {
+            return TableDataInfo.build(result);
+        }
+        Set<Long> skuIds = result.getRecords().stream().map(CheckOrderDetailVo::getSkuId).collect(Collectors.toSet());
+        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+            .stream()
+            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        result.getRecords().forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
         return TableDataInfo.build(result);
     }
 
@@ -75,6 +83,7 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         lqw.eq(bo.getWarehouseId() != null, CheckOrderDetail::getWarehouseId, bo.getWarehouseId());
         lqw.eq(bo.getAreaId() != null, CheckOrderDetail::getAreaId, bo.getAreaId());
         lqw.eq(bo.getInventoryDetailId() != null, CheckOrderDetail::getInventoryDetailId, bo.getInventoryDetailId());
+        lqw.apply(bo.getHaveProfitAndLoss() != null && bo.getHaveProfitAndLoss(), "quantity != check_quantity");
         return lqw;
     }
 
