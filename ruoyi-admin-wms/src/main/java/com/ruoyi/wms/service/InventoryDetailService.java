@@ -139,4 +139,10 @@ public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, I
             throw new BaseException("库存不足");
         }
     }
+
+    public void clearDataWithZeroRemainQuantity() {
+        LambdaQueryWrapper<InventoryDetail> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(InventoryDetail::getRemainQuantity, 0);
+        inventoryDetailMapper.delete(wrapper);
+    }
 }

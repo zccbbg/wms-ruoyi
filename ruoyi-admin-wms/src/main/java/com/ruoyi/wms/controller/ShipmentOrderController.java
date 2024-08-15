@@ -14,6 +14,7 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
+import com.ruoyi.wms.service.InventoryDetailService;
 import com.ruoyi.wms.service.ShipmentOrderService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,6 +38,7 @@ import java.util.List;
 public class ShipmentOrderController extends BaseController {
 
     private final ShipmentOrderService shipmentOrderService;
+    private final InventoryDetailService inventoryDetailService;
 
     /**
      * 查询出库单列表
@@ -104,6 +106,7 @@ public class ShipmentOrderController extends BaseController {
     public R<Void> shipment(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
         bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.FINISH);
         shipmentOrderService.shipment(bo);
+        inventoryDetailService.clearDataWithZeroRemainQuantity();
         return R.ok();
     }
 

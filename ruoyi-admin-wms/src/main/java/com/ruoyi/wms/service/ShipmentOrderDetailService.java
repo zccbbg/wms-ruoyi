@@ -132,7 +132,7 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
             .collect(Collectors.toMap(InventoryDetail::getId, InventoryDetail::getRemainQuantity));
         details.forEach(detail -> {
             detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-            detail.setRemainQuantity(remainQuantityMap.get(detail.getInventoryDetailId()));
+            detail.setRemainQuantity(remainQuantityMap.getOrDefault(detail.getInventoryDetailId(), BigDecimal.ZERO));
         });
         return details;
     }

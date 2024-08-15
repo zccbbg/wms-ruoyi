@@ -132,7 +132,7 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
             .stream().collect(Collectors.toMap(InventoryDetailVo::getId, InventoryDetailVo::getRemainQuantity));
         details.forEach(detail -> {
             detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-            detail.setRemainQuantity(remainQuantityMap.get(detail.getInventoryDetailId()));
+            detail.setRemainQuantity(remainQuantityMap.getOrDefault(detail.getInventoryDetailId(), BigDecimal.ZERO));
         });
         return details;
     }
