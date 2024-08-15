@@ -60,6 +60,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bo.minQuantity != null">
                 and detail.remain_quantity>=#{bo.minQuantity}
             </if>
+            <if test="bo.batchNo != null and bo.batchNo != ''">
+                and detail.batch_no=#{bo.batchNo}
+            </if>
+            <if test="bo.createStartTime != null and bo.createEndTime != null">
+                and (detail.create_time between #{bo.createStartTime} and #{bo.createEndTime})
+            </if>
+            <if test="bo.expirationStartTime != null and bo.expirationEndTime != null">
+                and (detail.expiration_date between #{bo.expirationStartTime} and #{bo.expirationEndTime})
+            </if>
         </where>
         order by detail.create_time desc
     </select>

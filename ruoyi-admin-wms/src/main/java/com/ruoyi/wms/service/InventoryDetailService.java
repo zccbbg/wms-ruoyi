@@ -19,6 +19,9 @@ import com.ruoyi.wms.domain.vo.InventoryDetailVo;
 import com.ruoyi.wms.mapper.InventoryDetailMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,6 +50,12 @@ public class InventoryDetailService extends ServiceImpl<InventoryDetailMapper, I
      * 查询库存详情列表
      */
     public TableDataInfo<InventoryDetailVo> queryPageList(InventoryDetailBo bo, PageQuery pageQuery) {
+        if (bo.getDaysToExpires() != null) {
+            LocalDateTime expirationStartTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+            bo.setExpirationStartTime(expirationStartTime);
+            LocalDateTime expirationEndTime = expirationStartTime.plusDays(bo.getDaysToExpires());
+            bo.setExpirationEndTime(expirationEndTime);
+        }
         Page<InventoryDetailVo> result = inventoryDetailMapper.selectPageByBo(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }

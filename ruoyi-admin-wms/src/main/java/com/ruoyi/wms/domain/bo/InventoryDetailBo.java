@@ -132,4 +132,10 @@ public class InventoryDetailBo extends BaseEntity implements PlaceAndItem {
     private String skuName;
     private String skuCode;
 
+    private LocalDateTime createStartTime;
+    private LocalDateTime createEndTime;
+    private Integer daysToExpires;
+    private LocalDateTime expirationStartTime;
+    private LocalDateTime expirationEndTime;
+
 }
