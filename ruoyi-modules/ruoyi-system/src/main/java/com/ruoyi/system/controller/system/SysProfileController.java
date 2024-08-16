@@ -12,10 +12,11 @@ import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.system.domain.bo.SysUserBo;
 import com.ruoyi.system.domain.bo.SysUserProfileBo;
+import com.ruoyi.system.domain.vo.ProfileVo;
 import com.ruoyi.system.domain.vo.SysOssVo;
 import com.ruoyi.system.domain.vo.SysUserVo;
-import com.ruoyi.system.service.SysUserService;
 import com.ruoyi.system.service.SysOssService;
+import com.ruoyi.system.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -43,13 +44,13 @@ public class SysProfileController extends BaseController {
      * 个人信息
      */
     @GetMapping
-    public R<Map<String, Object>> profile() {
+    public R<ProfileVo> profile() {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
-        return R.ok(Map.of(
-            "user", user,
-            "roleGroup", userService.selectUserRoleGroup(user.getUserName()),
-            "postGroup", userService.selectUserPostGroup(user.getUserName())
-        ));
+        ProfileVo profileVo = new ProfileVo();
+        profileVo.setUser(user);
+        profileVo.setRoleGroup(userService.selectUserRoleGroup(user.getUserId()));
+        profileVo.setPostGroup(userService.selectUserPostGroup(user.getUserId()));
+        return R.ok(profileVo);
     }
 
     /**
@@ -59,17 +60,14 @@ public class SysProfileController extends BaseController {
     @PutMapping
     public R<Void> updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
         SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
+        user.setUserId(LoginHelper.getUserId());
+        String username = LoginHelper.getUsername();
         if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
-            return R.fail("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
+            return R.fail("修改用户'" + username + "'失败，手机号码已存在");
         }
         if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
-            return R.fail("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            return R.fail("修改用户'" + username + "'失败，邮箱账号已存在");
         }
-        user.setUserId(LoginHelper.getUserId());
-        user.setUserName(null);
-        user.setPassword(null);
-        user.setAvatar(null);
-        user.setDeptId(null);
         if (userService.updateUserProfile(user) > 0) {
             return R.ok();
         }
@@ -86,16 +84,14 @@ public class SysProfileController extends BaseController {
     @PutMapping("/updatePwd")
     public R<Void> updatePwd(String oldPassword, String newPassword) {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
-        String userName = user.getUserName();
         String password = user.getPassword();
+        if (StringUtils.equals(oldPassword,newPassword)) {
+            return R.fail("新密码不能与旧密码相同");
+        }
         if (!BCrypt.checkpw(oldPassword, password)) {
             return R.fail("修改密码失败，旧密码错误");
         }
-        if (BCrypt.checkpw(newPassword, password)) {
-            return R.fail("新密码不能与旧密码相同");
-        }
-
-        if (userService.resetUserPwd(userName, BCrypt.hashpw(newPassword)) > 0) {
+        if (userService.resetUserPwd(user.getUserId(), BCrypt.hashpw(newPassword)) > 0) {
             return R.ok();
         }
         return R.fail("修改密码异常，请联系管理员");

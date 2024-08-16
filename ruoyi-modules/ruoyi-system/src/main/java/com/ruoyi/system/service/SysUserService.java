@@ -164,11 +164,11 @@ public class SysUserService implements UserService {
     /**
      * 查询用户所属角色组
      *
-     * @param userName 用户名
+     * @param userId 用户ID
      * @return 结果
      */
-    public String selectUserRoleGroup(String userName) {
-        List<SysRoleVo> list = roleMapper.selectRolesByUserName(userName);
+    public String selectUserRoleGroup(Long userId) {
+        List<SysRoleVo> list = roleMapper.selectRolesByUserId(userId);
         if (CollUtil.isEmpty(list)) {
             return StringUtils.EMPTY;
         }
@@ -178,11 +178,11 @@ public class SysUserService implements UserService {
     /**
      * 查询用户所属岗位组
      *
-     * @param userName 用户名
+     * @param userId 用户ID
      * @return 结果
      */
-    public String selectUserPostGroup(String userName) {
-        List<SysPostVo> list = postMapper.selectPostsByUserName(userName);
+    public String selectUserPostGroup(Long userId) {
+        List<SysPostVo> list = postMapper.selectPostsByUserId(userId);
         if (CollUtil.isEmpty(list)) {
             return StringUtils.EMPTY;
         }
@@ -377,20 +377,6 @@ public class SysUserService implements UserService {
             new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getPassword, password)
                 .eq(SysUser::getUserId, userId));
-    }
-
-    /**
-     * 重置用户密码
-     *
-     * @param userName 用户名
-     * @param password 密码
-     * @return 结果
-     */
-    public int resetUserPwd(String userName, String password) {
-        return userMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .set(SysUser::getPassword, password)
-                .eq(SysUser::getUserName, userName));
     }
 
     /**

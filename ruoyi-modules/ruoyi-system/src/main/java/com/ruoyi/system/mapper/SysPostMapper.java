@@ -30,10 +30,10 @@ public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPostVo> {
     /**
      * 查询用户所属岗位组
      *
-     * @param userName 用户名
+     * @param userId 用户ID
      * @return 结果
      */
-    List<SysPostVo> selectPostsByUserName(String userName);
+    List<SysPostVo> selectPostsByUserId(Long userId);
 
     @DataPermission({
         @DataColumn(key = "deptName", value = "dept_id"),
