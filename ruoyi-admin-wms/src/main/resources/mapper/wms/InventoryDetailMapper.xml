@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         item.*
         from wms_inventory_detail detail
         inner join wms_item_sku sku on detail.sku_id=sku.id
-        inner join wms_item item on sku.item_id=item.id
+        inner join wms_item     item on sku.item_id=item.id
         <where>
             <if test="bo.batchNo != null and bo.batchNo != ''">
                 detail.batch_no like concat('%', #{bo.batchNo}, '%')
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and (detail.expiration_date between #{bo.expirationStartTime} and #{bo.expirationEndTime})
             </if>
         </where>
-        order by detail.create_time desc
+        order by detail.warehouse_id,detail.area_id,sku.item_id,sku.id,detail.create_time
     </select>
     <select id="selectListByBo" resultType="com.ruoyi.wms.domain.vo.InventoryDetailVo">
         select

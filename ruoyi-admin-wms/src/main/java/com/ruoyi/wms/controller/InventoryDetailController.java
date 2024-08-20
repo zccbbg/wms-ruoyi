@@ -47,7 +47,7 @@ public class InventoryDetailController extends BaseController {
     }
 
     /**
-     * 查询库存详情列表
+     * 查询库存详情列表，盘库时需要
      */
     @SaCheckPermission("wms:inventoryDetail:list")
     @GetMapping("/listNoPage")
