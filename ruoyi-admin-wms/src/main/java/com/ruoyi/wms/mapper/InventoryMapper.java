@@ -15,8 +15,8 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface InventoryMapper extends BaseMapperPlus<Inventory, InventoryVo> {
 
-    Page<InventoryVo> queryItemBoardList(Page<Object> page, @Param("bo") InventoryBo bo);
-    Page<InventoryVo> queryAreaBoardList(Page<Object> page, @Param("bo") InventoryBo bo);
+    Page<InventoryVo> queryItemBoardList(Page<InventoryVo> page, @Param("bo") InventoryBo bo);
+    Page<InventoryVo> queryAreaBoardList(Page<InventoryVo> page, @Param("bo") InventoryBo bo);
 
-    Page<InventoryVo> selectBoardPageByWarehouse(Page<Object> page, @Param("bo") InventoryBo bo);
+    Page<InventoryVo> selectBoardPageByWarehouse(Page<InventoryVo> page, @Param("bo") InventoryBo bo);
 }

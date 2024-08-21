@@ -122,11 +122,6 @@ public class InventoryDetailBo extends BaseEntity implements PlaceAndItem {
     /** 出库数量 */
     private BigDecimal shipmentQuantity;
 
-    /**
-     * 最小数量
-     */
-    private BigDecimal minQuantity;
-
     private String itemName;
     private String itemCode;
     private String skuName;
