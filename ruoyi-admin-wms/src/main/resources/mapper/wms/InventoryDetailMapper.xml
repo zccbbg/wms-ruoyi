@@ -57,6 +57,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bo.skuCode != null and bo.skuCode != ''">
                 and sku.sku_code like concat('%', #{bo.skuCode}, '%')
             </if>
+            <if test="bo.itemId != null">
+                and item.id=#{bo.itemId}
+            </if>
             <if test="bo.warehouseId != null">
                 and detail.warehouse_id=#{bo.warehouseId}
             </if>
