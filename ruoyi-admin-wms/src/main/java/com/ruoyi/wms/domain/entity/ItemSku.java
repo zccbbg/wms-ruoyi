@@ -39,11 +39,6 @@ public class ItemSku extends BaseEntity {
     private String barcode;
 
     /**
-     * 货号
-     */
-    private String skuNumber;
-
-    /**
      * 编码
      */
     private String skuCode;

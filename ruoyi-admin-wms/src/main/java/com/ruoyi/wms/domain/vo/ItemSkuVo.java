@@ -45,12 +45,6 @@ public class ItemSkuVo implements Serializable {
     private String barcode;
 
     /**
-     * 货号
-     */
-    @ExcelProperty(value = "货号")
-    private String skuNumber;
-
-    /**
      * sku编码
      */
     @ExcelProperty(value = "sku编码")
