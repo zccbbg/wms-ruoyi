@@ -68,5 +68,6 @@ public class InventoryBo extends BaseEntity implements PlaceAndItem {
     private String itemCode;
     private String skuName;
     private String skuCode;
+    private Long itemId;
     private Long itemCategory;
 }
