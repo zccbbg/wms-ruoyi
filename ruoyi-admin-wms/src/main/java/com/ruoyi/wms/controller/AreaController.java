@@ -33,7 +33,7 @@ public class AreaController extends BaseController {
     /**
      * 查询库区列表
      */
-    @SaCheckPermission("wms:area:list")
+    @SaCheckPermission("wms:warehouse:all")
     @GetMapping("/list")
     public TableDataInfo<AreaVo> list(AreaBo bo, PageQuery pageQuery) {
         return areaService.queryPageList(bo, pageQuery);
@@ -42,7 +42,7 @@ public class AreaController extends BaseController {
     /**
      * 查询库区列表
      */
-    @SaCheckPermission("wms:area:list")
+    @SaCheckPermission("wms:warehouse:all")
     @GetMapping("/listNoPage")
     public R<List<AreaVo>> listNoPage(AreaBo bo) {
         return R.ok(areaService.queryList(bo));
@@ -51,7 +51,7 @@ public class AreaController extends BaseController {
     /**
      * 导出库区列表
      */
-    @SaCheckPermission("wms:area:export")
+    @SaCheckPermission("wms:warehouse:all")
     @Log(title = "库区", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(AreaBo bo, HttpServletResponse response) {
@@ -64,7 +64,7 @@ public class AreaController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:area:query")
+    @SaCheckPermission("wms:warehouse:all")
     @GetMapping("/{id}")
     public R<AreaVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -74,7 +74,7 @@ public class AreaController extends BaseController {
     /**
      * 新增库区
      */
-    @SaCheckPermission("wms:area:add")
+    @SaCheckPermission("wms:warehouse:all")
     @Log(title = "库区", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -86,7 +86,7 @@ public class AreaController extends BaseController {
     /**
      * 修改库区
      */
-    @SaCheckPermission("wms:area:edit")
+    @SaCheckPermission("wms:warehouse:all")
     @Log(title = "库区", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -100,7 +100,7 @@ public class AreaController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:area:remove")
+    @SaCheckPermission("wms:warehouse:all")
     @Log(title = "库区", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

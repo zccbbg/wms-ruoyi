@@ -40,7 +40,7 @@ public class InventoryHistoryController extends BaseController {
     /**
      * 查询库存记录列表
      */
-    @SaCheckPermission("wms:inventoryHistory:list")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @GetMapping("/list")
     public TableDataInfo<InventoryHistoryVo> list(InventoryHistoryBo bo, PageQuery pageQuery) {
         return inventoryHistoryService.queryPageList(bo, pageQuery);
@@ -49,7 +49,7 @@ public class InventoryHistoryController extends BaseController {
     /**
      * 导出库存记录列表
      */
-    @SaCheckPermission("wms:inventoryHistory:export")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @Log(title = "库存记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(InventoryHistoryBo bo, HttpServletResponse response) {
@@ -62,7 +62,7 @@ public class InventoryHistoryController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:inventoryHistory:query")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @GetMapping("/{id}")
     public R<InventoryHistoryVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -72,7 +72,7 @@ public class InventoryHistoryController extends BaseController {
     /**
      * 新增库存记录
      */
-    @SaCheckPermission("wms:inventoryHistory:add")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @Log(title = "库存记录", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -84,7 +84,7 @@ public class InventoryHistoryController extends BaseController {
     /**
      * 修改库存记录
      */
-    @SaCheckPermission("wms:inventoryHistory:edit")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @Log(title = "库存记录", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -98,7 +98,7 @@ public class InventoryHistoryController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("wms:inventoryHistory:remove")
+    @SaCheckPermission("wms:inventoryHistory:all")
     @Log(title = "库存记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

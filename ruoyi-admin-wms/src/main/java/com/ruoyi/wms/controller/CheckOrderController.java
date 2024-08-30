@@ -1,28 +1,28 @@
 package com.ruoyi.wms.controller;
 
-import java.util.List;
-
-import com.ruoyi.common.core.constant.ServiceConstants;
-import com.ruoyi.wms.service.InventoryDetailService;
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.wms.domain.vo.CheckOrderVo;
-import com.ruoyi.wms.domain.bo.CheckOrderBo;
-import com.ruoyi.wms.service.CheckOrderService;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.CheckOrderBo;
+import com.ruoyi.wms.domain.vo.CheckOrderVo;
+import com.ruoyi.wms.service.CheckOrderService;
+import com.ruoyi.wms.service.InventoryDetailService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 库存盘点单据
@@ -42,7 +42,7 @@ public class CheckOrderController extends BaseController {
     /**
      * 查询库存盘点单据列表
      */
-    @SaCheckPermission("wms:checkOrder:list")
+    @SaCheckPermission("wms:check:all")
     @GetMapping("/list")
     public TableDataInfo<CheckOrderVo> list(CheckOrderBo bo, PageQuery pageQuery) {
         return checkOrderService.queryPageList(bo, pageQuery);
@@ -51,7 +51,7 @@ public class CheckOrderController extends BaseController {
     /**
      * 导出库存盘点单据列表
      */
-    @SaCheckPermission("wms:checkOrder:export")
+    @SaCheckPermission("wms:check:all")
     @Log(title = "库存盘点单据", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(CheckOrderBo bo, HttpServletResponse response) {
@@ -64,7 +64,7 @@ public class CheckOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:checkOrder:query")
+    @SaCheckPermission("wms:check:all")
     @GetMapping("/{id}")
     public R<CheckOrderVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -74,7 +74,7 @@ public class CheckOrderController extends BaseController {
     /**
      * 新增库存盘点单据
      */
-    @SaCheckPermission("wms:checkOrder:add")
+    @SaCheckPermission("wms:check:all")
     @Log(title = "库存盘点单据", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -87,7 +87,7 @@ public class CheckOrderController extends BaseController {
     /**
      * 修改库存盘点单据
      */
-    @SaCheckPermission("wms:checkOrder:edit")
+    @SaCheckPermission("wms:check:all")
     @Log(title = "库存盘点单据", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -99,7 +99,7 @@ public class CheckOrderController extends BaseController {
     /**
      * 盘库结束
      */
-    @SaCheckPermission("wms:checkOrder:edit")
+    @SaCheckPermission("wms:check:all")
     @Log(title = "库存盘点单据", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PostMapping("/check")
@@ -115,7 +115,7 @@ public class CheckOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:checkOrder:remove")
+    @SaCheckPermission("wms:check:all")
     @Log(title = "库存盘点单据", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

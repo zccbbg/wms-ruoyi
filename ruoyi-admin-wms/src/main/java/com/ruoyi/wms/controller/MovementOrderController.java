@@ -1,28 +1,28 @@
 package com.ruoyi.wms.controller;
 
-import java.util.List;
-
-import com.ruoyi.common.core.constant.ServiceConstants;
-import com.ruoyi.wms.service.InventoryDetailService;
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.wms.domain.vo.MovementOrderVo;
-import com.ruoyi.wms.domain.bo.MovementOrderBo;
-import com.ruoyi.wms.service.MovementOrderService;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.MovementOrderBo;
+import com.ruoyi.wms.domain.vo.MovementOrderVo;
+import com.ruoyi.wms.service.InventoryDetailService;
+import com.ruoyi.wms.service.MovementOrderService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 移库单
@@ -42,7 +42,7 @@ public class MovementOrderController extends BaseController {
     /**
      * 查询移库单列表
      */
-    @SaCheckPermission("wms:movementOrder:list")
+    @SaCheckPermission("wms:movement:all")
     @GetMapping("/list")
     public TableDataInfo<MovementOrderVo> list(MovementOrderBo bo, PageQuery pageQuery) {
         return movementOrderService.queryPageList(bo, pageQuery);
@@ -51,7 +51,7 @@ public class MovementOrderController extends BaseController {
     /**
      * 导出移库单列表
      */
-    @SaCheckPermission("wms:movementOrder:export")
+    @SaCheckPermission("wms:movement:all")
     @Log(title = "移库单", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(MovementOrderBo bo, HttpServletResponse response) {
@@ -64,7 +64,7 @@ public class MovementOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:movementOrder:query")
+    @SaCheckPermission("wms:movement:all")
     @GetMapping("/{id}")
     public R<MovementOrderVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -74,7 +74,7 @@ public class MovementOrderController extends BaseController {
     /**
      * 新增移库单
      */
-    @SaCheckPermission("wms:movementOrder:add")
+    @SaCheckPermission("wms:movement:all")
     @Log(title = "移库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -87,7 +87,7 @@ public class MovementOrderController extends BaseController {
     /**
      * 修改移库单
      */
-    @SaCheckPermission("wms:movementOrder:edit")
+    @SaCheckPermission("wms:movement:all")
     @Log(title = "移库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -99,7 +99,7 @@ public class MovementOrderController extends BaseController {
     /**
      * 移库
      */
-    @SaCheckPermission("wms:movementOrder:edit")
+    @SaCheckPermission("wms:movement:all")
     @Log(title = "移库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PostMapping("/move")
@@ -115,7 +115,7 @@ public class MovementOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:movementOrder:remove")
+    @SaCheckPermission("wms:movement:all")
     @Log(title = "移库单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

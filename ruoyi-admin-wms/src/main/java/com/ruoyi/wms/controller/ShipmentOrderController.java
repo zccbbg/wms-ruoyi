@@ -17,7 +17,6 @@ import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.service.InventoryDetailService;
 import com.ruoyi.wms.service.ShipmentOrderService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -43,7 +42,7 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 查询出库单列表
      */
-    @SaCheckPermission("wms:shipmentOrder:list")
+    @SaCheckPermission("wms:shipment:all")
     @GetMapping("/list")
     public TableDataInfo<ShipmentOrderVo> list(ShipmentOrderBo bo, PageQuery pageQuery) {
         return shipmentOrderService.queryPageList(bo, pageQuery);
@@ -52,7 +51,7 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 导出出库单列表
      */
-    @SaCheckPermission("wms:shipmentOrder:export")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ShipmentOrderBo bo, HttpServletResponse response) {
@@ -65,7 +64,7 @@ public class ShipmentOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:shipmentOrder:query")
+    @SaCheckPermission("wms:shipment:all")
     @GetMapping("/{id}")
     public R<ShipmentOrderVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -75,7 +74,7 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 新增出库单
      */
-    @SaCheckPermission("wms:shipmentOrder:add")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -87,7 +86,7 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 修改出库单
      */
-    @SaCheckPermission("wms:shipmentOrder:edit")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -99,7 +98,7 @@ public class ShipmentOrderController extends BaseController {
     /**
      * 出库
      */
-    @SaCheckPermission("wms:shipmentOrder:shipment")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/shipment")
@@ -115,7 +114,7 @@ public class ShipmentOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:shipmentOrder:remove")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

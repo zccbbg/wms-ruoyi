@@ -40,7 +40,7 @@ public class InventoryController extends BaseController {
     /**
      * 查询库存列表库区维度
      */
-    @SaCheckPermission("wms:inventory:list")
+    @SaCheckPermission("wms:inventory:all")
     @GetMapping(value = {"/list", "/boardList/area"})
     public TableDataInfo<InventoryVo> queryAreaBoardList(InventoryBo bo, PageQuery pageQuery) {
         return inventoryService.queryAreaBoardList(bo, pageQuery);
@@ -49,7 +49,7 @@ public class InventoryController extends BaseController {
     /**
      * 查询库存列表商品维度
      */
-    @SaCheckPermission("wms:inventory:list")
+    @SaCheckPermission("wms:inventory:all")
     @GetMapping(value = {"/boardList/item"})
     public TableDataInfo<InventoryVo> queryItemBoardList(InventoryBo bo, PageQuery pageQuery) {
         return inventoryService.queryItemBoardList(bo, pageQuery);
@@ -58,7 +58,7 @@ public class InventoryController extends BaseController {
     /**
      * 查询库存列表仓库维度
      */
-    @SaCheckPermission("wms:inventory:list")
+    @SaCheckPermission("wms:inventory:all")
     @GetMapping("/boardList/warehouse")
     public TableDataInfo<InventoryVo> queryWarehouseBoardList(InventoryBo bo, PageQuery pageQuery) {
         return inventoryService.queryWarehouseBoardList(bo, pageQuery);
@@ -67,7 +67,7 @@ public class InventoryController extends BaseController {
     /**
      * 导出库存列表
      */
-    @SaCheckPermission("wms:inventory:export")
+    @SaCheckPermission("wms:inventory:all")
     @Log(title = "库存", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(InventoryBo bo, HttpServletResponse response) {
@@ -80,7 +80,7 @@ public class InventoryController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:inventory:query")
+    @SaCheckPermission("wms:inventory:all")
     @GetMapping("/{id}")
     public R<InventoryVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -90,7 +90,7 @@ public class InventoryController extends BaseController {
     /**
      * 新增库存
      */
-    @SaCheckPermission("wms:inventory:add")
+    @SaCheckPermission("wms:inventory:all")
     @Log(title = "库存", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -102,7 +102,7 @@ public class InventoryController extends BaseController {
     /**
      * 修改库存
      */
-    @SaCheckPermission("wms:inventory:edit")
+    @SaCheckPermission("wms:inventory:all")
     @Log(title = "库存", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -116,7 +116,7 @@ public class InventoryController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("wms:inventory:remove")
+    @SaCheckPermission("wms:inventory:all")
     @Log(title = "库存", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

@@ -40,7 +40,7 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 查询入库单列表
      */
-    @SaCheckPermission("wms:receiptOrder:list")
+    @SaCheckPermission("wms:receipt:all")
     @GetMapping("/list")
     public TableDataInfo<ReceiptOrderVo> list(ReceiptOrderBo bo, PageQuery pageQuery) {
         return receiptOrderService.queryPageList(bo, pageQuery);
@@ -49,7 +49,7 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 导出入库单列表
      */
-    @SaCheckPermission("wms:receiptOrder:export")
+    @SaCheckPermission("wms:receipt:all")
     @Log(title = "入库单", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ReceiptOrderBo bo, HttpServletResponse response) {
@@ -62,7 +62,7 @@ public class ReceiptOrderController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:receiptOrder:query")
+    @SaCheckPermission("wms:receipt:all")
     @GetMapping("/{id}")
     public R<ReceiptOrderVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -72,7 +72,7 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 暂存入库单
      */
-    @SaCheckPermission("wms:receiptOrder:add")
+    @SaCheckPermission("wms:receipt:all")
     @Log(title = "入库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -85,7 +85,7 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 入库
      */
-    @SaCheckPermission("wms:receiptOrder:edit")
+    @SaCheckPermission("wms:receipt:all")
     @Log(title = "入库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PostMapping("/warehousing")
@@ -98,7 +98,7 @@ public class ReceiptOrderController extends BaseController {
     /**
      * 修改入库单
      */
-    @SaCheckPermission("wms:receiptOrder:edit")
+    @SaCheckPermission("wms:receipt:all")
     @Log(title = "入库单", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -112,7 +112,7 @@ public class ReceiptOrderController extends BaseController {
      *
      * @param id 主键串
      */
-    @SaCheckPermission("wms:receiptOrder:remove")
+    @SaCheckPermission("wms:receipt:all")
     @Log(title = "入库单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

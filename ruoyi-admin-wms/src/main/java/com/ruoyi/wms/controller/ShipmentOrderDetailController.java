@@ -1,26 +1,27 @@
 package com.ruoyi.wms.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.wms.domain.vo.ShipmentOrderDetailVo;
-import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
-import com.ruoyi.wms.service.ShipmentOrderDetailService;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
+import com.ruoyi.wms.domain.vo.ShipmentOrderDetailVo;
+import com.ruoyi.wms.service.ShipmentOrderDetailService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 出库单详情
@@ -39,7 +40,7 @@ public class ShipmentOrderDetailController extends BaseController {
     /**
      * 查询出库单详情列表
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:list")
+    @SaCheckPermission("wms:shipment:all")
     @GetMapping("/list")
     public TableDataInfo<ShipmentOrderDetailVo> list(ShipmentOrderDetailBo bo, PageQuery pageQuery) {
         return shipmentOrderDetailService.queryPageList(bo, pageQuery);
@@ -48,7 +49,7 @@ public class ShipmentOrderDetailController extends BaseController {
     /**
      * 导出出库单详情列表
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:export")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单详情", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ShipmentOrderDetailBo bo, HttpServletResponse response) {
@@ -61,7 +62,7 @@ public class ShipmentOrderDetailController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:query")
+    @SaCheckPermission("wms:shipment:all")
     @GetMapping("/{id}")
     public R<ShipmentOrderDetailVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -71,7 +72,7 @@ public class ShipmentOrderDetailController extends BaseController {
     /**
      * 新增出库单详情
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:add")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单详情", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -83,7 +84,7 @@ public class ShipmentOrderDetailController extends BaseController {
     /**
      * 修改出库单详情
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:edit")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单详情", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -97,7 +98,7 @@ public class ShipmentOrderDetailController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:remove")
+    @SaCheckPermission("wms:shipment:all")
     @Log(title = "出库单详情", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
@@ -110,7 +111,7 @@ public class ShipmentOrderDetailController extends BaseController {
      * 获取出库单详情详细信息
      *
      */
-    @SaCheckPermission("wms:shipmentOrderDetail:query")
+    @SaCheckPermission("wms:shipment:all")
     @GetMapping("/list/{shipmentOrderId}")
     public R<List<ShipmentOrderDetailVo>> listByShipmentOrderId(@NotNull @PathVariable Long shipmentOrderId) {
         return R.ok(shipmentOrderDetailService.queryByShipmentOrderId(shipmentOrderId));
