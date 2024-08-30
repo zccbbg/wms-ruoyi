@@ -307,7 +307,8 @@ public class SysLoginService {
      * 登录校验
      */
     private void checkLogin(LoginType loginType, String username, Supplier<Boolean> supplier) {
-        String errorKey = CacheConstants.PWD_ERR_CNT_KEY + username;
+        String clientIP = ServletUtils.getClientIP();
+        String errorKey = CacheConstants.PWD_ERR_CNT_KEY + username+":"+clientIP;
         String loginFail = Constants.LOGIN_FAIL;
 
         // 获取用户登录错误次数，默认为0 (可自定义限制策略 例如: key + username + ip)
