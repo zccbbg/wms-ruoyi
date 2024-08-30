@@ -1,5 +1,6 @@
 package com.ruoyi.wms.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
@@ -37,6 +38,7 @@ public class ItemCategoryController extends BaseController {
      * 查询物料类型列表
      */
     @GetMapping("/list")
+    @SaCheckPermission("wms:item:list")
     public TableDataInfo<ItemCategoryVo> list(ItemCategoryBo bo, PageQuery pageQuery) {
         return itemCategoryService.queryPageList(bo, pageQuery);
     }
@@ -45,6 +47,7 @@ public class ItemCategoryController extends BaseController {
      * 查询物料类型列表
      */
     @GetMapping("/listNoPage")
+    @SaCheckPermission("wms:item:list")
     public R<List<ItemCategoryVo>> listNoPage(ItemCategoryBo bo) {
         return R.ok(itemCategoryService.queryList(bo));
     }
@@ -53,6 +56,7 @@ public class ItemCategoryController extends BaseController {
      * 获取物料类型下拉树列表
      */
     @GetMapping("/treeselect")
+    @SaCheckPermission("wms:item:list")
     public R<List<ItemTypeTreeSelectVo>> treeselect(ItemCategoryBo query) {
         List<ItemCategoryVo> itemTypes = itemCategoryService.queryList(query);
         return R.ok(itemCategoryService.buildItemTypeTreeSelect(itemTypes));
@@ -63,6 +67,7 @@ public class ItemCategoryController extends BaseController {
      */
     @Log(title = "物料类型", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @SaCheckPermission("wms:item:list")
     public void export(ItemCategoryBo bo, HttpServletResponse response) {
         List<ItemCategoryVo> list = itemCategoryService.queryList(bo);
         ExcelUtil.exportExcel(list, "物料类型", ItemCategoryVo.class, response);
@@ -74,6 +79,7 @@ public class ItemCategoryController extends BaseController {
      * @param itemTypeId 主键
      */
     @GetMapping("/{itemTypeId}")
+    @SaCheckPermission("wms:item:list")
     public R<ItemCategoryVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long itemTypeId) {
         return R.ok(itemCategoryService.queryById(itemTypeId));
@@ -85,6 +91,7 @@ public class ItemCategoryController extends BaseController {
     @Log(title = "物料类型", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ItemCategoryBo bo) {
         itemCategoryService.insertByBo(bo);
         return R.ok();
@@ -96,6 +103,7 @@ public class ItemCategoryController extends BaseController {
     @Log(title = "物料类型", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ItemCategoryBo bo) {
         itemCategoryService.updateByBo(bo);
         return R.ok();
@@ -108,6 +116,7 @@ public class ItemCategoryController extends BaseController {
      */
     @Log(title = "物料类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{itemTypeIds}")
+    @SaCheckPermission("wms:item:edit")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] itemTypeIds) {
         List<Long> ids = new ArrayList<>(Arrays.asList(itemTypeIds));
@@ -116,6 +125,7 @@ public class ItemCategoryController extends BaseController {
     }
 
     @PostMapping("/update/orderNum")
+    @SaCheckPermission("wms:item:edit")
     public R<Void> updateOrderNum(@RequestBody List<ItemTypeTreeSelectVo> tree) {
         itemCategoryService.updateOrderNum(tree);
         return R.ok();

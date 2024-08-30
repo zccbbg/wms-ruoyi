@@ -1,5 +1,6 @@
 package com.ruoyi.wms.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
@@ -33,6 +34,7 @@ public class ItemController extends BaseController {
      * 查询物料列表
      */
     @GetMapping("/list")
+    @SaCheckPermission("wms:item:list")
     public TableDataInfo<ItemVo> list(ItemBo bo, PageQuery pageQuery) {
         return itemService.queryPageList(bo, pageQuery);
     }
@@ -41,6 +43,7 @@ public class ItemController extends BaseController {
      * 查询物料列表
      */
     @GetMapping("/listNoPage")
+    @SaCheckPermission("wms:item:list")
     public R<List<ItemVo>> list(ItemBo bo) {
         return R.ok(itemService.queryList(bo));
     }
@@ -50,6 +53,7 @@ public class ItemController extends BaseController {
      */
     @Log(title = "物料", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @SaCheckPermission("wms:item:list")
     public void export(ItemBo bo, HttpServletResponse response) {
         List<ItemVo> list = itemService.queryList(bo);
         ExcelUtil.exportExcel(list, "物料", ItemVo.class, response);
@@ -61,6 +65,7 @@ public class ItemController extends BaseController {
      * @param id 主键
      */
     @GetMapping("/{id}")
+    @SaCheckPermission("wms:item:list")
     public R<ItemVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
         return R.ok(itemService.queryById(id));
@@ -72,6 +77,7 @@ public class ItemController extends BaseController {
     @Log(title = "物料", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ItemBo form) {
         itemService.insertByForm(form);
         return R.ok();
@@ -82,6 +88,7 @@ public class ItemController extends BaseController {
     @Log(title = "物料", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ItemBo form) {
         itemService.updateByForm(form);
         return R.ok();
@@ -94,6 +101,7 @@ public class ItemController extends BaseController {
      */
     @Log(title = "物料", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
+    @SaCheckPermission("wms:item:edit")
     public R<Void> remove(@NotNull(message = "主键不能为空")
                           @PathVariable Long id) {
         itemService.deleteById(id);

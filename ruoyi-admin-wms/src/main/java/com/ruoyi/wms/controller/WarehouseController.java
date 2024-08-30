@@ -51,7 +51,7 @@ public class WarehouseController extends BaseController {
     /**
      * 导出仓库列表
      */
-    @SaCheckPermission("wms:warehouse:export")
+    @SaCheckPermission("wms:warehouse:list")
     @Log(title = "仓库", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(WarehouseBo bo, HttpServletResponse response) {
@@ -64,7 +64,7 @@ public class WarehouseController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:warehouse:query")
+    @SaCheckPermission("wms:warehouse:list")
     @GetMapping("/{id}")
     public R<WarehouseVo> getInfo(@NotNull(message = "主键不能为空")
                                   @PathVariable Long id) {
@@ -74,7 +74,7 @@ public class WarehouseController extends BaseController {
     /**
      * 新增仓库
      */
-    @SaCheckPermission("wms:warehouse:add")
+    @SaCheckPermission("wms:warehouse:edit")
     @Log(title = "仓库", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -100,7 +100,7 @@ public class WarehouseController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:warehouse:remove")
+    @SaCheckPermission("wms:warehouse:edit")
     @Log(title = "仓库", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

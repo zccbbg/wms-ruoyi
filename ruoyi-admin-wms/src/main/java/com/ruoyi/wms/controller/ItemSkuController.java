@@ -1,5 +1,6 @@
 package com.ruoyi.wms.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
@@ -33,6 +34,7 @@ public class ItemSkuController extends BaseController {
      * 查询sku信息列表
      */
     @GetMapping("/list")
+    @SaCheckPermission("wms:item:list")
     public TableDataInfo<ItemSkuVo> list(ItemSkuBo bo, PageQuery pageQuery) {
         return itemSkuService.queryPageList(bo, pageQuery);
     }
@@ -40,6 +42,7 @@ public class ItemSkuController extends BaseController {
      * 查询sku信息列表
      */
     @GetMapping("/listNoPage")
+    @SaCheckPermission("wms:item:list")
     public R<List<ItemSkuVo>> list(ItemSkuBo bo) {
         return R.ok(itemSkuService.queryList(bo));
     }
@@ -49,6 +52,7 @@ public class ItemSkuController extends BaseController {
      */
     @Log(title = "sku信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @SaCheckPermission("wms:item:list")
     public void export(ItemSkuBo bo, HttpServletResponse response) {
         List<ItemSkuVo> list = itemSkuService.queryList(bo);
         ExcelUtil.exportExcel(list, "sku信息", ItemSkuVo.class, response);
@@ -60,6 +64,7 @@ public class ItemSkuController extends BaseController {
      * @param id 主键
      */
     @GetMapping("/{id}")
+    @SaCheckPermission("wms:item:list")
     public R<ItemSkuVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
         return R.ok(itemSkuService.queryById(id));
@@ -71,6 +76,7 @@ public class ItemSkuController extends BaseController {
     @Log(title = "sku信息", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ItemSkuBo bo) {
         return toAjax(itemSkuService.insertByBo(bo));
     }
@@ -81,6 +87,7 @@ public class ItemSkuController extends BaseController {
     @Log(title = "sku信息", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
+    @SaCheckPermission("wms:item:edit")
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody ItemSkuBo bo) {
         return toAjax(itemSkuService.updateByBo(bo));
     }
@@ -92,6 +99,7 @@ public class ItemSkuController extends BaseController {
      */
     @Log(title = "sku信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
+    @SaCheckPermission("wms:item:edit")
     public R<Void> remove(@NotNull(message = "主键不能为空")
                           @PathVariable Long id) {
         itemSkuService.deleteById(id);

@@ -57,7 +57,7 @@ public class MerchantController extends BaseController {
     /**
      * 导出往来单位列表
      */
-    @SaCheckPermission("wms:merchant:export")
+    @SaCheckPermission("wms:merchant:list")
     @Log(title = "往来单位", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(MerchantBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class MerchantController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:merchant:query")
+    @SaCheckPermission("wms:merchant:list")
     @GetMapping("/{id}")
     public R<MerchantVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class MerchantController extends BaseController {
     /**
      * 新增往来单位
      */
-    @SaCheckPermission("wms:merchant:add")
+    @SaCheckPermission("wms:merchant:edit")
     @Log(title = "往来单位", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -106,7 +106,7 @@ public class MerchantController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:merchant:remove")
+    @SaCheckPermission("wms:merchant:edit")
     @Log(title = "往来单位", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")

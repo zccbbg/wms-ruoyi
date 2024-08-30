@@ -1,26 +1,26 @@
 package com.ruoyi.wms.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.wms.domain.vo.ItemBrandVo;
-import com.ruoyi.wms.domain.bo.ItemBrandBo;
-import com.ruoyi.wms.service.ItemBrandService;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.ItemBrandBo;
+import com.ruoyi.wms.domain.vo.ItemBrandVo;
+import com.ruoyi.wms.service.ItemBrandService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 商品品牌
@@ -57,7 +57,7 @@ public class ItemBrandController extends BaseController {
     /**
      * 导出商品品牌列表
      */
-    @SaCheckPermission("wms:itemBrand:export")
+    @SaCheckPermission("wms:itemBrand:list")
     @Log(title = "商品品牌", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ItemBrandBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ItemBrandController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:itemBrand:query")
+    @SaCheckPermission("wms:itemBrand:list")
     @GetMapping("/{id}")
     public R<ItemBrandVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ItemBrandController extends BaseController {
     /**
      * 新增商品品牌
      */
-    @SaCheckPermission("wms:itemBrand:add")
+    @SaCheckPermission("wms:itemBrand:edit")
     @Log(title = "商品品牌", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -106,7 +106,7 @@ public class ItemBrandController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("wms:itemBrand:remove")
+    @SaCheckPermission("wms:itemBrand:edit")
     @Log(title = "商品品牌", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public R<Void> remove(@NotNull(message = "主键不能为空")
