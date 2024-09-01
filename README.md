@@ -38,8 +38,9 @@
 > 提交PR前请先阅读：[PULL_REQUEST_TEMPLATE.zh-CN.md](docs/PULL_REQUEST_TEMPLATE.zh-CN.md)
 
 ## 本地运行
-
+https://docs.ichengle.top/wms/open/run2.html
 ## 系统部署文档
+https://docs.ichengle.top/wms/open/ops2.html
 
 ## 演示图
 ![入库单](docs/入库单.jpg)
