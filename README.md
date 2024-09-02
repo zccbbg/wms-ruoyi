@@ -15,6 +15,9 @@
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
+## 在线体验
+- 最新版V2演示地址：http://kucun.ichengle.top
+- 旧版V1演示地址：http://wms.ichengle.top
 
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
@@ -57,9 +60,6 @@ https://docs.ichengle.top/wms/open/ops2.html
 
 #### github
 [https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
-
-## 在线体验
-- 演示地址：http://kc.ichengle.top
 
 ## CSDN若依技术专栏
 - 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
