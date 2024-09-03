@@ -12,4 +12,11 @@ public class PasswordTest {
         boolean result = BCrypt.checkpw(password, encrypt);
         System.out.println(result);
     }
+
+    @Test
+    public void testGeneratePassword(){
+        String password = "000000";
+        String encrypt = BCrypt.hashpw(password, BCrypt.gensalt());
+        System.out.println(encrypt);
+    }
 }
