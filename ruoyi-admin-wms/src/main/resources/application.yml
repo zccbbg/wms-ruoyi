@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: ruoyi-fast-service
+  name: ruoyi-wms-service
   # 版本
   version: ${revision}
   # 版权年份
@@ -214,7 +214,7 @@ springdoc:
     contact:
       name: zcc
       email: zccbbg@qq.com
-      url: https://gitee.com/zccbbg/ruoyi-fast-service
+      url: https://gitee.com/zccbbg/ruoyi-wms
   components:
     # 鉴权方式配置
     security-schemes:
