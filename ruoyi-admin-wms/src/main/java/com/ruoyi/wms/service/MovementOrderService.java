@@ -205,7 +205,6 @@ public class MovementOrderService {
             } else {
                 InventoryBo mergedInventoryBo = new InventoryBo();
                 mergedInventoryBo.setWarehouseId(detail.getSourceWarehouseId());
-                mergedInventoryBo.setAreaId(detail.getSourceAreaId());
                 mergedInventoryBo.setSkuId(detail.getSkuId());
                 mergedInventoryBo.setQuantity(detail.getQuantity());
                 mergedShipmentMap.put(mergedShipmentKey, mergedInventoryBo);
@@ -229,7 +228,6 @@ public class MovementOrderService {
             } else {
                 InventoryBo mergedInventoryBo = new InventoryBo();
                 mergedInventoryBo.setWarehouseId(detail.getTargetWarehouseId());
-                mergedInventoryBo.setAreaId(detail.getTargetAreaId());
                 mergedInventoryBo.setSkuId(detail.getSkuId());
                 mergedInventoryBo.setQuantity(detail.getQuantity());
                 mergedReceiptMap.put(mergedReceiptKey, mergedInventoryBo);
@@ -249,7 +247,6 @@ public class MovementOrderService {
         bo.getDetails().forEach(detail -> {
             InventoryHistory shipmentInventoryHistory = new InventoryHistory();
             shipmentInventoryHistory.setWarehouseId(detail.getSourceWarehouseId());
-            shipmentInventoryHistory.setAreaId(detail.getSourceAreaId());
             shipmentInventoryHistory.setSkuId(detail.getSkuId());
             shipmentInventoryHistory.setQuantity(detail.getQuantity().negate());
             shipmentInventoryHistory.setBatchNo(detail.getBatchNo());
@@ -261,7 +258,6 @@ public class MovementOrderService {
             addInventoryHistoryList.add(shipmentInventoryHistory);
             InventoryHistory receiptInventoryHistory = new InventoryHistory();
             receiptInventoryHistory.setWarehouseId(detail.getTargetWarehouseId());
-            receiptInventoryHistory.setAreaId(detail.getTargetAreaId());
             receiptInventoryHistory.setSkuId(detail.getSkuId());
             receiptInventoryHistory.setQuantity(detail.getQuantity());
             receiptInventoryHistory.setBatchNo(detail.getBatchNo());

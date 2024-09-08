@@ -107,7 +107,5 @@ public class MovementOrderDetailVo implements Serializable {
 
     private ItemSkuVo itemSku;
 
-    private InventoryDetailVo inventoryDetail;
-
     private BigDecimal remainQuantity;
 }

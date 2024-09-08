@@ -106,8 +106,4 @@ public class MovementOrderDetailBo extends BaseEntity implements PlaceAndItem {
         return this.getSourceWarehouseId();
     }
 
-    @Override
-    public Long getAreaId() {
-        return this.getSourceAreaId();
-    }
 }

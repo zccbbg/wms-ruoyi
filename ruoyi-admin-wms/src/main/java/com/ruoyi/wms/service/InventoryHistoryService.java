@@ -61,7 +61,6 @@ public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper,
         lqw.eq(bo.getSkuId() != null, InventoryHistory::getSkuId, bo.getSkuId());
         lqw.eq(bo.getQuantity() != null, InventoryHistory::getQuantity, bo.getQuantity());
         lqw.eq(bo.getWarehouseId() != null, InventoryHistory::getWarehouseId, bo.getWarehouseId());
-        lqw.eq(bo.getAreaId() != null, InventoryHistory::getAreaId, bo.getAreaId());
         return lqw;
     }
 

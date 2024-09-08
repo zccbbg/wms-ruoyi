@@ -81,7 +81,6 @@ public class CheckOrderService {
         lqw.eq(bo.getCheckOrderStatus() != null, CheckOrder::getCheckOrderStatus, bo.getCheckOrderStatus());
         lqw.eq(bo.getCheckOrderTotal() != null, CheckOrder::getCheckOrderTotal, bo.getCheckOrderTotal());
         lqw.eq(bo.getWarehouseId() != null, CheckOrder::getWarehouseId, bo.getWarehouseId());
-        lqw.eq(bo.getAreaId() != null, CheckOrder::getAreaId, bo.getAreaId());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
@@ -200,10 +199,8 @@ public class CheckOrderService {
             .filter(detail -> detail.getProfitAndLoss().compareTo(BigDecimal.ZERO) < 0)
             .map(filteredDetail -> {
                 InventoryBo inventoryBo = new InventoryBo();
-                inventoryBo.setId(filteredDetail.getInventoryDetailId());
                 inventoryBo.setSkuId(filteredDetail.getSkuId());
                 inventoryBo.setWarehouseId(filteredDetail.getWarehouseId());
-                inventoryBo.setAreaId(filteredDetail.getAreaId());
                 inventoryBo.setQuantity(filteredDetail.getProfitAndLoss());
                 return inventoryBo;
             }).toList();
@@ -216,7 +213,6 @@ public class CheckOrderService {
                 InventoryBo inventoryDetailBo = new InventoryBo();
                 inventoryDetailBo.setSkuId(filteredDetail.getSkuId());
                 inventoryDetailBo.setWarehouseId(filteredDetail.getWarehouseId());
-                inventoryDetailBo.setAreaId(filteredDetail.getAreaId());
                 inventoryDetailBo.setQuantity(filteredDetail.getProfitAndLoss());
                 inventoryDetailBo.setCreateTime(filteredDetail.getReceiptTime());
                 return inventoryDetailBo;

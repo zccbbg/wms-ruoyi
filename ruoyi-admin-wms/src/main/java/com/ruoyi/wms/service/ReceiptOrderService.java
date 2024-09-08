@@ -151,7 +151,6 @@ public class ReceiptOrderService {
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
-            inventoryHistory.setAreaId(detail.getAreaId());
             inventoryHistory.setBatchNo(detail.getBatchNo());
             inventoryHistory.setProductionDate(detail.getProductionDate());
             inventoryHistory.setExpirationDate(detail.getExpirationDate());
@@ -167,7 +166,7 @@ public class ReceiptOrderService {
      * @return
      */
     private List<InventoryBo> convertInventoryList(List<ReceiptOrderDetailBo> orderDetailBoList) {
-        Function<ReceiptOrderDetailBo, String> keyFunction = it -> it.getWarehouseId() + "_" + it.getAreaId() + "_" + it.getSkuId();
+        Function<ReceiptOrderDetailBo, String> keyFunction = it -> it.getWarehouseId() +  "_" + it.getSkuId();
         Map<String, InventoryBo> inventoryMap = new HashMap<>();
         orderDetailBoList.forEach(orderDetailBo -> {
             String key = keyFunction.apply(orderDetailBo);
@@ -178,7 +177,6 @@ public class ReceiptOrderService {
                 InventoryBo inventory = new InventoryBo();
                 inventory.setSkuId(orderDetailBo.getSkuId());
                 inventory.setWarehouseId(orderDetailBo.getWarehouseId());
-                inventory.setAreaId(orderDetailBo.getAreaId());
                 inventory.setQuantity(orderDetailBo.getQuantity());
                 inventoryMap.put(key, inventory);
             }

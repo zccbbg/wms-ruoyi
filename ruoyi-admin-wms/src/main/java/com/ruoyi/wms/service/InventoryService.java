@@ -61,7 +61,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(bo.getSkuId() != null, Inventory::getSkuId, bo.getSkuId());
         wrapper.eq(bo.getWarehouseId() != null, Inventory::getWarehouseId, bo.getWarehouseId());
-        wrapper.eq(bo.getAreaId() != null, Inventory::getAreaId, bo.getAreaId());
         wrapper.eq(bo.getQuantity() != null, Inventory::getQuantity, bo.getQuantity());
         return wrapper;
     }
@@ -104,7 +103,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         list.forEach(inventoryBo -> {
             LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
             wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
-            wrapper.eq(Inventory::getAreaId, inventoryBo.getAreaId());
             wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result!=null){
@@ -141,7 +139,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      */
     public boolean existsByAreaIds(@NotEmpty Collection<Long> areaIds) {
         LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
-        lqw.in(Inventory::getAreaId, areaIds);
         return inventoryMapper.exists(lqw);
     }
 

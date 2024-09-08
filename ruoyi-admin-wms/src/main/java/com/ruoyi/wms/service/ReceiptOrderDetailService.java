@@ -67,7 +67,6 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
         lqw.eq(bo.getQuantity() != null, ReceiptOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getAmount() != null, ReceiptOrderDetail::getAmount, bo.getAmount());
         lqw.eq(bo.getWarehouseId() != null, ReceiptOrderDetail::getWarehouseId, bo.getWarehouseId());
-        lqw.eq(bo.getAreaId() != null, ReceiptOrderDetail::getAreaId, bo.getAreaId());
         return lqw;
     }
 

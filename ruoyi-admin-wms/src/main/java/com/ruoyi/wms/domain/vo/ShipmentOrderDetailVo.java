@@ -10,7 +10,6 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 出库单详情视图对象 wms_shipment_order_detail
@@ -63,36 +62,10 @@ public class ShipmentOrderDetailVo implements Serializable, PlaceAndItem {
     private Long warehouseId;
 
     /**
-     * 批号
-     */
-    @ExcelProperty(value = "批号")
-    private String batchNo;
-
-    /**
-     * 生产日期
-     */
-    @ExcelProperty(value = "生产日期")
-    private LocalDateTime productionDate;
-
-    /**
-     * 过期时间
-     */
-    @ExcelProperty(value = "过期时间")
-    private LocalDateTime expirationDate;
-
-    /**
-     * 入库记录id
-     */
-    @ExcelProperty(value = "入库记录id")
-    private Long inventoryDetailId;
-
-    /**
      * 备注
      */
     @ExcelProperty(value = "备注")
     private String remark;
 
     private ItemSkuVo itemSku;
-
-    private BigDecimal remainQuantity;
 }

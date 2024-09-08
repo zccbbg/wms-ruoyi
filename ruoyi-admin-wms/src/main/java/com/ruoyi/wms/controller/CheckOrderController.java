@@ -15,7 +15,6 @@ import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.wms.domain.bo.CheckOrderBo;
 import com.ruoyi.wms.domain.vo.CheckOrderVo;
 import com.ruoyi.wms.service.CheckOrderService;
-import com.ruoyi.wms.service.InventoryDetailService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ import java.util.List;
 public class CheckOrderController extends BaseController {
 
     private final CheckOrderService checkOrderService;
-    private final InventoryDetailService inventoryDetailService;
 
     /**
      * 查询库存盘点单据列表
@@ -106,7 +104,6 @@ public class CheckOrderController extends BaseController {
     public R<Void> check(@Validated(AddGroup.class) @RequestBody CheckOrderBo bo) {
         bo.setCheckOrderStatus(ServiceConstants.CheckOrderStatus.FINISH);
         checkOrderService.check(bo);
-        inventoryDetailService.clearDataWithZeroRemainQuantity();
         return R.ok();
     }
 
