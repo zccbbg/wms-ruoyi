@@ -13,7 +13,6 @@ import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
-import com.ruoyi.wms.domain.bo.InventoryDetailBo;
 import com.ruoyi.wms.domain.bo.ShipmentDataBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
 import com.ruoyi.wms.domain.entity.Inventory;
@@ -42,7 +41,6 @@ import java.util.stream.Collectors;
 public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
 
     private final InventoryMapper inventoryMapper;
-    private final InventoryDetailService inventoryDetailService;
     private final ItemSkuService itemSkuService;
 
     /**

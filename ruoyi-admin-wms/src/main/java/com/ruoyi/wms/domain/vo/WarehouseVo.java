@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 
 @Data
@@ -47,5 +46,4 @@ public class WarehouseVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-    private List<AreaVo> areaList;
 }

@@ -10,21 +10,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.WarehouseBo;
+import com.ruoyi.wms.domain.entity.Warehouse;
+import com.ruoyi.wms.domain.vo.WarehouseVo;
+import com.ruoyi.wms.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.wms.domain.bo.WarehouseBo;
-import com.ruoyi.wms.domain.entity.Area;
-import com.ruoyi.wms.domain.entity.Warehouse;
-import com.ruoyi.wms.domain.vo.WarehouseVo;
-import com.ruoyi.wms.mapper.AreaMapper;
-import com.ruoyi.wms.mapper.WarehouseMapper;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 仓库Service业务层处理
@@ -37,7 +34,6 @@ import java.util.stream.Collectors;
 public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     private final WarehouseMapper warehouseMapper;
-    private final AreaMapper areaMapper;
 
     /**
      * 查询仓库
@@ -126,9 +122,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
     }
 
     private void validIdBeforeDelete(Long id) {
-        LambdaQueryWrapper<Area> lqw = Wrappers.lambdaQuery();
-        lqw.eq(Area::getWarehouseId, id);
-        Assert.isTrue(areaMapper.selectCount(lqw) == 0, "删除失败！请先删除该仓库下的库区！");
+        // todo 查看仓库下面是否有商品
     }
 
     /**
@@ -136,17 +130,7 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
      */
 
     public void deleteByIds(Collection<Long> ids) {
-        List<Long> areaIdList = this.getAreaIdInWarehouse(ids);
         warehouseMapper.deleteBatchIds(ids);
-        if (CollUtil.isNotEmpty(areaIdList)) {
-            areaMapper.deleteBatchIds(areaIdList);
-        }
-    }
-
-    private List<Long> getAreaIdInWarehouse(Collection<Long> ids) {
-        LambdaQueryWrapper<Area> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(Area::getWarehouseId, ids);
-        return areaMapper.selectList(wrapper).stream().map(Area::getId).collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = {Exception.class})

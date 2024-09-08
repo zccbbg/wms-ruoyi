@@ -18,12 +18,10 @@ import com.ruoyi.system.service.SysDictTypeService;
 import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.InventoryDetail;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
-import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,9 +43,7 @@ public class ReceiptOrderService {
 
     private final ReceiptOrderMapper receiptOrderMapper;
     private final ReceiptOrderDetailService receiptOrderDetailService;
-    private final ReceiptOrderDetailMapper receiptOrderDetailMapper;
     private final InventoryService inventoryService;
-    private final InventoryDetailService inventoryDetailService;
     private final InventoryHistoryService inventoryHistoryService;
     private final SysDictTypeService dictTypeService;
 
@@ -131,14 +127,11 @@ public class ReceiptOrderService {
             updateByBo(bo);
         }
 
-        // 3.保存库存明细
-        this.saveInventoryDetails(bo);
-
-        // 4.增加库存
+        // 3.增加库存
         List<InventoryBo> inventoryList = convertInventoryList(bo.getDetails());
         inventoryService.updateInventoryQuantity(inventoryList);
 
-        // 5.保存库存记录
+        // 4.保存库存记录
         this.saveInventoryHistory(bo);
     }
 
@@ -166,19 +159,6 @@ public class ReceiptOrderService {
             inventoryHistoryList.add(inventoryHistory);
         });
         inventoryHistoryService.saveBatch(inventoryHistoryList);
-    }
-
-    private void saveInventoryDetails(ReceiptOrderBo bo){
-
-        List<InventoryDetail> inventoryDetailList = MapstructUtils.convert(bo.getDetails(), InventoryDetail.class);
-
-        inventoryDetailList.forEach(inventoryDetail -> {
-            inventoryDetail.setReceiptOrderId(bo.getId());
-            inventoryDetail.setOrderNo(bo.getOrderNo());
-            inventoryDetail.setType(ServiceConstants.InventoryDetailType.RECEIPT);
-            inventoryDetail.setRemainQuantity(inventoryDetail.getQuantity());
-        });
-        inventoryDetailService.saveBatch(inventoryDetailList);
     }
 
     /**
