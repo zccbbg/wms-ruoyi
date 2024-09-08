@@ -54,11 +54,6 @@ public class CheckOrderBo extends BaseEntity {
     private Long warehouseId;
 
     /**
-     * 所属库区
-     */
-    private Long areaId;
-
-    /**
      * 备注
      */
     private String remark;

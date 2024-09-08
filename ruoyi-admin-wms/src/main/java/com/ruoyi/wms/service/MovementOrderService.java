@@ -12,24 +12,19 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.wms.domain.bo.InventoryBo;
-import com.ruoyi.wms.domain.bo.InventoryDetailBo;
 import com.ruoyi.wms.domain.bo.MovementOrderBo;
 import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
-import com.ruoyi.wms.domain.entity.InventoryDetail;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.MovementOrder;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.domain.vo.MovementOrderVo;
-import com.ruoyi.wms.mapper.InventoryDetailMapper;
 import com.ruoyi.wms.mapper.MovementOrderMapper;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -45,8 +40,6 @@ public class MovementOrderService {
     private final MovementOrderMapper movementOrderMapper;
     private final MovementOrderDetailService movementOrderDetailService;
     private final InventoryService inventoryService;
-    private final InventoryDetailService inventoryDetailService;
-    private final InventoryDetailMapper inventoryDetailMapper;
     private final InventoryHistoryService inventoryHistoryService;
 
 
@@ -167,13 +160,12 @@ public class MovementOrderService {
     @Transactional
     public void move(MovementOrderBo bo) {
 
-        List<InventoryDetailBo> inventoryDetailBoList = convertMovementOrderDetailToInventoryDetail(bo.getDetails());
 
         // 1.校验商品明细不能为空！
         validateBeforeMove(bo);
 
-        // 2.校验库存记录
-        inventoryDetailService.validateRemainQuantity(inventoryDetailBoList);
+        // 2. todo 校验库存记录
+        //inventoryService.validateRemainQuantity(inventoryDetailBoList);
 
         // 3.保存移库单核移库单明细
         if (Objects.isNull(bo.getId())) {
@@ -188,9 +180,6 @@ public class MovementOrderService {
         inventoryService.updateInventoryQuantity(mergedShipmentInventoryList);
         inventoryService.updateInventoryQuantity(mergedReceiptInventoryList);
 
-        // 5.更新库存明细InventoryDetail: deductInventoryDetailQuantity移出扣减库存，addInventoryDetail为移入增加库存
-        inventoryDetailMapper.deductInventoryDetailQuantity(inventoryDetailBoList, LoginHelper.getUsername(), LocalDateTime.now());
-        addInventoryDetail(bo);
 
         // 6.创建库存记录流水
         createInventoryHistory(bo);
@@ -249,39 +238,6 @@ public class MovementOrderService {
         return new ArrayList<>(mergedReceiptMap.values());
     }
 
-    public List<InventoryDetailBo> convertMovementOrderDetailToInventoryDetail(List<MovementOrderDetailBo> movementOrderDetailBoList) {
-        return movementOrderDetailBoList
-            .stream()
-            .map(detail -> {
-                InventoryDetailBo inventoryDetailBo = new InventoryDetailBo();
-                inventoryDetailBo.setId(detail.getInventoryDetailId());
-                inventoryDetailBo.setShipmentQuantity(detail.getQuantity());
-                return inventoryDetailBo;
-            }).toList();
-    }
-
-    /**
-     * 移库完成创建入库记录
-     * @param bo
-     */
-    @Transactional
-    public void addInventoryDetail(MovementOrderBo bo) {
-        List<InventoryDetail> addInventoryDetailList = bo.getDetails().stream().map(it -> {
-            InventoryDetail addInventoryDetail = new InventoryDetail();
-            addInventoryDetail.setReceiptOrderId(bo.getId());
-            addInventoryDetail.setType(ServiceConstants.InventoryDetailType.MOVEMENT);
-            addInventoryDetail.setSkuId(it.getSkuId());
-            addInventoryDetail.setWarehouseId(it.getTargetWarehouseId());
-            addInventoryDetail.setAreaId(it.getTargetAreaId());
-            addInventoryDetail.setQuantity(it.getQuantity());
-            addInventoryDetail.setBatchNo(it.getBatchNo());
-            addInventoryDetail.setProductionDate(it.getProductionDate());
-            addInventoryDetail.setExpirationDate(it.getExpirationDate());
-            addInventoryDetail.setRemainQuantity(it.getQuantity());
-            return addInventoryDetail;
-        }).toList();
-        inventoryDetailService.saveBatch(addInventoryDetailList);
-    }
 
     /**
      * 移库完成创建库存记录

@@ -13,7 +13,6 @@ import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
-import com.ruoyi.wms.domain.bo.ShipmentDataBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;

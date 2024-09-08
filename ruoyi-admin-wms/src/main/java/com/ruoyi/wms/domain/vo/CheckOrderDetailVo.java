@@ -1,17 +1,14 @@
 package com.ruoyi.wms.domain.vo;
 
-import java.math.BigDecimal;
-import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import lombok.Data;
+import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
-import java.io.Serializable;
 import java.io.Serial;
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 库存盘点单据详情视图对象 wms_check_order_detail
@@ -22,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = CheckOrderDetail.class)
-public class CheckOrderDetailVo implements Serializable {
+public class  CheckOrderDetailVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -62,42 +59,6 @@ public class CheckOrderDetailVo implements Serializable {
      */
     @ExcelProperty(value = "所属仓库")
     private Long warehouseId;
-
-    /**
-     * 所属库区
-     */
-    @ExcelProperty(value = "所属库区")
-    private Long areaId;
-
-    /**
-     * 批号
-     */
-    @ExcelProperty(value = "批号")
-    private String batchNo;
-
-    /**
-     * 生产日期
-     */
-    @ExcelProperty(value = "生产日期")
-    private LocalDateTime productionDate;
-
-    /**
-     * 过期日期
-     */
-    @ExcelProperty(value = "过期日期")
-    private LocalDateTime expirationDate;
-
-    /**
-     * 入库时间
-     */
-    @ExcelProperty(value = "入库时间")
-    private LocalDateTime receiptTime;
-
-    /**
-     * 入库记录id
-     */
-    @ExcelProperty(value = "入库记录id")
-    private Long inventoryDetailId;
 
     /**
      * 备注

@@ -66,11 +66,6 @@ public class CheckOrderDetailBo extends BaseEntity {
     private Long warehouseId;
 
     /**
-     * 所属库区
-     */
-    @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long areaId;
-    /**
      * 批号
      */
     private String batchNo;
@@ -89,12 +84,6 @@ public class CheckOrderDetailBo extends BaseEntity {
      * 入库时间
      */
     private LocalDateTime receiptTime;
-
-    /**
-     * 入库记录id
-     */
-    @NotNull(message = "入库记录id不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long inventoryDetailId;
 
     /**
      * 备注

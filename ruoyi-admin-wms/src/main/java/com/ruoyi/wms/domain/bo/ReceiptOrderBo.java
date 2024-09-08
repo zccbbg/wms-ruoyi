@@ -6,7 +6,6 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -74,11 +73,6 @@ public class ReceiptOrderBo extends BaseEntity {
      */
     @NotNull(message = "仓库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long warehouseId;
-
-    /**
-     * 库区id
-     */
-    private Long areaId;
 
     /**
      * 备注

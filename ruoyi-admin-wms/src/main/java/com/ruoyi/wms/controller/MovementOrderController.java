@@ -14,7 +14,6 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.wms.domain.bo.MovementOrderBo;
 import com.ruoyi.wms.domain.vo.MovementOrderVo;
-import com.ruoyi.wms.service.InventoryDetailService;
 import com.ruoyi.wms.service.MovementOrderService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +36,6 @@ import java.util.List;
 public class MovementOrderController extends BaseController {
 
     private final MovementOrderService movementOrderService;
-    private final InventoryDetailService inventoryDetailService;
 
     /**
      * 查询移库单列表
@@ -106,7 +104,6 @@ public class MovementOrderController extends BaseController {
     public R<Void> move(@Validated(AddGroup.class) @RequestBody MovementOrderBo bo) {
         bo.setMovementOrderStatus(ServiceConstants.MovementOrderStatus.FINISH);
         movementOrderService.move(bo);
-        inventoryDetailService.clearDataWithZeroRemainQuantity();
         return R.ok();
     }
 

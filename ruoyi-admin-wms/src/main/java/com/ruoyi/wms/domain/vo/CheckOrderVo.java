@@ -1,18 +1,14 @@
 package com.ruoyi.wms.domain.vo;
 
-import java.math.BigDecimal;
-
-import com.ruoyi.common.mybatis.core.domain.BaseVo;
-import com.ruoyi.wms.domain.entity.CheckOrder;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import lombok.Data;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
+import com.ruoyi.wms.domain.entity.CheckOrder;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
-import java.io.Serializable;
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -58,12 +54,6 @@ public class CheckOrderVo extends BaseVo {
      */
     @ExcelProperty(value = "所属仓库")
     private Long warehouseId;
-
-    /**
-     * 所属库区
-     */
-    @ExcelProperty(value = "所属库区")
-    private Long areaId;
 
     /**
      * 备注

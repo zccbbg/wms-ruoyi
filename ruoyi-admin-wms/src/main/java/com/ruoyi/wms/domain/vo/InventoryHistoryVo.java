@@ -101,12 +101,6 @@ public class InventoryHistoryVo implements Serializable {
     @ExcelProperty(value = "所属仓库")
     private Long warehouseId;
 
-    /**
-     * 所属库区
-     */
-    @ExcelProperty(value = "所属库区")
-    private Long areaId;
-
     private ItemSkuVo itemSku;
 
     private ItemVo item;

@@ -66,12 +66,6 @@ public class ShipmentOrderDetailBo extends BaseEntity implements PlaceAndItem {
     private Long warehouseId;
 
     /**
-     * 所属库区
-     */
-    @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long areaId;
-
-    /**
      * 批号
      */
     private String batchNo;

@@ -24,7 +24,7 @@ public class CheckOrder extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     /**
-     * 
+     *
      */
     @TableId(value = "id")
     private Long id;
@@ -44,10 +44,6 @@ public class CheckOrder extends BaseEntity {
      * 所属仓库
      */
     private Long warehouseId;
-    /**
-     * 所属库区
-     */
-    private Long areaId;
     /**
      * 备注
      */

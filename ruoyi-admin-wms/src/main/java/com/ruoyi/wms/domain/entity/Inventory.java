@@ -38,10 +38,6 @@ public class Inventory extends BaseEntity implements PlaceAndItem {
      */
     private Long warehouseId;
     /**
-     * 所属库区
-     */
-    private Long areaId;
-    /**
      * 库存
      */
     private BigDecimal quantity;

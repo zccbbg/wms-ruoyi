@@ -73,9 +73,5 @@ public class InventoryHistory extends BaseHistoryEntity {
      * 所属仓库
      */
     private Long warehouseId;
-    /**
-     * 所属库区
-     */
-    private Long areaId;
 
 }

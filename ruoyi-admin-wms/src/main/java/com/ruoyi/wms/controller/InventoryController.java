@@ -38,15 +38,6 @@ public class InventoryController extends BaseController {
     private final InventoryService inventoryService;
 
     /**
-     * 查询库存列表库区维度
-     */
-    @SaCheckPermission("wms:inventory:all")
-    @GetMapping(value = {"/list", "/boardList/area"})
-    public TableDataInfo<InventoryVo> queryAreaBoardList(InventoryBo bo, PageQuery pageQuery) {
-        return inventoryService.queryAreaBoardList(bo, pageQuery);
-    }
-
-    /**
      * 查询库存列表商品维度
      */
     @SaCheckPermission("wms:inventory:all")

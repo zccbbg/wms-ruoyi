@@ -1,28 +1,22 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.ruoyi.wms.domain.entity.MovementOrderDetail;
-import com.ruoyi.wms.domain.vo.InventoryDetailVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.utils.MapstructUtils;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
+import com.ruoyi.wms.domain.entity.CheckOrderDetail;
+import com.ruoyi.wms.domain.vo.CheckOrderDetailVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
-import com.ruoyi.wms.domain.vo.MovementOrderDetailVo;
-import com.ruoyi.wms.mapper.InventoryDetailMapper;
+import com.ruoyi.wms.mapper.CheckOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
-import com.ruoyi.wms.domain.vo.CheckOrderDetailVo;
-import com.ruoyi.wms.domain.entity.CheckOrderDetail;
-import com.ruoyi.wms.mapper.CheckOrderDetailMapper;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,7 +33,6 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
 
     private final CheckOrderDetailMapper checkOrderDetailMapper;
     private final ItemSkuService itemSkuService;
-    private final InventoryDetailMapper inventoryDetailMapper;
 
     /**
      * 查询库存盘点单据详情
@@ -81,8 +74,6 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         lqw.eq(bo.getQuantity() != null, CheckOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getCheckQuantity() != null, CheckOrderDetail::getCheckQuantity, bo.getCheckQuantity());
         lqw.eq(bo.getWarehouseId() != null, CheckOrderDetail::getWarehouseId, bo.getWarehouseId());
-        lqw.eq(bo.getAreaId() != null, CheckOrderDetail::getAreaId, bo.getAreaId());
-        lqw.eq(bo.getInventoryDetailId() != null, CheckOrderDetail::getInventoryDetailId, bo.getInventoryDetailId());
         lqw.apply(bo.getHaveProfitAndLoss() != null && bo.getHaveProfitAndLoss(), "quantity != check_quantity");
         return lqw;
     }
@@ -125,20 +116,8 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         if (CollUtil.isEmpty(details)) {
             return Collections.emptyList();
         }
-        Set<Long> skuIds = details
-            .stream()
-            .map(CheckOrderDetailVo::getSkuId)
-            .collect(Collectors.toSet());
-        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-            .stream()
-            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-        List<Long> inventoryDetailIds = details.stream().map(CheckOrderDetailVo::getInventoryDetailId).toList();
-        Map<Long, BigDecimal> remainQuantityMap = inventoryDetailMapper.selectVoBatchIds(inventoryDetailIds)
-            .stream().collect(Collectors.toMap(InventoryDetailVo::getId, InventoryDetailVo::getRemainQuantity));
-        details.forEach(it -> {
-            it.setItemSku(itemSkuMap.get(it.getSkuId()));
-            it.setRemainQuantity(remainQuantityMap.getOrDefault(it.getInventoryDetailId(), BigDecimal.ZERO));
-        });
+
+        // todo 设置盘库单详情
         return details;
     }
 }

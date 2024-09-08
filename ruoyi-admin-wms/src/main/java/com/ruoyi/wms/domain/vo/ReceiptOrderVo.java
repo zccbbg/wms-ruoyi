@@ -80,12 +80,6 @@ public class ReceiptOrderVo extends BaseVo {
     private Long warehouseId;
 
     /**
-     * 库区id
-     */
-    @ExcelProperty(value = "库区id")
-    private Long areaId;
-
-    /**
      * 备注
      */
     @ExcelProperty(value = "备注")

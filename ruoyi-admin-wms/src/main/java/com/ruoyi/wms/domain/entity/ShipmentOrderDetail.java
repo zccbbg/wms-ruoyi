@@ -50,10 +50,6 @@ public class ShipmentOrderDetail extends BaseEntity {
      */
     private Long warehouseId;
     /**
-     * 所属库区
-     */
-    private Long areaId;
-    /**
      * 批号
      */
     private String batchNo;

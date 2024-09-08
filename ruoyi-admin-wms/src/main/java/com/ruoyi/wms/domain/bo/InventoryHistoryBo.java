@@ -93,12 +93,6 @@ public class InventoryHistoryBo extends BaseHistoryEntity {
     @NotNull(message = "所属仓库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long warehouseId;
 
-    /**
-     * 所属库区
-     */
-    @NotNull(message = "所属库区不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long areaId;
-
     private String itemName;
     private String itemCode;
     private String skuName;
