@@ -1,14 +1,13 @@
 package com.ruoyi.wms.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
-
 import java.io.Serial;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 /**
  * 出库单详情对象 wms_shipment_order_detail
@@ -49,22 +48,6 @@ public class ShipmentOrderDetail extends BaseEntity {
      * 所属仓库
      */
     private Long warehouseId;
-    /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期时间
-     */
-    private LocalDateTime expirationDate;
-    /**
-     * 入库记录id
-     */
-    private Long inventoryDetailId;
     /**
      * 备注
      */

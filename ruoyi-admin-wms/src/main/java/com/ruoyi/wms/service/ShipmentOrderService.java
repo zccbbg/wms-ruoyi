@@ -178,9 +178,6 @@ public class ShipmentOrderService {
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity().negate());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
-            inventoryHistory.setBatchNo(detail.getBatchNo());
-            inventoryHistory.setProductionDate(detail.getProductionDate());
-            inventoryHistory.setExpirationDate(detail.getExpirationDate());
             inventoryHistory.setAmount(detail.getAmount());
             inventoryHistoryList.add(inventoryHistory);
         });

@@ -214,7 +214,6 @@ public class CheckOrderService {
                 inventoryDetailBo.setSkuId(filteredDetail.getSkuId());
                 inventoryDetailBo.setWarehouseId(filteredDetail.getWarehouseId());
                 inventoryDetailBo.setQuantity(filteredDetail.getProfitAndLoss());
-                inventoryDetailBo.setCreateTime(filteredDetail.getReceiptTime());
                 return inventoryDetailBo;
             }).toList();
     }

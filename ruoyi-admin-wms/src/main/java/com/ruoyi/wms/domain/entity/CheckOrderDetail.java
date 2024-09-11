@@ -54,22 +54,6 @@ public class CheckOrderDetail extends BaseEntity {
      */
     private Long warehouseId;
     /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期日期
-     */
-    private LocalDateTime expirationDate;
-    /**
-     * 入库记录id
-     */
-    private Long inventoryDetailId;
-    /**
      * 备注
      */
     private String remark;

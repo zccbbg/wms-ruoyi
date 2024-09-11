@@ -3,16 +3,15 @@ package com.ruoyi.wms.domain.bo;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 入库单详情业务对象 wms_receipt_order_detail
@@ -57,22 +56,6 @@ public class ReceiptOrderDetailBo extends BaseEntity {
      */
     @NotNull(message = "金额不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal amount;
-
-    /**
-     * 批号
-     */
-    private String batchNo;
-
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-
-    /**
-     * 过期时间
-     */
-    private LocalDateTime expirationDate;
-
     /**
      * 备注
      */

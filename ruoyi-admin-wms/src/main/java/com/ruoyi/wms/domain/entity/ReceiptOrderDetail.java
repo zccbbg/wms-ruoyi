@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 入库单详情对象 wms_receipt_order_detail
@@ -45,18 +44,6 @@ public class ReceiptOrderDetail extends BaseEntity {
      * 金额
      */
     private BigDecimal amount;
-    /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期时间
-     */
-    private LocalDateTime expirationDate;
     /**
      * 备注
      */

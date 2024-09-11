@@ -221,7 +221,7 @@ public class MovementOrderService {
     public List<InventoryBo> mergeReceiptDetailByPlaceAndItem(@NotEmpty List<MovementOrderDetailBo> movementOrderDetailBoList) {
         Map<String, InventoryBo> mergedReceiptMap = new HashMap<>();
         movementOrderDetailBoList.forEach(detail -> {
-            String mergedReceiptKey = detail.getTargetWarehouseId() + "_" + detail.getTargetAreaId() + "_" + detail.getSkuId();
+            String mergedReceiptKey = detail.getTargetWarehouseId() +  "_" + detail.getSkuId();
             if (mergedReceiptMap.containsKey(mergedReceiptKey)) {
                 InventoryBo mergedInventoryBo = mergedReceiptMap.get(mergedReceiptKey);
                 mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().add(detail.getQuantity()));
@@ -249,9 +249,6 @@ public class MovementOrderService {
             shipmentInventoryHistory.setWarehouseId(detail.getSourceWarehouseId());
             shipmentInventoryHistory.setSkuId(detail.getSkuId());
             shipmentInventoryHistory.setQuantity(detail.getQuantity().negate());
-            shipmentInventoryHistory.setBatchNo(detail.getBatchNo());
-            shipmentInventoryHistory.setProductionDate(detail.getProductionDate());
-            shipmentInventoryHistory.setExpirationDate(detail.getExpirationDate());
             shipmentInventoryHistory.setOrderId(bo.getId());
             shipmentInventoryHistory.setOrderNo(bo.getMovementOrderNo());
             shipmentInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
@@ -260,9 +257,6 @@ public class MovementOrderService {
             receiptInventoryHistory.setWarehouseId(detail.getTargetWarehouseId());
             receiptInventoryHistory.setSkuId(detail.getSkuId());
             receiptInventoryHistory.setQuantity(detail.getQuantity());
-            receiptInventoryHistory.setBatchNo(detail.getBatchNo());
-            receiptInventoryHistory.setProductionDate(detail.getProductionDate());
-            receiptInventoryHistory.setExpirationDate(detail.getExpirationDate());
             receiptInventoryHistory.setOrderId(bo.getId());
             receiptInventoryHistory.setOrderNo(bo.getMovementOrderNo());
             receiptInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
