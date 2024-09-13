@@ -39,9 +39,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bo.warehouseId != null">
                 and history.warehouse_id=#{bo.warehouseId}
             </if>
-            <if test="bo.areaId != null">
-                and history.area_id=#{bo.areaId}
-            </if>
             <if test="bo.startTime != null and bo.startTime != '' and bo.endTime != null and bo.endTime != ''">
                 and (history.create_time between #{bo.startTime} and #{bo.endTime})
             </if>

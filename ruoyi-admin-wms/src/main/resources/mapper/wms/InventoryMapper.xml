@@ -39,9 +39,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bo.warehouseId != null">
                 and inventory.warehouse_id=#{bo.warehouseId}
             </if>
-            <if test="bo.areaId != null">
-                and inventory.area_id=#{bo.areaId}
-            </if>
             <if test="bo.minQuantity != null">
                 and inventory.quantity>=#{bo.minQuantity}
             </if>
@@ -50,12 +47,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="queryAreaBoardList" resultMap="inventoryVoMap">
         <include refid="selectVoListByBo"/>
-        order by inventory.warehouse_id,inventory.area_id,sku.item_id,sku.id
+        order by inventory.warehouse_id,sku.item_id,sku.id
     </select>
 
     <select id="queryItemBoardList" resultMap="inventoryVoMap">
         <include refid="selectVoListByBo"/>
-        order by sku.item_id,sku.id,inventory.warehouse_id,inventory.area_id
+        order by sku.item_id,sku.id,inventory.warehouse_id
     </select>
 
     <select id="selectBoardPageByWarehouse" resultType="com.ruoyi.wms.domain.vo.InventoryVo">
