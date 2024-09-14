@@ -57,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBoardPageByWarehouse" resultType="com.ruoyi.wms.domain.vo.InventoryVo">
         select
+        inventory.id,
         inventory.warehouse_id,
         inventory.sku_id,
         sum(inventory.quantity) quantity
