@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.HttpStatus;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
@@ -134,9 +135,14 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
             wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
+            if(result==null){
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
+                throw new ServiceException("库存不足", HttpStatus.NOT_ACCEPTABLE,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
+            }
             BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
             if(quantity.signum() == -1){
-                throw new ServiceException("库存不足");
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
+                throw new ServiceException("库存不足", HttpStatus.NOT_ACCEPTABLE,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
             }
             result.setQuantity(quantity);
             updateList.add(result);

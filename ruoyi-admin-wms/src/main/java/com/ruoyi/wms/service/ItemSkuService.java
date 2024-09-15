@@ -1,7 +1,6 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,6 +11,10 @@ import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.ItemSkuBo;
+import com.ruoyi.wms.domain.entity.ItemSku;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
+import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemMapper;
 import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +23,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.wms.domain.bo.ItemSkuBo;
-import com.ruoyi.wms.domain.entity.ItemSku;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
-import com.ruoyi.wms.domain.vo.ItemVo;
-import com.ruoyi.wms.mapper.ItemCategoryMapper;
 
 import java.util.*;
 import java.util.function.Function;
@@ -37,8 +35,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
 
 
     private final ItemSkuMapper itemSkuMapper;
-    private final ItemService itemService;
-    private final ItemCategoryMapper itemCategoryMapper;
     private final InventoryService inventoryService;
     private final ItemMapper itemMapper;
 
@@ -47,7 +43,12 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
      */
 
     public ItemSkuVo queryById(Long id) {
-        return itemSkuMapper.selectVoById(id);
+        ItemSkuVo itemSkuVo = itemSkuMapper.selectVoById(id);
+        if(itemSkuVo!=null){
+            ItemVo itemVo = itemMapper.selectVoById(itemSkuVo.getItemId());
+            itemSkuVo.setItem(itemVo);
+        }
+        return itemSkuVo;
     }
 
 
@@ -140,18 +141,6 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
     public void saveOrUpdateBatchByBo(List<ItemSkuBo> sku) {
         List<ItemSku> itemSkuList = MapstructUtils.convert(sku, ItemSku.class);
         saveOrUpdateBatch(itemSkuList);
-    }
-
-    /**
-     * 填充sku的编码
-     * @param itemSkuList
-     */
-    public void setOutSkuId(List<ItemSkuBo> itemSkuList) {
-        for (ItemSkuBo itemSkuBo : itemSkuList) {
-            if (StrUtil.isBlank(itemSkuBo.getBarcode())) {
-                itemSkuBo.setBarcode(RandomUtil.randomNumbers(8));
-            }
-        }
     }
 
     public void setItemId(List<ItemSkuBo> itemSkuList,Long itemId) {

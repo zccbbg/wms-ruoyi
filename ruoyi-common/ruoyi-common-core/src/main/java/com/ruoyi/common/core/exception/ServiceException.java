@@ -40,6 +40,12 @@ public final class ServiceException extends RuntimeException {
         this.code = code;
     }
 
+    public ServiceException(String message, Integer code,String detailMessage) {
+        this.message = message;
+        this.code = code;
+        this.detailMessage = detailMessage;
+    }
+
     public String getDetailMessage() {
         return detailMessage;
     }

@@ -30,6 +30,8 @@ public class R<T> implements Serializable {
 
     private String msg;
 
+    private String detailMessage;
+
     private T data;
 
     public static <T> R<T> ok() {
@@ -68,6 +70,10 @@ public class R<T> implements Serializable {
         return restResult(null, code, msg);
     }
 
+    public static <T> R<T> fail(int code, String msg,String detailMessage) {
+        return restResult(null, code, msg,detailMessage);
+    }
+
     /**
      * 返回警告消息
      *
@@ -94,6 +100,15 @@ public class R<T> implements Serializable {
         r.setCode(code);
         r.setData(data);
         r.setMsg(msg);
+        return r;
+    }
+
+    private static <T> R<T> restResult(T data, int code, String msg,String detailMessage) {
+        R<T> r = new R<>();
+        r.setCode(code);
+        r.setData(data);
+        r.setMsg(msg);
+        r.setDetailMessage(detailMessage);
         return r;
     }
 

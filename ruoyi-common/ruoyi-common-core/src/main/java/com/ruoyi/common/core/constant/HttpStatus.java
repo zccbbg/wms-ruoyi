@@ -72,6 +72,11 @@ public interface HttpStatus {
     int CONFLICT = 409;
 
     /**
+     * 资源不被允许访问
+     */
+    int NOT_ACCEPTABLE = 406;
+
+    /**
      * 不支持的数据，媒体类型
      */
     int UNSUPPORTED_TYPE = 415;
