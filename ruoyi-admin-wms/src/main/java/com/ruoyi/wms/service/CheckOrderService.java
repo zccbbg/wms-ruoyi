@@ -177,14 +177,14 @@ public class CheckOrderService {
             //inventoryMapper.deductInventoryDetailQuantity(shipmentList, LoginHelper.getUsername(), LocalDateTime.now());
 
             // 扣减库存
-            inventoryService.updateInventoryQuantity(shipmentList);
+            inventoryService.addInventoryQuantity(shipmentList);
             // 创建库存记录流水
             createInventoryHistory(shipmentList, bo.getId(), bo.getCheckOrderNo());
         }
         // 有盘盈入库
         if (CollUtil.isNotEmpty(receiptList)) {
             // 加库存
-            inventoryService.updateInventoryQuantity(receiptList);
+            inventoryService.addInventoryQuantity(receiptList);
             // 创建库存记录流水
             createInventoryHistory(receiptList, bo.getId(), bo.getCheckOrderNo());
         }

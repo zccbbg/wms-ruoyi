@@ -13,6 +13,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
@@ -153,18 +154,18 @@ public class ShipmentOrderService {
     public void shipment(ShipmentOrderBo bo) {
         // 1.校验商品明细不能为空！
         validateBeforeShipment(bo);
-        // todo 3.校验库存明细
-        //inventoryService.validateRemainQuantity(inventoryDetailBoList);
-        // 4. 保存入库单和入库单明细
+        // 2. 保存入库单和入库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
-        // todo 5.更新库存：Inventory表
-        //inventoryService.updateInventoryQuantity(mergedInventoryBoList);
+        List<ShipmentOrderDetailBo> details = bo.getDetails();
+        List<InventoryBo> inventoryList = MapstructUtils.convert(details, InventoryBo.class);
+        // 3.更新库存：Inventory表
+        inventoryService.subtractInventoryQuantity(inventoryList);
 
-        // 7.创建库存记录
+        // 4.创建库存记录
         saveInventoryHistory(bo);
     }
 

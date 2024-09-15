@@ -129,7 +129,7 @@ public class ReceiptOrderService {
 
         // 3.增加库存
         List<InventoryBo> inventoryList = convertInventoryList(bo.getDetails());
-        inventoryService.updateInventoryQuantity(inventoryList);
+        inventoryService.addInventoryQuantity(inventoryList);
 
         // 4.保存库存记录
         this.saveInventoryHistory(bo);

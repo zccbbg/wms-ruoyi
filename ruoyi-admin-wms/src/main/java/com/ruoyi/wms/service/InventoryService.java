@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
 import com.ruoyi.common.core.validate.AddGroup;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -84,11 +86,11 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     }
 
     /**
-     * 更新库存
+     * 增加库存
      * @param list
      */
     @Transactional
-    public synchronized void updateInventoryQuantity(List<InventoryBo> list) {
+    public void addInventoryQuantity(List<InventoryBo> list) {
         list.forEach(inventoryBo -> {
             ValidatorUtils.validate(inventoryBo, AddGroup.class);
         });
@@ -117,6 +119,32 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     }
 
     /**
+     * 扣减库存
+     * @param list
+     */
+    @Transactional
+    public void subtractInventoryQuantity(List<InventoryBo> list) {
+        list.forEach(inventoryBo -> {
+            ValidatorUtils.validate(inventoryBo, AddGroup.class);
+        });
+
+        List<Inventory> updateList = new LinkedList<>();
+        list.forEach(inventoryBo -> {
+            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
+            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
+            Inventory result = inventoryMapper.selectOne(wrapper);
+            BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
+            if(quantity.signum() == -1){
+                throw new ServiceException("库存不足");
+            }
+            result.setQuantity(quantity);
+            updateList.add(result);
+        });
+        updateBatchById(updateList);
+    }
+
+    /**
      * 校验规格是否有库存
      * @param skuIds
      * @return
@@ -124,16 +152,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     public boolean existsBySkuIds(@NotEmpty Collection<Long> skuIds) {
         LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
         lqw.in(Inventory::getSkuId, skuIds);
-        return inventoryMapper.exists(lqw);
-    }
-
-    /**
-     * 校验该库区是否有库存
-     * @param areaIds
-     * @return
-     */
-    public boolean existsByAreaIds(@NotEmpty Collection<Long> areaIds) {
-        LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
         return inventoryMapper.exists(lqw);
     }
 
@@ -152,16 +170,9 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             return tableDataInfo;
     }
 
-    /**
-     * 查询库存列表
-     */
-    public TableDataInfo<InventoryVo> queryAreaBoardList(InventoryBo bo, PageQuery pageQuery) {
-        Page<InventoryVo> result = inventoryMapper.queryAreaBoardList(pageQuery.build(), bo);
-        return TableDataInfo.build(result);
-    }
-
     public TableDataInfo<InventoryVo> queryItemBoardList(InventoryBo bo, PageQuery pageQuery) {
         Page<InventoryVo> result = inventoryMapper.queryItemBoardList(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }
+
 }

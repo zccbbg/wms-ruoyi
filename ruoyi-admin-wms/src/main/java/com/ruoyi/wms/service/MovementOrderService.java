@@ -177,8 +177,8 @@ public class MovementOrderService {
         List<InventoryBo> mergedShipmentInventoryList = mergeShipmentDetailByPlaceAndItem(bo.getDetails());
         List<InventoryBo> mergedReceiptInventoryList = mergeReceiptDetailByPlaceAndItem(bo.getDetails());
         mergedShipmentInventoryList.forEach(mergedShipmentInventory -> mergedShipmentInventory.setQuantity(mergedShipmentInventory.getQuantity().negate()));
-        inventoryService.updateInventoryQuantity(mergedShipmentInventoryList);
-        inventoryService.updateInventoryQuantity(mergedReceiptInventoryList);
+        inventoryService.addInventoryQuantity(mergedShipmentInventoryList);
+        inventoryService.addInventoryQuantity(mergedReceiptInventoryList);
 
 
         // 6.创建库存记录流水
