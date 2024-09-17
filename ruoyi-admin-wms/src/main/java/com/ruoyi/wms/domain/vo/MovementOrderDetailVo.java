@@ -66,12 +66,6 @@ public class MovementOrderDetailVo implements Serializable {
     @ExcelProperty(value = "目标仓库")
     private Long targetWarehouseId;
 
-    /**
-     * 入库记录id
-     */
-    @ExcelProperty(value = "入库记录id")
-    private Long inventoryDetailId;
-
     private ItemSkuVo itemSku;
 
     private BigDecimal remainQuantity;
