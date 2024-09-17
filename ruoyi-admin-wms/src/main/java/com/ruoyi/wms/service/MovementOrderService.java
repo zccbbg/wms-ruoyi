@@ -20,7 +20,6 @@ import com.ruoyi.wms.domain.entity.MovementOrder;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.domain.vo.MovementOrderVo;
 import com.ruoyi.wms.mapper.MovementOrderMapper;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,9 +161,6 @@ public class MovementOrderService {
         // 1.校验商品明细不能为空！
         validateBeforeMove(bo);
 
-        // 2. todo 校验库存记录
-        //inventoryService.validateRemainQuantity(inventoryDetailBoList);
-
         // 3.保存移库单核移库单明细
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
@@ -172,66 +168,45 @@ public class MovementOrderService {
             updateByBo(bo);
         }
         // 4.更新库存Inventory
-        List<InventoryBo> mergedShipmentInventoryList = mergeShipmentDetailByPlaceAndItem(bo.getDetails());
-        List<InventoryBo> mergedReceiptInventoryList = mergeReceiptDetailByPlaceAndItem(bo.getDetails());
-        mergedShipmentInventoryList.forEach(mergedShipmentInventory -> mergedShipmentInventory.setQuantity(mergedShipmentInventory.getQuantity().negate()));
-        inventoryService.addInventoryQuantity(mergedShipmentInventoryList);
-        inventoryService.addInventoryQuantity(mergedReceiptInventoryList);
+        List<InventoryBo> shipmentList = getShipmenttList(bo.getDetails());
+        inventoryService.subtractInventoryQuantity(shipmentList);
+
+        List<InventoryBo> receiptList = getReceiptList(bo.getDetails());
+        inventoryService.addInventoryQuantity(receiptList);
 
 
         // 6.创建库存记录流水
         createInventoryHistory(bo);
     }
 
+    private List<InventoryBo> getReceiptList(List<MovementOrderDetailBo> details) {
+
+        return details.stream()
+            .map(detail -> {
+                InventoryBo inventoryBo = new InventoryBo();
+                inventoryBo.setSkuId(detail.getSkuId());
+                inventoryBo.setQuantity(detail.getQuantity());
+                inventoryBo.setWarehouseId(detail.getTargetWarehouseId());
+                return inventoryBo;
+            }).toList();
+    }
+
+    private List<InventoryBo> getShipmenttList(List<MovementOrderDetailBo> details) {
+
+        return details.stream()
+            .map(detail -> {
+                InventoryBo inventoryBo = new InventoryBo();
+                inventoryBo.setSkuId(detail.getSkuId());
+                inventoryBo.setQuantity(detail.getQuantity());
+                inventoryBo.setWarehouseId(detail.getSourceWarehouseId());
+                return inventoryBo;
+            }).toList();
+    }
+
     private void validateBeforeMove(MovementOrderBo bo) {
         if (CollUtil.isEmpty(bo.getDetails())) {
             throw new BaseException("商品明细不能为空！");
         }
-    }
-
-    /**
-     * 按仓库库区规格合并商品明细的数量
-     * @param movementOrderDetailBoList
-     */
-    public List<InventoryBo> mergeShipmentDetailByPlaceAndItem(@NotEmpty List<MovementOrderDetailBo> movementOrderDetailBoList) {
-        Map<String, InventoryBo> mergedShipmentMap = new HashMap<>();
-        movementOrderDetailBoList.forEach(detail -> {
-            String mergedShipmentKey = detail.getKey();
-            if (mergedShipmentMap.containsKey(mergedShipmentKey)) {
-                InventoryBo mergedInventoryBo = mergedShipmentMap.get(mergedShipmentKey);
-                mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().add(detail.getQuantity()));
-            } else {
-                InventoryBo mergedInventoryBo = new InventoryBo();
-                mergedInventoryBo.setWarehouseId(detail.getSourceWarehouseId());
-                mergedInventoryBo.setSkuId(detail.getSkuId());
-                mergedInventoryBo.setQuantity(detail.getQuantity());
-                mergedShipmentMap.put(mergedShipmentKey, mergedInventoryBo);
-            }
-        });
-
-        return new ArrayList<>(mergedShipmentMap.values());
-    }
-
-    /**
-     * 按仓库库区规格合并商品明细的数量
-     * @param movementOrderDetailBoList
-     */
-    public List<InventoryBo> mergeReceiptDetailByPlaceAndItem(@NotEmpty List<MovementOrderDetailBo> movementOrderDetailBoList) {
-        Map<String, InventoryBo> mergedReceiptMap = new HashMap<>();
-        movementOrderDetailBoList.forEach(detail -> {
-            String mergedReceiptKey = detail.getTargetWarehouseId() +  "_" + detail.getSkuId();
-            if (mergedReceiptMap.containsKey(mergedReceiptKey)) {
-                InventoryBo mergedInventoryBo = mergedReceiptMap.get(mergedReceiptKey);
-                mergedInventoryBo.setQuantity(mergedInventoryBo.getQuantity().add(detail.getQuantity()));
-            } else {
-                InventoryBo mergedInventoryBo = new InventoryBo();
-                mergedInventoryBo.setWarehouseId(detail.getTargetWarehouseId());
-                mergedInventoryBo.setSkuId(detail.getSkuId());
-                mergedInventoryBo.setQuantity(detail.getQuantity());
-                mergedReceiptMap.put(mergedReceiptKey, mergedInventoryBo);
-            }
-        });
-        return new ArrayList<>(mergedReceiptMap.values());
     }
 
 
