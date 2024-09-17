@@ -3,7 +3,6 @@ package com.ruoyi.wms.domain.bo;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +22,7 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = MovementOrderDetail.class, reverseConvertGenerate = false)
-public class MovementOrderDetailBo extends BaseEntity implements PlaceAndItem {
+public class MovementOrderDetailBo extends BaseEntity {
 
     /**
      *
@@ -66,11 +65,5 @@ public class MovementOrderDetailBo extends BaseEntity implements PlaceAndItem {
      */
     @NotNull(message = "目标仓库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long targetWarehouseId;
-
-
-    @Override
-    public Long getWarehouseId() {
-        return this.getSourceWarehouseId();
-    }
 
 }

@@ -3,7 +3,6 @@ package com.ruoyi.wms.domain.bo;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.domain.PlaceAndItem;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -26,7 +25,7 @@ import java.math.BigDecimal;
     @AutoMapper(target = ShipmentOrderDetail.class, reverseConvertGenerate = false),
     @AutoMapper(target = InventoryBo.class, reverseConvertGenerate = false)
 })
-public class ShipmentOrderDetailBo extends BaseEntity implements PlaceAndItem {
+public class ShipmentOrderDetailBo extends BaseEntity{
 
     /**
      *
