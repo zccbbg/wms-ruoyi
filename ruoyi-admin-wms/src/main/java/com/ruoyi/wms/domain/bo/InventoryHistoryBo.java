@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 库存记录业务对象 wms_inventory_history
@@ -54,21 +53,6 @@ public class InventoryHistoryBo extends BaseHistoryEntity {
      */
     @NotNull(message = "物料ID不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long skuId;
-
-    /**
-     * 批号
-     */
-    private String batchNo;
-
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-
-    /**
-     * 过期时间
-     */
-    private LocalDateTime expirationDate;
 
     /**
      * 金额

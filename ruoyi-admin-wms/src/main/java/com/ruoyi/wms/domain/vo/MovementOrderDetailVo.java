@@ -9,7 +9,6 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 库存移动详情视图对象 wms_movement_order_detail
@@ -54,24 +53,6 @@ public class MovementOrderDetailVo implements Serializable {
      */
     @ExcelProperty(value = "备注")
     private String remark;
-
-    /**
-     * 批号
-     */
-    @ExcelProperty(value = "批号")
-    private String batchNo;
-
-    /**
-     * 生产日期
-     */
-    @ExcelProperty(value = "生产日期")
-    private LocalDateTime productionDate;
-
-    /**
-     * 过期时间
-     */
-    @ExcelProperty(value = "过期时间")
-    private LocalDateTime expirationDate;
 
     /**
      * 源仓库
