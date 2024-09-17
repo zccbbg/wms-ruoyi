@@ -62,12 +62,6 @@ public class MovementOrderDetailBo extends BaseEntity implements PlaceAndItem {
     private Long sourceWarehouseId;
 
     /**
-     * 源库区
-     */
-    @NotNull(message = "源库区不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long sourceAreaId;
-
-    /**
      * 目标仓库
      */
     @NotNull(message = "目标仓库不能为空", groups = { AddGroup.class, EditGroup.class })

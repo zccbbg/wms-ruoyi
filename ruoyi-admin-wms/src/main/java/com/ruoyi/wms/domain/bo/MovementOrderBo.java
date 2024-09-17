@@ -43,20 +43,10 @@ public class MovementOrderBo extends BaseEntity {
     private Long sourceWarehouseId;
 
     /**
-     * 源库区
-     */
-    private Long sourceAreaId;
-
-    /**
      * 目标仓库
      */
     @NotNull(message = "目标仓库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long targetWarehouseId;
-
-    /**
-     * 目标库区
-     */
-    private Long targetAreaId;
 
     /**
      * 状态

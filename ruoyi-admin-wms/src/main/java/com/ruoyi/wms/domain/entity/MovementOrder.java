@@ -24,7 +24,7 @@ public class MovementOrder extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     /**
-     * 
+     *
      */
     @TableId(value = "id")
     private Long id;
@@ -37,17 +37,9 @@ public class MovementOrder extends BaseEntity {
      */
     private Long sourceWarehouseId;
     /**
-     * 源库区
-     */
-    private Long sourceAreaId;
-    /**
      * 目标仓库
      */
     private Long targetWarehouseId;
-    /**
-     * 目标库区
-     */
-    private Long targetAreaId;
     /**
      * 状态
      */

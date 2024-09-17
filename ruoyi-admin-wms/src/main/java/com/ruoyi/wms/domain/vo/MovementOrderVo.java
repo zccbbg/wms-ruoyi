@@ -1,18 +1,14 @@
 package com.ruoyi.wms.domain.vo;
 
-import java.math.BigDecimal;
-
-import com.ruoyi.common.mybatis.core.domain.BaseVo;
-import com.ruoyi.wms.domain.entity.MovementOrder;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import lombok.Data;
+import com.ruoyi.common.mybatis.core.domain.BaseVo;
+import com.ruoyi.wms.domain.entity.MovementOrder;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
-import java.io.Serializable;
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -48,22 +44,10 @@ public class MovementOrderVo extends BaseVo{
     private Long sourceWarehouseId;
 
     /**
-     * 源库区
-     */
-    @ExcelProperty(value = "源库区")
-    private Long sourceAreaId;
-
-    /**
      * 目标仓库
      */
     @ExcelProperty(value = "目标仓库")
     private Long targetWarehouseId;
-
-    /**
-     * 目标库区
-     */
-    @ExcelProperty(value = "目标库区")
-    private Long targetAreaId;
 
     /**
      * 状态

@@ -1,16 +1,14 @@
 package com.ruoyi.wms.domain.vo;
 
-import java.math.BigDecimal;
-import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.excel.annotation.ExcelDictFormat;
-import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import lombok.Data;
+import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 
-import java.io.Serializable;
 import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -82,22 +80,10 @@ public class MovementOrderDetailVo implements Serializable {
     private Long sourceWarehouseId;
 
     /**
-     * 源库区
-     */
-    @ExcelProperty(value = "源库区")
-    private Long sourceAreaId;
-
-    /**
      * 目标仓库
      */
     @ExcelProperty(value = "目标仓库")
     private Long targetWarehouseId;
-
-    /**
-     * 目标库区
-     */
-    @ExcelProperty(value = "目标库区")
-    private Long targetAreaId;
 
     /**
      * 入库记录id
