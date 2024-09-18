@@ -52,7 +52,13 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      */
     public List<InventoryVo> queryList(InventoryBo bo) {
         LambdaQueryWrapper<Inventory> lqw = buildQueryWrapper(bo);
-        return inventoryMapper.selectVoList(lqw);
+        List<InventoryVo> vos = inventoryMapper.selectVoList(lqw);
+        if(CollUtil.isNotEmpty(vos)){
+            Set<Long> skuIds = vos.stream().map(InventoryVo::getSkuId).collect(Collectors.toSet());
+            Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds).stream().collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+            vos.forEach(it -> it.setItemSku(itemSkuMap.get(it.getSkuId())));
+        }
+        return vos;
     }
 
     private LambdaQueryWrapper<Inventory> buildQueryWrapper(InventoryBo bo) {

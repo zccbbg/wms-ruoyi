@@ -56,6 +56,15 @@ public class InventoryController extends BaseController {
     }
 
     /**
+     * 查询库存列表商品维度
+     */
+    @SaCheckPermission("wms:inventory:all")
+    @GetMapping(value = {"/listNoPage"})
+    public R<List<InventoryVo>> listNoPage(InventoryBo bo) {
+        return R.ok(inventoryService.queryList(bo));
+    }
+
+    /**
      * 导出库存列表
      */
     @SaCheckPermission("wms:inventory:all")

@@ -11,16 +11,6 @@ public class ServiceConstants {
     }
 
     /**
-     * 入库记录类型
-     */
-    public class InventoryDetailType{
-        public static final Integer RECEIPT = 1;
-        public static final Integer MOVEMENT = 2;
-        public static final Integer CHECK = 3;
-
-    }
-
-    /**
      * 出库单状态
      */
     public class ShipmentOrderStatus {
