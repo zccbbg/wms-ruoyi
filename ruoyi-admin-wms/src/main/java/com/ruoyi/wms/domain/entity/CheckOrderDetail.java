@@ -1,14 +1,13 @@
 package com.ruoyi.wms.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-
-import java.math.BigDecimal;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 /**
  * 库存盘点单据详情对象 wms_check_order_detail
@@ -45,10 +44,6 @@ public class CheckOrderDetail extends BaseEntity {
      * 盘点数量
      */
     private BigDecimal checkQuantity;
-    /**
-     * 入库时间
-     */
-    private LocalDateTime receiptTime;
     /**
      * 所属仓库
      */
