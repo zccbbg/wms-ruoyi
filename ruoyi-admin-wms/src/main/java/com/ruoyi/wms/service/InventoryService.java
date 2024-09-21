@@ -12,6 +12,7 @@ import com.ruoyi.common.core.utils.ValidatorUtils;
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
@@ -187,4 +188,51 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         return TableDataInfo.build(result);
     }
 
+    public void updateInventory(List<CheckOrderDetailBo> details) {
+        List<Inventory> updateInventoryList=new LinkedList<>();
+        List<Inventory> insertInventoryList=new LinkedList<>();
+
+        details.forEach(detail -> {
+            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+            if(detail.getInventoryId()!=null){
+                wrapper.eq(Inventory::getId,detail.getInventoryId());
+                Inventory inventory = inventoryMapper.selectOne(wrapper);
+                if(!inventory.getQuantity().equals(detail.getQuantity())){
+                    ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
+                    throw new ServiceException(
+                        itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）账面库存不匹配",
+                        HttpStatus.NOT_ACCEPTABLE,
+                        "填写账面库存："+detail.getQuantity()+" 实际账面库存："+inventory.getQuantity());
+                }else {
+                    if(!inventory.getQuantity().equals(detail.getCheckQuantity())){
+                        inventory.setQuantity(detail.getCheckQuantity());
+                        updateInventoryList.add(inventory);
+                    }
+                }
+            }else{
+                wrapper.eq(Inventory::getSkuId,detail.getSkuId());
+                wrapper.eq(Inventory::getWarehouseId,detail.getWarehouseId());
+                Inventory inventory = inventoryMapper.selectOne(wrapper);
+                if(inventory != null){
+                    ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
+                    throw new ServiceException(
+                        itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）账面库存不匹配",
+                        HttpStatus.NOT_ACCEPTABLE,
+                        "填写账面库存：0, 实际账面库存："+inventory.getQuantity());
+                }else {
+                    inventory = new Inventory();
+                    inventory.setSkuId(detail.getSkuId());
+                    inventory.setWarehouseId(detail.getWarehouseId());
+                    inventory.setQuantity(detail.getCheckQuantity());
+                    insertInventoryList.add(inventory);
+                }
+            }
+        });
+        if(CollUtil.isNotEmpty(updateInventoryList)){
+            inventoryMapper.updateBatchById(updateInventoryList);
+        }
+        if(CollUtil.isNotEmpty(insertInventoryList)){
+            inventoryMapper.insertBatch(insertInventoryList);
+        }
+    }
 }

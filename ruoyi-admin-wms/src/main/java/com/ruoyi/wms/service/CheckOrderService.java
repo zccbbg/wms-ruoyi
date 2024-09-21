@@ -164,34 +164,21 @@ public class CheckOrderService {
         } else {
             updateByBo(bo);
         }
+        inventoryService.updateInventory(details);
         // 计算盈亏数
-        calcProfitAndLoss(details);
+        details.forEach(detail -> detail.setProfitAndLoss(detail.getCheckQuantity().subtract(detail.getQuantity())));
         // 拆分盘盈入库和盘盈出库数据
         List<InventoryBo> shipmentList = splitOutShipmentData(details);
-        List<InventoryBo> receiptList = splitOutReceiptData(bo);
-        // 有盘亏出库
+        List<InventoryBo> receiptList = splitOutReceiptData(details);
         if (CollUtil.isNotEmpty(shipmentList)) {
-            // todo 校验入库记录剩余数
-            //inventoryService.validateRemainQuantity(shipmentList);
-            // todo 扣减入库记录剩余数
-            //inventoryMapper.deductInventoryDetailQuantity(shipmentList, LoginHelper.getUsername(), LocalDateTime.now());
-
-            // 扣减库存
-            inventoryService.addInventoryQuantity(shipmentList);
             // 创建库存记录流水
             createInventoryHistory(shipmentList, bo.getId(), bo.getCheckOrderNo());
         }
         // 有盘盈入库
         if (CollUtil.isNotEmpty(receiptList)) {
-            // 加库存
-            inventoryService.addInventoryQuantity(receiptList);
             // 创建库存记录流水
             createInventoryHistory(receiptList, bo.getId(), bo.getCheckOrderNo());
         }
-    }
-
-    private void calcProfitAndLoss(List<CheckOrderDetailBo> details) {
-        details.forEach(detail -> detail.setProfitAndLoss(detail.getCheckQuantity().subtract(detail.getQuantity())));
     }
 
     public List<InventoryBo> splitOutShipmentData(List<CheckOrderDetailBo> details) {
@@ -206,8 +193,8 @@ public class CheckOrderService {
             }).toList();
     }
 
-    public List<InventoryBo> splitOutReceiptData(CheckOrderBo bo) {
-        return bo.getDetails().stream()
+    public List<InventoryBo> splitOutReceiptData(List<CheckOrderDetailBo> details) {
+        return details.stream()
             .filter(detail -> detail.getProfitAndLoss().compareTo(BigDecimal.ZERO) > 0)
             .map(filteredDetail -> {
                 InventoryBo inventoryDetailBo = new InventoryBo();
@@ -222,7 +209,6 @@ public class CheckOrderService {
     public void createInventoryHistory(List<InventoryBo> inventoryDetailBoList, Long checkOrderId, String checkOrderNo) {
         List<InventoryHistory> addInventoryHistoryList = inventoryDetailBoList.stream().map(bo -> {
             InventoryHistory addInventoryHistory = MapstructUtils.convert(bo, InventoryHistory.class);
-            addInventoryHistory.setId(null);
             addInventoryHistory.setOrderId(checkOrderId);
             addInventoryHistory.setOrderNo(checkOrderNo);
             addInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.CHECK);
