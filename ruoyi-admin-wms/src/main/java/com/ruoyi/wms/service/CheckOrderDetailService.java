@@ -17,7 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -113,11 +117,19 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         CheckOrderDetailBo bo = new CheckOrderDetailBo();
         bo.setCheckOrderId(checkOrderId);
         List<CheckOrderDetailVo> details = queryList(bo);
-        if (CollUtil.isEmpty(details)) {
-            return Collections.emptyList();
-        }
+        if (CollUtil.isNotEmpty(details)) {
+            Set<Long> skuIds = details
+                .stream()
+                .map(CheckOrderDetailVo::getSkuId)
+                .collect(Collectors.toSet());
+            Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+                .stream()
+                .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+            details.forEach(it -> {
+                it.setItemSku(itemSkuMap.get(it.getSkuId()));
+            });
 
-        // todo 设置盘库单详情
+        }
         return details;
     }
 }
