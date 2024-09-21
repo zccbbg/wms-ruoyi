@@ -1,6 +1,5 @@
 package com.ruoyi.wms.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,7 +13,6 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.CheckOrderBo;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
-import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.entity.CheckOrder;
 import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
@@ -146,74 +144,36 @@ public class CheckOrderService {
     }
 
     /**
-     * 盘库结束
-     * 拆分出盘盈入库和盘亏出库的
-     * 有出库的话要校验
-     * 分别对入库与出库根据仓库库区规格进行合并——用于更新库存
-     * 更新入库记录剩余数
-     * 更新库存
-     * 记流水
      * @param bo
      */
     @Transactional
     public void check(CheckOrderBo bo) {
         List<CheckOrderDetailBo> details = bo.getDetails();
-        // 保存盘库单
+        // 保存盘库单 check order
         if (Objects.isNull(bo.getId())) {
             insertByBo(bo);
         } else {
             updateByBo(bo);
         }
+        // 保存库存 inventory
         inventoryService.updateInventory(details);
-        // 计算盈亏数
-        details.forEach(detail -> detail.setProfitAndLoss(detail.getCheckQuantity().subtract(detail.getQuantity())));
-        // 拆分盘盈入库和盘盈出库数据
-        List<InventoryBo> shipmentList = splitOutShipmentData(details);
-        List<InventoryBo> receiptList = splitOutReceiptData(details);
-        if (CollUtil.isNotEmpty(shipmentList)) {
-            // 创建库存记录流水
-            createInventoryHistory(shipmentList, bo.getId(), bo.getCheckOrderNo());
-        }
-        // 有盘盈入库
-        if (CollUtil.isNotEmpty(receiptList)) {
-            // 创建库存记录流水
-            createInventoryHistory(receiptList, bo.getId(), bo.getCheckOrderNo());
-        }
+        // 新增库存记录 inventory history
+        this.addInventoryHistory(details, bo.getId(), bo.getCheckOrderNo());
     }
 
-    public List<InventoryBo> splitOutShipmentData(List<CheckOrderDetailBo> details) {
-        return details.stream()
-            .filter(detail -> detail.getProfitAndLoss().compareTo(BigDecimal.ZERO) < 0)
-            .map(filteredDetail -> {
-                InventoryBo inventoryBo = new InventoryBo();
-                inventoryBo.setSkuId(filteredDetail.getSkuId());
-                inventoryBo.setWarehouseId(filteredDetail.getWarehouseId());
-                inventoryBo.setQuantity(filteredDetail.getProfitAndLoss());
-                return inventoryBo;
-            }).toList();
-    }
-
-    public List<InventoryBo> splitOutReceiptData(List<CheckOrderDetailBo> details) {
-        return details.stream()
-            .filter(detail -> detail.getProfitAndLoss().compareTo(BigDecimal.ZERO) > 0)
-            .map(filteredDetail -> {
-                InventoryBo inventoryDetailBo = new InventoryBo();
-                inventoryDetailBo.setSkuId(filteredDetail.getSkuId());
-                inventoryDetailBo.setWarehouseId(filteredDetail.getWarehouseId());
-                inventoryDetailBo.setQuantity(filteredDetail.getProfitAndLoss());
-                return inventoryDetailBo;
-            }).toList();
-    }
-
-    @Transactional
-    public void createInventoryHistory(List<InventoryBo> inventoryDetailBoList, Long checkOrderId, String checkOrderNo) {
-        List<InventoryHistory> addInventoryHistoryList = inventoryDetailBoList.stream().map(bo -> {
-            InventoryHistory addInventoryHistory = MapstructUtils.convert(bo, InventoryHistory.class);
-            addInventoryHistory.setOrderId(checkOrderId);
-            addInventoryHistory.setOrderNo(checkOrderNo);
-            addInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.CHECK);
-            return addInventoryHistory;
-        }).toList();
-        inventoryHistoryService.saveBatch(addInventoryHistoryList);
+    private void addInventoryHistory(List<CheckOrderDetailBo> details, Long checkOrderId, String checkOrderNo){
+        List<InventoryHistory> list = details.stream()
+            .map(detail -> {
+                BigDecimal result = detail.getCheckQuantity().subtract(detail.getQuantity());
+                InventoryHistory inventoryHistory = new InventoryHistory();
+                inventoryHistory.setSkuId(detail.getSkuId());
+                inventoryHistory.setWarehouseId(detail.getWarehouseId());
+                inventoryHistory.setQuantity(result);
+                inventoryHistory.setOrderId(checkOrderId);
+                inventoryHistory.setOrderNo(checkOrderNo);
+                inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.CHECK);
+                return inventoryHistory;
+            }).filter(it -> it.getQuantity().compareTo(BigDecimal.ZERO) != 0).toList();
+        inventoryHistoryService.saveBatch(list);
     }
 }
