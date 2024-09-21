@@ -68,6 +68,9 @@ public class  CheckOrderDetailVo implements Serializable {
 
     private ItemSkuVo itemSku;
 
-    private BigDecimal remainQuantity;
+    /**
+     * 库存id
+     */
+    private Long inventoryId;
 
 }

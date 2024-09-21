@@ -37,6 +37,10 @@ public class CheckOrderDetail extends BaseEntity {
      */
     private Long skuId;
     /**
+     * 库存id
+     */
+    private Long inventoryId;
+    /**
      * 库存数量
      */
     private BigDecimal quantity;
