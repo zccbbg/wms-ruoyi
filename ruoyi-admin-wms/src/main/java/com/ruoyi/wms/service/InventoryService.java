@@ -200,7 +200,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                 if(!inventory.getQuantity().equals(detail.getQuantity())){
                     ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
                     throw new ServiceException(
-                        itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）账面库存不匹配",
+                        "账面库存不匹配："+itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）",
                         HttpStatus.NOT_ACCEPTABLE,
                         "填写账面库存："+detail.getQuantity()+" 实际账面库存："+inventory.getQuantity());
                 }else {
@@ -216,7 +216,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                 if(inventory != null){
                     ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
                     throw new ServiceException(
-                        itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）账面库存不匹配",
+                        "账面库存不匹配："+itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）",
                         HttpStatus.NOT_ACCEPTABLE,
                         "填写账面库存：0, 实际账面库存："+inventory.getQuantity());
                 }else {
