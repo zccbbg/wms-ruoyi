@@ -197,7 +197,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             if(detail.getInventoryId()!=null){
                 wrapper.eq(Inventory::getId,detail.getInventoryId());
                 Inventory inventory = inventoryMapper.selectOne(wrapper);
-                if(!inventory.getQuantity().equals(detail.getQuantity())){
+                if(inventory.getQuantity().compareTo(detail.getQuantity())!=0){
                     ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
                     throw new ServiceException(
                         "账面库存不匹配："+itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）",
