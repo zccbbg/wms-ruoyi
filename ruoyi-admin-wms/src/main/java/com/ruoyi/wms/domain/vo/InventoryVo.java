@@ -56,6 +56,4 @@ public class InventoryVo implements Serializable {
 
     private ItemSkuVo itemSku;
 
-    private ItemVo item;
-
 }

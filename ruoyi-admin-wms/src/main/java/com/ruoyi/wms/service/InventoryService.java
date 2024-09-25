@@ -180,7 +180,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             tableDataInfo.getRows().forEach(it -> {
                 ItemSkuVo itemSku = skuMap.get(it.getSkuId());
                 it.setItemSku(itemSku);
-                it.setItem(itemSku.getItem());
             });
             return tableDataInfo;
     }
