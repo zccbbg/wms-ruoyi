@@ -144,12 +144,12 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result==null){
                 ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
-                throw new ServiceException("库存不足", HttpStatus.NOT_ACCEPTABLE,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
+                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
             }
             BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
             if(quantity.signum() == -1){
                 ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
-                throw new ServiceException("库存不足", HttpStatus.NOT_ACCEPTABLE,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
+                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
             }
             result.setQuantity(quantity);
             updateList.add(result);
@@ -201,7 +201,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                     ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
                     throw new ServiceException(
                         "账面库存不匹配："+itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）",
-                        HttpStatus.NOT_ACCEPTABLE,
+                        HttpStatus.CONFLICT,
                         "填写账面库存："+detail.getQuantity()+" 实际账面库存："+inventory.getQuantity());
                 }else {
                     if(!inventory.getQuantity().equals(detail.getCheckQuantity())){
@@ -217,7 +217,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
                     ItemSkuVo itemSkuVo = itemSkuService.queryById(detail.getSkuId());
                     throw new ServiceException(
                         "账面库存不匹配："+itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）",
-                        HttpStatus.NOT_ACCEPTABLE,
+                        HttpStatus.CONFLICT,
                         "填写账面库存：0, 实际账面库存："+inventory.getQuantity());
                 }else {
                     inventory = new Inventory();

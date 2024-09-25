@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.constant.HttpStatus;
 import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
@@ -24,7 +25,6 @@ import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -218,7 +218,7 @@ public class ReceiptOrderService {
         ReceiptOrderVo receiptOrderVo = queryById(id);
         Assert.notNull(receiptOrderVo, "入库单不存在");
         if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getReceiptOrderStatus())) {
-            throw new ServiceException("入库单【" + receiptOrderVo.getReceiptOrderNo() + "】已入库，无法删除！", HttpStatus.CONFLICT.value());
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"入库单【" + receiptOrderVo.getReceiptOrderNo() + "】已入库，无法删除！");
         }
     }
 
