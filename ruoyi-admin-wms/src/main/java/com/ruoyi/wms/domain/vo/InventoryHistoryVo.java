@@ -83,6 +83,15 @@ public class InventoryHistoryVo implements Serializable {
     @ExcelProperty(value = "所属仓库")
     private Long warehouseId;
 
+    /**
+     * 更新前数量
+     */
+    private BigDecimal beforeQuantity;
+    /**
+     * 更新后数量
+     */
+    private BigDecimal afterQuantity;
+
     private ItemSkuVo itemSku;
 
     private ItemVo item;

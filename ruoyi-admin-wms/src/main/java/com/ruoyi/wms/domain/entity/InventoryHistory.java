@@ -53,6 +53,14 @@ public class InventoryHistory extends BaseHistoryEntity {
      */
     private BigDecimal quantity;
     /**
+     * 更新前数量
+     */
+    private BigDecimal beforeQuantity;
+    /**
+     * 更新后数量
+     */
+    private BigDecimal afterQuantity;
+    /**
      * 备注
      */
     private String remark;

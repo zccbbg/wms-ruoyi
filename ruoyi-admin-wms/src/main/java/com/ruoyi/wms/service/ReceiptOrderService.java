@@ -16,7 +16,6 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.system.service.SysDictTypeService;
-import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * 入库单Service业务层处理
@@ -128,8 +126,7 @@ public class ReceiptOrderService {
         }
 
         // 3.增加库存
-        List<InventoryBo> inventoryList = convertInventoryList(bo.getDetails());
-        inventoryService.addInventoryQuantity(inventoryList);
+        inventoryService.add(bo.getDetails());
 
         // 4.保存库存记录
         this.saveInventoryHistory(bo);
@@ -152,33 +149,11 @@ public class ReceiptOrderService {
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAmount(detail.getAmount());
+            inventoryHistory.setBeforeQuantity(detail.getBeforeQuantity());
+            inventoryHistory.setAfterQuantity(detail.getAfterQuantity());
             inventoryHistoryList.add(inventoryHistory);
         });
         inventoryHistoryService.saveBatch(inventoryHistoryList);
-    }
-
-    /**
-     * 合并入库单详情 合并key：warehouseId_areaId_skuId
-     * @param orderDetailBoList
-     * @return
-     */
-    private List<InventoryBo> convertInventoryList(List<ReceiptOrderDetailBo> orderDetailBoList) {
-        Function<ReceiptOrderDetailBo, String> keyFunction = it -> it.getWarehouseId() +  "_" + it.getSkuId();
-        Map<String, InventoryBo> inventoryMap = new HashMap<>();
-        orderDetailBoList.forEach(orderDetailBo -> {
-            String key = keyFunction.apply(orderDetailBo);
-            if (inventoryMap.containsKey(key)) {
-                InventoryBo mergedItem = inventoryMap.get(key);
-                mergedItem.setQuantity(mergedItem.getQuantity().add(orderDetailBo.getQuantity()));
-            } else {
-                InventoryBo inventory = new InventoryBo();
-                inventory.setSkuId(orderDetailBo.getSkuId());
-                inventory.setWarehouseId(orderDetailBo.getWarehouseId());
-                inventory.setQuantity(orderDetailBo.getQuantity());
-                inventoryMap.put(key, inventory);
-            }
-        });
-        return new ArrayList<>(inventoryMap.values());
     }
 
     /**

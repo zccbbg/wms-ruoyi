@@ -14,6 +14,7 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
+import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
@@ -111,7 +112,8 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
             wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result!=null){
-                result.setQuantity(result.getQuantity().add(inventoryBo.getQuantity()));
+                BigDecimal after = result.getQuantity().add(inventoryBo.getQuantity());
+                result.setQuantity(after);
                 updateList.add(result);
             }else {
                 Inventory inventory = MapstructUtils.convert(inventoryBo, Inventory.class);
@@ -233,6 +235,37 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         }
         if(CollUtil.isNotEmpty(insertInventoryList)){
             inventoryMapper.insertBatch(insertInventoryList);
+        }
+    }
+
+    @Transactional
+    public void add(List<ReceiptOrderDetailBo> details) {
+        List<Inventory> addList = new LinkedList<>();
+        List<Inventory> updateList = new LinkedList<>();
+        details.forEach(inventoryBo -> {
+            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
+            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
+            Inventory result = inventoryMapper.selectOne(wrapper);
+            if(result!=null){
+                BigDecimal before = result.getQuantity();
+                BigDecimal after = before.add(inventoryBo.getQuantity());
+                result.setQuantity(after);
+                inventoryBo.setAfterQuantity(after);
+                inventoryBo.setBeforeQuantity(before);
+                updateList.add(result);
+            }else {
+                inventoryBo.setBeforeQuantity(BigDecimal.ZERO);
+                inventoryBo.setAfterQuantity(inventoryBo.getQuantity());
+                Inventory inventory = MapstructUtils.convert(inventoryBo, Inventory.class);
+                addList.add(inventory);
+            }
+        });
+        if (addList.size() > 0) {
+            saveBatch(addList);
+        }
+        if (updateList.size() > 0) {
+            updateBatchById(updateList);
         }
     }
 }
