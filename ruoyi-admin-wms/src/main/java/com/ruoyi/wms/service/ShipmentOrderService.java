@@ -161,7 +161,7 @@ public class ShipmentOrderService {
         inventoryService.subtract(bo.getDetails());
 
         // 4.创建库存记录
-        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.SHIPMENT);
+        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.SHIPMENT,false);
     }
 
 

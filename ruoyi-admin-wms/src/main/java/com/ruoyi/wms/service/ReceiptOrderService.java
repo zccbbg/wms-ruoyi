@@ -129,7 +129,7 @@ public class ReceiptOrderService {
         inventoryService.add(bo.getDetails());
 
         // 4.保存库存记录
-        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.RECEIPT);
+        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.RECEIPT,true);
     }
 
     private void validateBeforeReceive(ReceiptOrderBo bo) {

@@ -12,10 +12,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.BaseOrderDetailBo;
 import com.ruoyi.wms.domain.bo.MovementOrderBo;
-import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
-import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.MovementOrder;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.domain.vo.MovementOrderVo;
@@ -24,7 +21,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 移库单Service业务层处理
@@ -168,69 +168,34 @@ public class MovementOrderService {
             updateByBo(bo);
         }
         // 4.更新库存Inventory
-        List<BaseOrderDetailBo> shipmentList = getShipmenttList(bo.getDetails());
-        inventoryService.subtract(shipmentList);
+        MovementOrderBo shipmentBo = getShipmentBo(bo);
+        inventoryService.subtract(shipmentBo.getDetails());
 
-        List<BaseOrderDetailBo> receiptList = getReceiptList(bo.getDetails());
-        inventoryService.add(receiptList);
+        MovementOrderBo receiptBo = getReceiptList(bo);
+        inventoryService.add(receiptBo.getDetails());
 
 
         // 6.创建库存记录流水
-        createInventoryHistory(bo);
+        inventoryHistoryService.saveInventoryHistory(shipmentBo, ServiceConstants.InventoryHistoryOrderType.MOVEMENT,false);
+        inventoryHistoryService.saveInventoryHistory(receiptBo, ServiceConstants.InventoryHistoryOrderType.MOVEMENT,true);
     }
 
-    private List<BaseOrderDetailBo> getReceiptList(List<MovementOrderDetailBo> details) {
+    private MovementOrderBo getReceiptList(MovementOrderBo bo) {
 
-        return details.stream()
-            .map(detail -> {
-                BaseOrderDetailBo baseOrderDetailBo = MapstructUtils.convert(detail, BaseOrderDetailBo.class);
-                baseOrderDetailBo.setWarehouseId(detail.getTargetWarehouseId());
-                return baseOrderDetailBo;
-            }).toList();
+        MovementOrderBo shipmentBo = MapstructUtils.convert(bo, MovementOrderBo.class);
+        shipmentBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getSourceWarehouseId()));
+        return shipmentBo;
     }
 
-    private List<BaseOrderDetailBo> getShipmenttList(List<MovementOrderDetailBo> details) {
-
-        return details.stream()
-            .map(detail -> {
-                BaseOrderDetailBo baseOrderDetailBo = MapstructUtils.convert(detail, BaseOrderDetailBo.class);
-                baseOrderDetailBo.setWarehouseId(detail.getSourceWarehouseId());
-                return baseOrderDetailBo;
-            }).toList();
+    private MovementOrderBo getShipmentBo(MovementOrderBo bo) {
+        MovementOrderBo shipmentBo = MapstructUtils.convert(bo, MovementOrderBo.class);
+        shipmentBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getTargetWarehouseId()));
+        return shipmentBo;
     }
 
     private void validateBeforeMove(MovementOrderBo bo) {
         if (CollUtil.isEmpty(bo.getDetails())) {
             throw new BaseException("商品明细不能为空！");
         }
-    }
-
-
-    /**
-     * 移库完成创建库存记录
-     * @param bo
-     */
-    @Transactional
-    public void createInventoryHistory(MovementOrderBo bo) {
-        List<InventoryHistory> addInventoryHistoryList = new LinkedList<>();
-        bo.getDetails().forEach(detail -> {
-            InventoryHistory shipmentInventoryHistory = new InventoryHistory();
-            shipmentInventoryHistory.setWarehouseId(detail.getSourceWarehouseId());
-            shipmentInventoryHistory.setSkuId(detail.getSkuId());
-            shipmentInventoryHistory.setQuantity(detail.getQuantity().negate());
-            shipmentInventoryHistory.setOrderId(bo.getId());
-            shipmentInventoryHistory.setOrderNo(bo.getOrderNo());
-            shipmentInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
-            addInventoryHistoryList.add(shipmentInventoryHistory);
-            InventoryHistory receiptInventoryHistory = new InventoryHistory();
-            receiptInventoryHistory.setWarehouseId(detail.getTargetWarehouseId());
-            receiptInventoryHistory.setSkuId(detail.getSkuId());
-            receiptInventoryHistory.setQuantity(detail.getQuantity());
-            receiptInventoryHistory.setOrderId(bo.getId());
-            receiptInventoryHistory.setOrderNo(bo.getOrderNo());
-            receiptInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
-            addInventoryHistoryList.add(receiptInventoryHistory);
-        });
-        inventoryHistoryService.saveBatch(addInventoryHistoryList);
     }
 }
