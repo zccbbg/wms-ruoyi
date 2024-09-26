@@ -3,10 +3,12 @@ package com.ruoyi.wms.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BaseOrder extends BaseEntity {
 
     /**
@@ -18,18 +20,12 @@ public class BaseOrder extends BaseEntity {
      * 入库单号
      */
     private String orderNo;
-    /**
-     * 入库类型
-     */
-    private Long orderType;
+
     /**
      * 供应商
      */
     private Long merchantId;
-    /**
-     * 业务订单号
-     */
-    private String bizOrderNo;
+
     /**
      * 商品总数
      */

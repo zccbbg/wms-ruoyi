@@ -76,7 +76,7 @@ public class ShipmentOrderService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ShipmentOrder> lqw = Wrappers.lambdaQuery();
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getOrderType() != null, ShipmentOrder::getOrderType, bo.getOrderType());
+        lqw.eq(bo.getOptType() != null, ShipmentOrder::getOptType, bo.getOptType());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getMerchantId() != null, ShipmentOrder::getMerchantId, bo.getMerchantId());
         lqw.eq(bo.getTotalAmount() != null, ShipmentOrder::getTotalAmount, bo.getTotalAmount());

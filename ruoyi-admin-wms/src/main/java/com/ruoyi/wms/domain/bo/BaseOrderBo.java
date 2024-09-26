@@ -6,11 +6,13 @@ import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     /**
      *
@@ -25,20 +27,9 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     private String orderNo;
 
     /**
-     * 入库类型
-     */
-    @NotNull(message = "订单类型不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long orderType;
-
-    /**
-     * 供应商
+     * 对接商户
      */
     private Long merchantId;
-
-    /**
-     * 订单号
-     */
-    private String bizOrderNo;
 
     /**
      * 商品总数

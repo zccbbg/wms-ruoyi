@@ -76,7 +76,7 @@ public class ReceiptOrderService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ReceiptOrder> lqw = Wrappers.lambdaQuery();
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getOrderType() != null, ReceiptOrder::getOrderType, bo.getOrderType());
+        lqw.eq(bo.getOptType() != null, ReceiptOrder::getOptType, bo.getOptType());
         lqw.eq(bo.getMerchantId() != null, ReceiptOrder::getMerchantId, bo.getMerchantId());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getTotalAmount() != null, ReceiptOrder::getTotalAmount, bo.getTotalAmount());
