@@ -72,7 +72,7 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
     private LambdaQueryWrapper<CheckOrderDetail> buildQueryWrapper(CheckOrderDetailBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<CheckOrderDetail> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getCheckOrderId() != null, CheckOrderDetail::getCheckOrderId, bo.getCheckOrderId());
+        lqw.eq(bo.getOrderId() != null, CheckOrderDetail::getOrderId, bo.getOrderId());
         lqw.eq(bo.getSkuId() != null, CheckOrderDetail::getSkuId, bo.getSkuId());
         lqw.eq(bo.getQuantity() != null, CheckOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getCheckQuantity() != null, CheckOrderDetail::getCheckQuantity, bo.getCheckQuantity());
@@ -114,7 +114,7 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
 
     public List<CheckOrderDetailVo> queryByCheckOrderId(Long checkOrderId) {
         CheckOrderDetailBo bo = new CheckOrderDetailBo();
-        bo.setCheckOrderId(checkOrderId);
+        bo.setOrderId(checkOrderId);
         List<CheckOrderDetailVo> details = queryList(bo);
         if (CollUtil.isNotEmpty(details)) {
             Set<Long> skuIds = details

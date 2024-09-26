@@ -61,7 +61,7 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
     private LambdaQueryWrapper<ShipmentOrderDetail> buildQueryWrapper(ShipmentOrderDetailBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ShipmentOrderDetail> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getShipmentOrderId() != null, ShipmentOrderDetail::getShipmentOrderId, bo.getShipmentOrderId());
+        lqw.eq(bo.getOrderId() != null, ShipmentOrderDetail::getOrderId, bo.getOrderId());
         lqw.eq(bo.getSkuId() != null, ShipmentOrderDetail::getSkuId, bo.getSkuId());
         lqw.eq(bo.getQuantity() != null, ShipmentOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getAmount() != null, ShipmentOrderDetail::getAmount, bo.getAmount());
@@ -102,24 +102,22 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
 
     public List<ShipmentOrderDetailVo> queryByShipmentOrderId(Long shipmentOrderId) {
         ShipmentOrderDetailBo bo = new ShipmentOrderDetailBo();
-        bo.setShipmentOrderId(shipmentOrderId);
+        bo.setOrderId(shipmentOrderId);
         List<ShipmentOrderDetailVo> details = queryList(bo);
-        if (CollUtil.isEmpty(details)) {
-            return Collections.EMPTY_LIST;
-        }
-        // 查规格
-        Set<Long> skuIds = details
-            .stream()
-            .map(ShipmentOrderDetailVo::getSkuId)
-            .collect(Collectors.toSet());
-        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-            .stream()
-            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
+        if (CollUtil.isNotEmpty(details)) {
+            // 查规格
+            Set<Long> skuIds = details
+                .stream()
+                .map(ShipmentOrderDetailVo::getSkuId)
+                .collect(Collectors.toSet());
+            Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
+                .stream()
+                .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
 
-        details.forEach(detail -> {
-            detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-            // todo 设置数量
-        });
+            details.forEach(detail -> {
+                detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
+            });
+        }
         return details;
     }
 }

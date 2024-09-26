@@ -77,7 +77,7 @@ public class MovementOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody MovementOrderBo bo) {
-        bo.setMovementOrderStatus(ServiceConstants.MovementOrderStatus.PENDING);
+        bo.setOrderStatus(ServiceConstants.MovementOrderStatus.PENDING);
         movementOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -102,7 +102,7 @@ public class MovementOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/move")
     public R<Void> move(@Validated(AddGroup.class) @RequestBody MovementOrderBo bo) {
-        bo.setMovementOrderStatus(ServiceConstants.MovementOrderStatus.FINISH);
+        bo.setOrderStatus(ServiceConstants.MovementOrderStatus.FINISH);
         movementOrderService.move(bo);
         return R.ok();
     }

@@ -77,7 +77,7 @@ public class CheckOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody CheckOrderBo bo) {
-        bo.setCheckOrderStatus(ServiceConstants.CheckOrderStatus.PENDING);
+        bo.setOrderStatus(ServiceConstants.CheckOrderStatus.PENDING);
         checkOrderService.insertByBo(bo);
         return R.ok();
     }
@@ -102,7 +102,7 @@ public class CheckOrderController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/check")
     public R<Void> check(@Validated(AddGroup.class) @RequestBody CheckOrderBo bo) {
-        bo.setCheckOrderStatus(ServiceConstants.CheckOrderStatus.FINISH);
+        bo.setOrderStatus(ServiceConstants.CheckOrderStatus.FINISH);
         checkOrderService.check(bo);
         return R.ok();
     }

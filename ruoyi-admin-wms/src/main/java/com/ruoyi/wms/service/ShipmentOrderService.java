@@ -75,13 +75,13 @@ public class ShipmentOrderService {
     private LambdaQueryWrapper<ShipmentOrder> buildQueryWrapper(ShipmentOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ShipmentOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getShipmentOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getOrderType() != null, ShipmentOrder::getShipmentOrderType, bo.getOrderType());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getOrderNo, bo.getOrderNo());
+        lqw.eq(bo.getOrderType() != null, ShipmentOrder::getOrderType, bo.getOrderType());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getMerchantId() != null, ShipmentOrder::getMerchantId, bo.getMerchantId());
-        lqw.eq(bo.getAmount() != null, ShipmentOrder::getReceivableAmount, bo.getAmount());
+        lqw.eq(bo.getTotalAmount() != null, ShipmentOrder::getTotalAmount, bo.getTotalAmount());
         lqw.eq(bo.getTotalQuantity() != null, ShipmentOrder::getTotalQuantity, bo.getTotalQuantity());
-        lqw.eq(bo.getOrderStatus() != null, ShipmentOrder::getShipmentOrderStatus, bo.getOrderStatus());
+        lqw.eq(bo.getOrderStatus() != null, ShipmentOrder::getOrderStatus, bo.getOrderStatus());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
@@ -99,13 +99,13 @@ public class ShipmentOrderService {
         bo.setId(add.getId());
         List<ShipmentOrderDetailBo> detailBoList = bo.getDetails();
         List<ShipmentOrderDetail> addDetailList = MapstructUtils.convert(detailBoList, ShipmentOrderDetail.class);
-        addDetailList.forEach(it -> it.setShipmentOrderId(add.getId()));
+        addDetailList.forEach(it -> it.setOrderId(add.getId()));
         shipmentOrderDetailService.saveDetails(addDetailList);
     }
 
     public void validateShipmentOrderNo(String shipmentOrderNo) {
         LambdaQueryWrapper<ShipmentOrder> receiptOrderLqw = Wrappers.lambdaQuery();
-        receiptOrderLqw.eq(ShipmentOrder::getShipmentOrderNo, shipmentOrderNo);
+        receiptOrderLqw.eq(ShipmentOrder::getOrderNo, shipmentOrderNo);
         ShipmentOrder shipmentOrder = shipmentOrderMapper.selectOne(receiptOrderLqw);
         Assert.isNull(shipmentOrder, "出库单号重复，请手动修改");
     }
@@ -121,7 +121,7 @@ public class ShipmentOrderService {
         shipmentOrderMapper.updateById(update);
         // 保存出库单明细
         List<ShipmentOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ShipmentOrderDetail.class);
-        detailList.forEach(it -> it.setShipmentOrderId(bo.getId()));
+        detailList.forEach(it -> it.setOrderId(bo.getId()));
         shipmentOrderDetailService.saveDetails(detailList);
     }
 
@@ -138,8 +138,8 @@ public class ShipmentOrderService {
         if (shipmentOrderVo == null) {
             throw new BaseException("出库单不存在");
         }
-        if (ServiceConstants.ShipmentOrderStatus.FINISH.equals(shipmentOrderVo.getShipmentOrderStatus())) {
-            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"出库单【" + shipmentOrderVo.getShipmentOrderNo() + "】已出库，无法删除！");
+        if (ServiceConstants.ShipmentOrderStatus.FINISH.equals(shipmentOrderVo.getOrderStatus())) {
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"出库单【" + shipmentOrderVo.getOrderNo() + "】已出库，无法删除！");
         }
     }
 
@@ -161,7 +161,7 @@ public class ShipmentOrderService {
         inventoryService.subtract(bo.getDetails());
 
         // 4.创建库存记录
-        inventoryHistoryService.saveInventoryHistory(bo);
+        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.SHIPMENT);
     }
 
 

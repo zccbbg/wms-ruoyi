@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -34,13 +33,13 @@ public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper,
 
     private final InventoryHistoryMapper inventoryHistoryMapper;
 
-    public void saveInventoryHistory(BaseOrderBo<BaseOrderDetailBo> bo){
+    public void saveInventoryHistory(BaseOrderBo<? extends BaseOrderDetailBo> bo,Integer orderType){
         List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
         bo.getDetails().forEach(detail -> {
             InventoryHistory inventoryHistory = new InventoryHistory();
             inventoryHistory.setOrderId(bo.getId());
             inventoryHistory.setOrderNo(bo.getOrderNo());
-            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.RECEIPT);
+            inventoryHistory.setOrderType(orderType);
             inventoryHistory.setSkuId(detail.getSkuId());
             inventoryHistory.setQuantity(detail.getQuantity());
             inventoryHistory.setWarehouseId(detail.getWarehouseId());

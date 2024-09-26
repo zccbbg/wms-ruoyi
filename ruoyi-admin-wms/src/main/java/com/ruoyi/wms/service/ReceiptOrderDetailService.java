@@ -62,7 +62,7 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
     private LambdaQueryWrapper<ReceiptOrderDetail> buildQueryWrapper(ReceiptOrderDetailBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ReceiptOrderDetail> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getReceiptOrderId() != null, ReceiptOrderDetail::getReceiptOrderId, bo.getReceiptOrderId());
+        lqw.eq(bo.getOrderId() != null, ReceiptOrderDetail::getOrderId, bo.getOrderId());
         lqw.eq(bo.getSkuId() != null, ReceiptOrderDetail::getSkuId, bo.getSkuId());
         lqw.eq(bo.getQuantity() != null, ReceiptOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getAmount() != null, ReceiptOrderDetail::getAmount, bo.getAmount());
@@ -98,7 +98,7 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
      */
     public void deleteByReceiptOrderId(@NotNull Long receiptOrderId) {
         LambdaQueryWrapper<ReceiptOrderDetail> lqw = Wrappers.lambdaQuery();
-        lqw.eq(ReceiptOrderDetail::getReceiptOrderId, receiptOrderId);
+        lqw.eq(ReceiptOrderDetail::getOrderId, receiptOrderId);
         receiptOrderDetailMapper.delete(lqw);
     }
 
@@ -112,7 +112,7 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
 
     public List<ReceiptOrderDetailVo> queryByReceiptOrderId(Long receiptOrderId) {
         ReceiptOrderDetailBo bo = new ReceiptOrderDetailBo();
-        bo.setReceiptOrderId(receiptOrderId);
+        bo.setOrderId(receiptOrderId);
         List<ReceiptOrderDetailVo> details = queryList(bo);
         if (CollUtil.isEmpty(details)) {
             return Collections.emptyList();

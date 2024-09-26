@@ -75,9 +75,9 @@ public class CheckOrderService {
     private LambdaQueryWrapper<CheckOrder> buildQueryWrapper(CheckOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<CheckOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getCheckOrderNo()), CheckOrder::getCheckOrderNo, bo.getCheckOrderNo());
-        lqw.eq(bo.getCheckOrderStatus() != null, CheckOrder::getCheckOrderStatus, bo.getCheckOrderStatus());
-        lqw.eq(bo.getCheckOrderTotal() != null, CheckOrder::getCheckOrderTotal, bo.getCheckOrderTotal());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), CheckOrder::getOrderNo, bo.getOrderNo());
+        lqw.eq(bo.getOrderStatus() != null, CheckOrder::getOrderStatus, bo.getOrderStatus());
+        lqw.eq(bo.getTotalQuantity() != null, CheckOrder::getTotalQuantity, bo.getTotalQuantity());
         lqw.eq(bo.getWarehouseId() != null, CheckOrder::getWarehouseId, bo.getWarehouseId());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
@@ -89,19 +89,19 @@ public class CheckOrderService {
     @Transactional
     public void insertByBo(CheckOrderBo bo) {
         // 校验盘库单号唯一性
-        validateCheckOrderNo(bo.getCheckOrderNo());
+        validateCheckOrderNo(bo.getOrderNo());
         // 创建盘库单
         CheckOrder add = MapstructUtils.convert(bo, CheckOrder.class);
         checkOrderMapper.insert(add);
         // 创建盘库单明细
         List<CheckOrderDetail> addDetailList = MapstructUtils.convert(bo.getDetails(), CheckOrderDetail.class);
-        addDetailList.forEach(it -> it.setCheckOrderId(add.getId()));
+        addDetailList.forEach(it -> it.setOrderId(add.getId()));
         checkOrderDetailService.saveDetails(addDetailList);
     }
 
     private void validateCheckOrderNo(String checkOrderNo) {
         LambdaQueryWrapper<CheckOrder> lambdaQueryWrapper = Wrappers.lambdaQuery();
-        lambdaQueryWrapper.eq(CheckOrder::getCheckOrderNo, checkOrderNo);
+        lambdaQueryWrapper.eq(CheckOrder::getOrderNo, checkOrderNo);
         if (checkOrderMapper.exists(lambdaQueryWrapper)) {
             throw new BaseException("盘库单号重复，请手动修改");
         }
@@ -117,7 +117,7 @@ public class CheckOrderService {
         checkOrderMapper.updateById(update);
         // 保存盘库单明细
         List<CheckOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), CheckOrderDetail.class);
-        detailList.forEach(it -> it.setCheckOrderId(bo.getId()));
+        detailList.forEach(it -> it.setOrderId(bo.getId()));
         checkOrderDetailService.saveDetails(detailList);
     }
 
@@ -131,8 +131,8 @@ public class CheckOrderService {
         if (checkOrderVo == null) {
             throw new BaseException("盘库单不存在");
         }
-        if (ServiceConstants.CheckOrderStatus.FINISH.equals(checkOrderVo.getCheckOrderStatus())) {
-            throw new ServiceException("盘库单【" + checkOrderVo.getCheckOrderNo() + "】已盘库完成，无法删除！");
+        if (ServiceConstants.CheckOrderStatus.FINISH.equals(checkOrderVo.getOrderStatus())) {
+            throw new ServiceException("盘库单【" + checkOrderVo.getOrderNo() + "】已盘库完成，无法删除！");
         }
     }
 
@@ -158,7 +158,7 @@ public class CheckOrderService {
         // 保存库存 inventory
         inventoryService.updateInventory(details);
         // 新增库存记录 inventory history
-        this.addInventoryHistory(details, bo.getId(), bo.getCheckOrderNo());
+        this.addInventoryHistory(details, bo.getId(), bo.getOrderNo());
     }
 
     private void addInventoryHistory(List<CheckOrderDetailBo> details, Long checkOrderId, String checkOrderNo){

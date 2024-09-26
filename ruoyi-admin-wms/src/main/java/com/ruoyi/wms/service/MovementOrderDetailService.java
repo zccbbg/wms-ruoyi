@@ -61,7 +61,7 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
     private LambdaQueryWrapper<MovementOrderDetail> buildQueryWrapper(MovementOrderDetailBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<MovementOrderDetail> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getMovementOrderId() != null, MovementOrderDetail::getMovementOrderId, bo.getMovementOrderId());
+        lqw.eq(bo.getOrderId() != null, MovementOrderDetail::getOrderId, bo.getOrderId());
         lqw.eq(bo.getSkuId() != null, MovementOrderDetail::getSkuId, bo.getSkuId());
         lqw.eq(bo.getQuantity() != null, MovementOrderDetail::getQuantity, bo.getQuantity());
         lqw.eq(bo.getSourceWarehouseId() != null, MovementOrderDetail::getSourceWarehouseId, bo.getSourceWarehouseId());
@@ -107,7 +107,7 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
      */
     public List<MovementOrderDetailVo> queryByMovementOrderId(Long movementOrderId) {
         MovementOrderDetailBo bo = new MovementOrderDetailBo();
-        bo.setMovementOrderId(movementOrderId);
+        bo.setOrderId(movementOrderId);
         List<MovementOrderDetailVo> details = queryList(bo);
         if (CollUtil.isEmpty(details)) {
             return Collections.emptyList();

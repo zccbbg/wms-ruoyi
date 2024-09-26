@@ -74,10 +74,10 @@ public class MovementOrderService {
     private LambdaQueryWrapper<MovementOrder> buildQueryWrapper(MovementOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<MovementOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getMovementOrderNo()), MovementOrder::getMovementOrderNo, bo.getMovementOrderNo());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), MovementOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getSourceWarehouseId() != null, MovementOrder::getSourceWarehouseId, bo.getSourceWarehouseId());
         lqw.eq(bo.getTargetWarehouseId() != null, MovementOrder::getTargetWarehouseId, bo.getTargetWarehouseId());
-        lqw.eq(bo.getMovementOrderStatus() != null, MovementOrder::getMovementOrderStatus, bo.getMovementOrderStatus());
+        lqw.eq(bo.getOrderStatus() != null, MovementOrder::getOrderStatus, bo.getOrderStatus());
         lqw.eq(bo.getTotalQuantity() != null, MovementOrder::getTotalQuantity, bo.getTotalQuantity());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
@@ -89,7 +89,7 @@ public class MovementOrderService {
     @Transactional
     public void insertByBo(MovementOrderBo bo) {
         // 1.校验移库单号唯一性
-        validateMovementOrderNo(bo.getMovementOrderNo());
+        validateMovementOrderNo(bo.getOrderNo());
         // 2.创建移库单
         MovementOrder add = MapstructUtils.convert(bo, MovementOrder.class);
         movementOrderMapper.insert(add);
@@ -97,14 +97,14 @@ public class MovementOrderService {
         // 3.创建移库单明细
         List<MovementOrderDetail> addDetailList = MapstructUtils.convert(bo.getDetails(), MovementOrderDetail.class);
         addDetailList.forEach(it -> {
-            it.setMovementOrderId(add.getId());
+            it.setOrderId(add.getId());
         });
         movementOrderDetailService.saveDetails(addDetailList);
     }
 
     private void validateMovementOrderNo(String movementOrderNo) {
         LambdaQueryWrapper<MovementOrder> lambdaQueryWrapper = Wrappers.lambdaQuery();
-        lambdaQueryWrapper.eq(MovementOrder::getMovementOrderNo, movementOrderNo);
+        lambdaQueryWrapper.eq(MovementOrder::getOrderNo, movementOrderNo);
         if (movementOrderMapper.exists(lambdaQueryWrapper)) {
             throw new BaseException("移库单号重复，请手动修改");
         }
@@ -120,7 +120,7 @@ public class MovementOrderService {
         movementOrderMapper.updateById(update);
         // 2.保存移库单明细
         List<MovementOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), MovementOrderDetail.class);
-        detailList.forEach(it -> it.setMovementOrderId(bo.getId()));
+        detailList.forEach(it -> it.setOrderId(bo.getId()));
         movementOrderDetailService.saveDetails(detailList);
     }
 
@@ -138,8 +138,8 @@ public class MovementOrderService {
         if (movementOrderVo == null) {
             throw new BaseException("移库单不存在");
         }
-        if (ServiceConstants.MovementOrderStatus.FINISH.equals(movementOrderVo.getMovementOrderStatus())) {
-            throw new ServiceException("移库单【" + movementOrderVo.getMovementOrderNo() + "】已移库，无法删除！");
+        if (ServiceConstants.MovementOrderStatus.FINISH.equals(movementOrderVo.getOrderStatus())) {
+            throw new ServiceException("移库单【" + movementOrderVo.getOrderNo() + "】已移库，无法删除！");
         }
     }
 
@@ -219,7 +219,7 @@ public class MovementOrderService {
             shipmentInventoryHistory.setSkuId(detail.getSkuId());
             shipmentInventoryHistory.setQuantity(detail.getQuantity().negate());
             shipmentInventoryHistory.setOrderId(bo.getId());
-            shipmentInventoryHistory.setOrderNo(bo.getMovementOrderNo());
+            shipmentInventoryHistory.setOrderNo(bo.getOrderNo());
             shipmentInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
             addInventoryHistoryList.add(shipmentInventoryHistory);
             InventoryHistory receiptInventoryHistory = new InventoryHistory();
@@ -227,7 +227,7 @@ public class MovementOrderService {
             receiptInventoryHistory.setSkuId(detail.getSkuId());
             receiptInventoryHistory.setQuantity(detail.getQuantity());
             receiptInventoryHistory.setOrderId(bo.getId());
-            receiptInventoryHistory.setOrderNo(bo.getMovementOrderNo());
+            receiptInventoryHistory.setOrderNo(bo.getOrderNo());
             receiptInventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.MOVEMENT);
             addInventoryHistoryList.add(receiptInventoryHistory);
         });

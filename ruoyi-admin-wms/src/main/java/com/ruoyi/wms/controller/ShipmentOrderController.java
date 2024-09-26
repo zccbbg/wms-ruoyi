@@ -101,7 +101,7 @@ public class ShipmentOrderController extends BaseController {
     @RepeatSubmit()
     @PutMapping("/shipment")
     public R<Void> shipment(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
-        bo.setShipmentOrderStatus(ServiceConstants.ShipmentOrderStatus.FINISH);
+        bo.setOrderStatus(ServiceConstants.ShipmentOrderStatus.FINISH);
         shipmentOrderService.shipment(bo);
         return R.ok();
     }

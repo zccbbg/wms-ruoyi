@@ -75,12 +75,12 @@ public class ReceiptOrderService {
     private LambdaQueryWrapper<ReceiptOrder> buildQueryWrapper(ReceiptOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ReceiptOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getReceiptOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getOrderType() != null, ReceiptOrder::getReceiptOrderType, bo.getOrderType());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
+        lqw.eq(bo.getOrderType() != null, ReceiptOrder::getOrderType, bo.getOrderType());
         lqw.eq(bo.getMerchantId() != null, ReceiptOrder::getMerchantId, bo.getMerchantId());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getAmount() != null, ReceiptOrder::getPayableAmount, bo.getAmount());
-        lqw.eq(bo.getOrderStatus() != null, ReceiptOrder::getReceiptOrderStatus, bo.getOrderStatus());
+        lqw.eq(bo.getTotalAmount() != null, ReceiptOrder::getTotalAmount, bo.getTotalAmount());
+        lqw.eq(bo.getOrderStatus() != null, ReceiptOrder::getOrderStatus, bo.getOrderStatus());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
@@ -99,7 +99,7 @@ public class ReceiptOrderService {
         List<ReceiptOrderDetailBo> detailBoList = bo.getDetails();
         List<ReceiptOrderDetail> addDetailList = MapstructUtils.convert(detailBoList, ReceiptOrderDetail.class);
         addDetailList.forEach(it -> {
-            it.setReceiptOrderId(add.getId());
+            it.setOrderId(add.getId());
         });
         // 创建入库单明细
         receiptOrderDetailService.saveDetails(addDetailList);
@@ -129,7 +129,7 @@ public class ReceiptOrderService {
         inventoryService.add(bo.getDetails());
 
         // 4.保存库存记录
-        inventoryHistoryService.saveInventoryHistory(bo);
+        inventoryHistoryService.saveInventoryHistory(bo,ServiceConstants.InventoryHistoryOrderType.RECEIPT);
     }
 
     private void validateBeforeReceive(ReceiptOrderBo bo) {
@@ -148,7 +148,7 @@ public class ReceiptOrderService {
         receiptOrderMapper.updateById(update);
         // 保存入库单明细
         List<ReceiptOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ReceiptOrderDetail.class);
-        detailList.forEach(it -> it.setReceiptOrderId(bo.getId()));
+        detailList.forEach(it -> it.setOrderId(bo.getId()));
         receiptOrderDetailService.saveDetails(detailList);
     }
 
@@ -159,7 +159,7 @@ public class ReceiptOrderService {
     public void editToInvalid(Long id) {
         LambdaUpdateWrapper<ReceiptOrder> wrapper = Wrappers.lambdaUpdate();
         wrapper.eq(ReceiptOrder::getId, id);
-        wrapper.set(ReceiptOrder::getReceiptOrderStatus, ServiceConstants.ReceiptOrderStatus.INVALID);
+        wrapper.set(ReceiptOrder::getOrderStatus, ServiceConstants.ReceiptOrderStatus.INVALID);
         receiptOrderMapper.update(null, wrapper);
     }
 
@@ -174,8 +174,8 @@ public class ReceiptOrderService {
     private void validateIdBeforeDelete(Long id) {
         ReceiptOrderVo receiptOrderVo = queryById(id);
         Assert.notNull(receiptOrderVo, "入库单不存在");
-        if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getReceiptOrderStatus())) {
-            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"入库单【" + receiptOrderVo.getReceiptOrderNo() + "】已入库，无法删除！");
+        if (ServiceConstants.ReceiptOrderStatus.FINISH.equals(receiptOrderVo.getOrderStatus())) {
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"入库单【" + receiptOrderVo.getOrderNo() + "】已入库，无法删除！");
         }
     }
 
@@ -188,7 +188,7 @@ public class ReceiptOrderService {
 
     public void validateReceiptOrderNo(String receiptOrderNo) {
         LambdaQueryWrapper<ReceiptOrder> receiptOrderLqw = Wrappers.lambdaQuery();
-        receiptOrderLqw.eq(ReceiptOrder::getReceiptOrderNo, receiptOrderNo);
+        receiptOrderLqw.eq(ReceiptOrder::getOrderNo, receiptOrderNo);
         ReceiptOrder receiptOrder = receiptOrderMapper.selectOne(receiptOrderLqw);
         Assert.isNull(receiptOrder, "入库单号重复，请手动修改");
     }
