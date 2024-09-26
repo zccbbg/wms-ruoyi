@@ -47,7 +47,6 @@ public class BaseOrderDetailBo extends BaseEntity {
     /**
      * 所属仓库
      */
-    @NotNull(message = "所属仓库不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long warehouseId;
 
     /**

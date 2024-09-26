@@ -18,6 +18,7 @@ import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import com.ruoyi.wms.domain.vo.MovementOrderVo;
 import com.ruoyi.wms.mapper.MovementOrderMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -171,7 +172,7 @@ public class MovementOrderService {
         MovementOrderBo shipmentBo = getShipmentBo(bo);
         inventoryService.subtract(shipmentBo.getDetails());
 
-        MovementOrderBo receiptBo = getReceiptList(bo);
+        MovementOrderBo receiptBo = getReceiptBo(bo);
         inventoryService.add(receiptBo.getDetails());
 
 
@@ -180,16 +181,16 @@ public class MovementOrderService {
         inventoryHistoryService.saveInventoryHistory(receiptBo, ServiceConstants.InventoryHistoryOrderType.MOVEMENT,true);
     }
 
-    private MovementOrderBo getReceiptList(MovementOrderBo bo) {
+    private MovementOrderBo getReceiptBo(MovementOrderBo bo) {
 
-        MovementOrderBo shipmentBo = MapstructUtils.convert(bo, MovementOrderBo.class);
-        shipmentBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getSourceWarehouseId()));
-        return shipmentBo;
+        MovementOrderBo receiptBo = SerializationUtils.clone(bo);
+        receiptBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getTargetWarehouseId()));
+        return receiptBo;
     }
 
     private MovementOrderBo getShipmentBo(MovementOrderBo bo) {
-        MovementOrderBo shipmentBo = MapstructUtils.convert(bo, MovementOrderBo.class);
-        shipmentBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getTargetWarehouseId()));
+        MovementOrderBo shipmentBo = SerializationUtils.clone(bo);
+        shipmentBo.getDetails().forEach(detail -> detail.setWarehouseId(detail.getSourceWarehouseId()));
         return shipmentBo;
     }
 

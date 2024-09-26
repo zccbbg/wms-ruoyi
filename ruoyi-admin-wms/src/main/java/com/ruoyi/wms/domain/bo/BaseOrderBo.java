@@ -42,12 +42,6 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     private Integer orderStatus;
 
     /**
-     * 仓库id
-     */
-    @NotNull(message = "仓库不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long warehouseId;
-
-    /**
      * 备注
      */
     private String remark;

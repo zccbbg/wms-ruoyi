@@ -33,4 +33,9 @@ public class ShipmentOrderBo extends BaseOrderBo<ShipmentOrderDetailBo> {
      * 对接商户
      */
     private Long merchantId;
+    /**
+     * 仓库id
+     */
+    @NotNull(message = "仓库不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long warehouseId;
 }
