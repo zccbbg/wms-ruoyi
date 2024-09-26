@@ -208,21 +208,24 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     @Transactional
     public void subtract(List<? extends BaseOrderDetailBo> details) {
         List<Inventory> updateList = new LinkedList<>();
-        details.forEach(inventoryBo -> {
+        details.forEach(shipmentOrderDetailBo -> {
             LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
-            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
+            wrapper.eq(Inventory::getWarehouseId, shipmentOrderDetailBo.getWarehouseId());
+            wrapper.eq(Inventory::getSkuId, shipmentOrderDetailBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result==null){
-                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(shipmentOrderDetailBo.getSkuId());
                 throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
             }
-            BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
-            if(quantity.signum() == -1){
-                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
-                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
+            BigDecimal beforeQuantity = result.getQuantity();
+            BigDecimal afterQuantity = beforeQuantity.subtract(shipmentOrderDetailBo.getQuantity());
+            if(afterQuantity.signum() == -1){
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(shipmentOrderDetailBo.getSkuId());
+                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+ beforeQuantity);
             }
-            result.setQuantity(quantity);
+            shipmentOrderDetailBo.setBeforeQuantity(beforeQuantity);
+            shipmentOrderDetailBo.setAfterQuantity(afterQuantity);
+            result.setQuantity(afterQuantity);
             updateList.add(result);
         });
         updateBatchById(updateList);
