@@ -27,11 +27,6 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     private String orderNo;
 
     /**
-     * 对接商户
-     */
-    private Long merchantId;
-
-    /**
      * 商品总数
      */
     private BigDecimal totalQuantity;

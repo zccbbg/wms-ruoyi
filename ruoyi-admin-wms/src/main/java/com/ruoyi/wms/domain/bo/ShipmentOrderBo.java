@@ -29,4 +29,8 @@ public class ShipmentOrderBo extends BaseOrderBo<ShipmentOrderDetailBo> {
      * 订单号
      */
     private String bizOrderNo;
+    /**
+     * 对接商户
+     */
+    private Long merchantId;
 }

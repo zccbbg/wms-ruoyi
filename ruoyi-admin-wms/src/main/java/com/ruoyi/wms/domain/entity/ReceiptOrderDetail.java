@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serial;
-
 /**
  * 入库单详情对象 wms_receipt_order_detail
  *
@@ -17,8 +15,10 @@ import java.io.Serial;
 @TableName("wms_receipt_order_detail")
 public class ReceiptOrderDetail extends BaseOrderDetail {
 
-    @Serial
-    private static final long serialVersionUID=1L;
+    /**
+     * 所属仓库
+     */
+    private Long warehouseId;
 
 
 }

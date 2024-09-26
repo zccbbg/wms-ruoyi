@@ -14,6 +14,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @TableName("wms_shipment_order")
 public class ShipmentOrder extends BaseOrder {
+    /**
+     * 仓库id
+     */
+    private Long warehouseId;
 
     /**
      * 入库类型
@@ -23,5 +27,9 @@ public class ShipmentOrder extends BaseOrder {
      * 业务订单号
      */
     private String bizOrderNo;
+    /**
+     * 供应商
+     */
+    private Long merchantId;
 
 }

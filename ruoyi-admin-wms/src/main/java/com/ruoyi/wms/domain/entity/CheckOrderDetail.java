@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serial;
 import java.math.BigDecimal;
 
 /**
@@ -18,12 +17,13 @@ import java.math.BigDecimal;
 @TableName("wms_check_order_detail")
 public class CheckOrderDetail extends BaseOrderDetail {
 
-    @Serial
-    private static final long serialVersionUID=1L;
-
     /**
      * 盘点数量
      */
     private BigDecimal checkQuantity;
+    /**
+     * 所属仓库
+     */
+    private Long warehouseId;
 
 }

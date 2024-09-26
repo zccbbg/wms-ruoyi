@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serial;
-
 /**
  * 库存盘点单据对象 wms_check_order
  *
@@ -17,7 +15,9 @@ import java.io.Serial;
 @TableName("wms_check_order")
 public class CheckOrder extends BaseOrder {
 
-    @Serial
-    private static final long serialVersionUID=1L;
+    /**
+     * 仓库id
+     */
+    private Long warehouseId;
 
 }

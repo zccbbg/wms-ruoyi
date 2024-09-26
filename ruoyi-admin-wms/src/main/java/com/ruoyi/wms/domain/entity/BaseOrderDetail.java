@@ -35,8 +35,4 @@ public class BaseOrderDetail extends BaseEntity {
      * 备注
      */
     private String remark;
-    /**
-     * 所属仓库
-     */
-    private Long warehouseId;
 }

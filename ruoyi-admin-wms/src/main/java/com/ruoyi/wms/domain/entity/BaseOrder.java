@@ -22,11 +22,6 @@ public class BaseOrder extends BaseEntity {
     private String orderNo;
 
     /**
-     * 供应商
-     */
-    private Long merchantId;
-
-    /**
      * 商品总数
      */
     private BigDecimal totalQuantity;
@@ -38,10 +33,7 @@ public class BaseOrder extends BaseEntity {
      * 订单状态
      */
     private Integer orderStatus;
-    /**
-     * 仓库id
-     */
-    private Long warehouseId;
+
     /**
      * 备注
      */
