@@ -1,11 +1,8 @@
 package com.ruoyi.wms.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-
-import java.math.BigDecimal;
 
 import java.io.Serial;
 
@@ -18,20 +15,12 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("wms_movement_order")
-public class MovementOrder extends BaseEntity {
+public class MovementOrder extends BaseOrder {
 
     @Serial
     private static final long serialVersionUID=1L;
 
-    /**
-     *
-     */
-    @TableId(value = "id")
-    private Long id;
-    /**
-     * 编号
-     */
-    private String movementOrderNo;
+
     /**
      * 源仓库
      */
@@ -40,17 +29,5 @@ public class MovementOrder extends BaseEntity {
      * 目标仓库
      */
     private Long targetWarehouseId;
-    /**
-     * 状态
-     */
-    private Integer movementOrderStatus;
-    /**
-     * 总数量
-     */
-    private BigDecimal totalQuantity;
-    /**
-     * 备注
-     */
-    private String remark;
 
 }

@@ -15,6 +15,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = ReceiptOrder.class, reverseConvertGenerate = false)
-public class ReceiptOrderBo extends BaseOrderBo {
+public class ReceiptOrderBo extends BaseOrderBo<ReceiptOrderDetailBo> {
 
 }

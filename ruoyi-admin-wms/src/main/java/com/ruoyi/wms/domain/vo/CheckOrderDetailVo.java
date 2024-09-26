@@ -6,8 +6,6 @@ import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -19,54 +17,13 @@ import java.math.BigDecimal;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = CheckOrderDetail.class)
-public class  CheckOrderDetailVo implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    @ExcelProperty(value = "")
-    private Long id;
-
-    /**
-     * 盘点单id
-     */
-    @ExcelProperty(value = "盘点单id")
-    private Long checkOrderId;
-
-    /**
-     * 规格id
-     */
-    @ExcelProperty(value = "规格id")
-    private Long skuId;
-
-    /**
-     * 库存数量
-     */
-    @ExcelProperty(value = "库存数量")
-    private BigDecimal quantity;
+public class  CheckOrderDetailVo extends BaseOrderDetailVo {
 
     /**
      * 盘点数量
      */
     @ExcelProperty(value = "盘点数量")
     private BigDecimal checkQuantity;
-
-    /**
-     * 所属仓库
-     */
-    @ExcelProperty(value = "所属仓库")
-    private Long warehouseId;
-
-    /**
-     * 备注
-     */
-    @ExcelProperty(value = "备注")
-    private String remark;
-
-    private ItemSkuVo itemSku;
 
     /**
      * 库存id

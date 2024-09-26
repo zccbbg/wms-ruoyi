@@ -21,8 +21,8 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     /**
      * 业务单号
      */
-    @NotBlank(message = "入库业务单号单号不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String bizOrderNo;
+    @NotBlank(message = "入库单号单号不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String orderNo;
 
     /**
      * 入库类型
@@ -38,7 +38,7 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     /**
      * 订单号
      */
-    private String orderNo;
+    private String bizOrderNo;
 
     /**
      * 商品总数
@@ -46,9 +46,9 @@ public class BaseOrderBo<T extends BaseOrderDetailBo> extends BaseEntity {
     private BigDecimal totalQuantity;
 
     /**
-     * 订单金额
+     * 订单总金额
      */
-    private BigDecimal amount;
+    private BigDecimal totalAmount;
 
     /**
      * 订单状态

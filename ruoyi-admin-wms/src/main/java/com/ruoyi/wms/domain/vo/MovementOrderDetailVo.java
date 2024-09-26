@@ -6,8 +6,6 @@ import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -19,40 +17,9 @@ import java.math.BigDecimal;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = MovementOrderDetail.class)
-public class MovementOrderDetailVo implements Serializable {
+public class MovementOrderDetailVo extends BaseOrderDetailVo {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @ExcelProperty(value = "")
-    private Long id;
-
-    /**
-     * 移库单Id
-     */
-    @ExcelProperty(value = "移库单Id")
-    private Long movementOrderId;
-
-    /**
-     * 规格id
-     */
-    @ExcelProperty(value = "规格id")
-    private Long skuId;
-
-    /**
-     * 数量
-     */
-    @ExcelProperty(value = "数量")
-    private BigDecimal quantity;
-
-    /**
-     * 备注
-     */
-    @ExcelProperty(value = "备注")
-    private String remark;
 
     /**
      * 源仓库
@@ -65,8 +32,6 @@ public class MovementOrderDetailVo implements Serializable {
      */
     @ExcelProperty(value = "目标仓库")
     private Long targetWarehouseId;
-
-    private ItemSkuVo itemSku;
 
     private BigDecimal remainQuantity;
 }
