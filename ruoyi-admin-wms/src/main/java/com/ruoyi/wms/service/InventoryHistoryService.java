@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -16,10 +17,7 @@ import com.ruoyi.wms.mapper.InventoryHistoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 库存记录Service业务层处理
@@ -41,7 +39,11 @@ public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper,
             inventoryHistory.setOrderNo(bo.getOrderNo());
             inventoryHistory.setOrderType(orderType);
             inventoryHistory.setSkuId(detail.getSkuId());
-            inventoryHistory.setQuantity(detail.getQuantity());
+            if(Objects.equals(orderType, ServiceConstants.InventoryHistoryOrderType.SHIPMENT)){
+                inventoryHistory.setQuantity(detail.getQuantity().negate());
+            }else {
+                inventoryHistory.setQuantity(detail.getQuantity());
+            }
             inventoryHistory.setWarehouseId(detail.getWarehouseId());
             inventoryHistory.setAmount(detail.getAmount());
             inventoryHistory.setBeforeQuantity(detail.getBeforeQuantity());
