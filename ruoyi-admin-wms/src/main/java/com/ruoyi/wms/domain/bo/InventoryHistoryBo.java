@@ -43,9 +43,9 @@ public class InventoryHistoryBo extends BaseHistoryEntity {
     private String orderNo;
 
     /**
-     * 操作类型
+     * 订单类型
      */
-    @NotNull(message = "操作类型不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "订单类型不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer orderType;
 
     /**

@@ -37,7 +37,7 @@ public class InventoryHistory extends BaseHistoryEntity {
      */
     private String orderNo;
     /**
-     * 操作类型
+     * 订单类型
      */
     private Integer orderType;
     /**

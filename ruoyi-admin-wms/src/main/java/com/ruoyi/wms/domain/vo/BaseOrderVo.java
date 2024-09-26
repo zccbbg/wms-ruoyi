@@ -28,8 +28,8 @@ public class BaseOrderVo<T extends BaseOrderDetailVo> extends BaseVo {
     /**
      * 入库类型
      */
-    @ExcelProperty(value = "订单类型")
-    private Long orderType;
+    @ExcelProperty(value = "操作类型")
+    private Long optType;
 
     /**
      * 供应商

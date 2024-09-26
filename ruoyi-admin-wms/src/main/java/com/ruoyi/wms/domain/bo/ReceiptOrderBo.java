@@ -23,7 +23,7 @@ public class ReceiptOrderBo extends BaseOrderBo<ReceiptOrderDetailBo> {
     /**
      * 入库类型
      */
-    @NotNull(message = "订单类型不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "入库类型不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long optType;
 
     /**
