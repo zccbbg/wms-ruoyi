@@ -8,13 +8,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.constant.HttpStatus;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.ValidatorUtils;
-import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.BaseOrderDetailBo;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.bo.InventoryBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.vo.InventoryVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
@@ -92,71 +90,6 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
      */
     public void deleteByIds(Collection<Long> ids) {
         inventoryMapper.deleteBatchIds(ids);
-    }
-
-    /**
-     * 增加库存
-     * @param list
-     */
-    @Transactional
-    public void addInventoryQuantity(List<InventoryBo> list) {
-        list.forEach(inventoryBo -> {
-            ValidatorUtils.validate(inventoryBo, AddGroup.class);
-        });
-
-        List<Inventory> addList = new LinkedList<>();
-        List<Inventory> updateList = new LinkedList<>();
-        list.forEach(inventoryBo -> {
-            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
-            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
-            Inventory result = inventoryMapper.selectOne(wrapper);
-            if(result!=null){
-                BigDecimal after = result.getQuantity().add(inventoryBo.getQuantity());
-                result.setQuantity(after);
-                updateList.add(result);
-            }else {
-                Inventory inventory = MapstructUtils.convert(inventoryBo, Inventory.class);
-                addList.add(inventory);
-            }
-        });
-        if (addList.size() > 0) {
-            saveBatch(addList);
-        }
-        if (updateList.size() > 0) {
-            updateBatchById(updateList);
-        }
-    }
-
-    /**
-     * 扣减库存
-     * @param list
-     */
-    @Transactional
-    public void subtractInventoryQuantity(List<InventoryBo> list) {
-        list.forEach(inventoryBo -> {
-            ValidatorUtils.validate(inventoryBo, AddGroup.class);
-        });
-
-        List<Inventory> updateList = new LinkedList<>();
-        list.forEach(inventoryBo -> {
-            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
-            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
-            Inventory result = inventoryMapper.selectOne(wrapper);
-            if(result==null){
-                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
-                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
-            }
-            BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
-            if(quantity.signum() == -1){
-                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
-                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
-            }
-            result.setQuantity(quantity);
-            updateList.add(result);
-        });
-        updateBatchById(updateList);
     }
 
     /**
@@ -238,7 +171,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     }
 
     @Transactional
-    public void add(List<ReceiptOrderDetailBo> details) {
+    public void add(List<? extends BaseOrderDetailBo> details) {
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
         details.forEach(inventoryBo -> {
@@ -266,5 +199,32 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         if (updateList.size() > 0) {
             updateBatchById(updateList);
         }
+    }
+
+    /**
+     * 扣减库存
+     * @param details
+     */
+    @Transactional
+    public void subtract(List<? extends BaseOrderDetailBo> details) {
+        List<Inventory> updateList = new LinkedList<>();
+        details.forEach(inventoryBo -> {
+            LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
+            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
+            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
+            Inventory result = inventoryMapper.selectOne(wrapper);
+            if(result==null){
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
+                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存：0");
+            }
+            BigDecimal quantity = result.getQuantity().subtract(inventoryBo.getQuantity());
+            if(quantity.signum() == -1){
+                ItemSkuVo itemSkuVo = itemSkuService.queryById(inventoryBo.getSkuId());
+                throw new ServiceException("库存不足", HttpStatus.CONFLICT,itemSkuVo.getItem().getItemName()+"（"+itemSkuVo.getSkuName()+"）库存不足，当前库存："+result.getQuantity());
+            }
+            result.setQuantity(quantity);
+            updateList.add(result);
+        });
+        updateBatchById(updateList);
     }
 }

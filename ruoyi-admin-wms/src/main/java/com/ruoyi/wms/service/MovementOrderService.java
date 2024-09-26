@@ -12,7 +12,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.InventoryBo;
+import com.ruoyi.wms.domain.bo.BaseOrderDetailBo;
 import com.ruoyi.wms.domain.bo.MovementOrderBo;
 import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
@@ -168,38 +168,34 @@ public class MovementOrderService {
             updateByBo(bo);
         }
         // 4.更新库存Inventory
-        List<InventoryBo> shipmentList = getShipmenttList(bo.getDetails());
-        inventoryService.subtractInventoryQuantity(shipmentList);
+        List<BaseOrderDetailBo> shipmentList = getShipmenttList(bo.getDetails());
+        inventoryService.subtract(shipmentList);
 
-        List<InventoryBo> receiptList = getReceiptList(bo.getDetails());
-        inventoryService.addInventoryQuantity(receiptList);
+        List<BaseOrderDetailBo> receiptList = getReceiptList(bo.getDetails());
+        inventoryService.add(receiptList);
 
 
         // 6.创建库存记录流水
         createInventoryHistory(bo);
     }
 
-    private List<InventoryBo> getReceiptList(List<MovementOrderDetailBo> details) {
+    private List<BaseOrderDetailBo> getReceiptList(List<MovementOrderDetailBo> details) {
 
         return details.stream()
             .map(detail -> {
-                InventoryBo inventoryBo = new InventoryBo();
-                inventoryBo.setSkuId(detail.getSkuId());
-                inventoryBo.setQuantity(detail.getQuantity());
-                inventoryBo.setWarehouseId(detail.getTargetWarehouseId());
-                return inventoryBo;
+                BaseOrderDetailBo baseOrderDetailBo = MapstructUtils.convert(detail, BaseOrderDetailBo.class);
+                baseOrderDetailBo.setWarehouseId(detail.getTargetWarehouseId());
+                return baseOrderDetailBo;
             }).toList();
     }
 
-    private List<InventoryBo> getShipmenttList(List<MovementOrderDetailBo> details) {
+    private List<BaseOrderDetailBo> getShipmenttList(List<MovementOrderDetailBo> details) {
 
         return details.stream()
             .map(detail -> {
-                InventoryBo inventoryBo = new InventoryBo();
-                inventoryBo.setSkuId(detail.getSkuId());
-                inventoryBo.setQuantity(detail.getQuantity());
-                inventoryBo.setWarehouseId(detail.getSourceWarehouseId());
-                return inventoryBo;
+                BaseOrderDetailBo baseOrderDetailBo = MapstructUtils.convert(detail, BaseOrderDetailBo.class);
+                baseOrderDetailBo.setWarehouseId(detail.getSourceWarehouseId());
+                return baseOrderDetailBo;
             }).toList();
     }
 

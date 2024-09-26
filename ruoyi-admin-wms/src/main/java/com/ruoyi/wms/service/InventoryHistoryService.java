@@ -4,17 +4,21 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.ServiceConstants;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.BaseOrderBo;
+import com.ruoyi.wms.domain.bo.BaseOrderDetailBo;
 import com.ruoyi.wms.domain.bo.InventoryHistoryBo;
 import com.ruoyi.wms.domain.entity.InventoryHistory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.ruoyi.wms.domain.vo.InventoryHistoryVo;
 import com.ruoyi.wms.mapper.InventoryHistoryMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +33,24 @@ import java.util.Map;
 public class InventoryHistoryService extends ServiceImpl<InventoryHistoryMapper, InventoryHistory> {
 
     private final InventoryHistoryMapper inventoryHistoryMapper;
+
+    public void saveInventoryHistory(BaseOrderBo<BaseOrderDetailBo> bo){
+        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
+        bo.getDetails().forEach(detail -> {
+            InventoryHistory inventoryHistory = new InventoryHistory();
+            inventoryHistory.setOrderId(bo.getId());
+            inventoryHistory.setOrderNo(bo.getOrderNo());
+            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.RECEIPT);
+            inventoryHistory.setSkuId(detail.getSkuId());
+            inventoryHistory.setQuantity(detail.getQuantity());
+            inventoryHistory.setWarehouseId(detail.getWarehouseId());
+            inventoryHistory.setAmount(detail.getAmount());
+            inventoryHistory.setBeforeQuantity(detail.getBeforeQuantity());
+            inventoryHistory.setAfterQuantity(detail.getAfterQuantity());
+            inventoryHistoryList.add(inventoryHistory);
+        });
+        this.saveBatch(inventoryHistoryList);
+    }
 
     /**
      * 查询库存记录

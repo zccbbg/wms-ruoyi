@@ -15,10 +15,8 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.system.service.SysDictTypeService;
 import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
@@ -27,7 +25,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 入库单Service业务层处理
@@ -43,7 +44,6 @@ public class ReceiptOrderService {
     private final ReceiptOrderDetailService receiptOrderDetailService;
     private final InventoryService inventoryService;
     private final InventoryHistoryService inventoryHistoryService;
-    private final SysDictTypeService dictTypeService;
 
     /**
      * 查询入库单
@@ -75,12 +75,12 @@ public class ReceiptOrderService {
     private LambdaQueryWrapper<ReceiptOrder> buildQueryWrapper(ReceiptOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ReceiptOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getReceiptOrderNo()), ReceiptOrder::getReceiptOrderNo, bo.getReceiptOrderNo());
-        lqw.eq(bo.getReceiptOrderType() != null, ReceiptOrder::getReceiptOrderType, bo.getReceiptOrderType());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getReceiptOrderNo, bo.getOrderNo());
+        lqw.eq(bo.getOrderType() != null, ReceiptOrder::getReceiptOrderType, bo.getOrderType());
         lqw.eq(bo.getMerchantId() != null, ReceiptOrder::getMerchantId, bo.getMerchantId());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ReceiptOrder::getOrderNo, bo.getOrderNo());
-        lqw.eq(bo.getPayableAmount() != null, ReceiptOrder::getPayableAmount, bo.getPayableAmount());
-        lqw.eq(bo.getReceiptOrderStatus() != null, ReceiptOrder::getReceiptOrderStatus, bo.getReceiptOrderStatus());
+        lqw.eq(bo.getAmount() != null, ReceiptOrder::getPayableAmount, bo.getAmount());
+        lqw.eq(bo.getOrderStatus() != null, ReceiptOrder::getReceiptOrderStatus, bo.getOrderStatus());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
@@ -91,7 +91,7 @@ public class ReceiptOrderService {
     @Transactional
     public void insertByBo(ReceiptOrderBo bo) {
         // 校验入库单号唯一性
-        validateReceiptOrderNo(bo.getReceiptOrderNo());
+        validateReceiptOrderNo(bo.getOrderNo());
         // 创建入库单
         ReceiptOrder add = MapstructUtils.convert(bo, ReceiptOrder.class);
         receiptOrderMapper.insert(add);
@@ -129,31 +129,13 @@ public class ReceiptOrderService {
         inventoryService.add(bo.getDetails());
 
         // 4.保存库存记录
-        this.saveInventoryHistory(bo);
+        inventoryHistoryService.saveInventoryHistory(bo);
     }
 
     private void validateBeforeReceive(ReceiptOrderBo bo) {
         if (CollUtil.isEmpty(bo.getDetails())) {
             throw new BaseException("商品明细不能为空");
         }
-    }
-
-    private void saveInventoryHistory(ReceiptOrderBo bo){
-        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
-        bo.getDetails().forEach(detail -> {
-            InventoryHistory inventoryHistory = new InventoryHistory();
-            inventoryHistory.setOrderId(bo.getId());
-            inventoryHistory.setOrderNo(bo.getReceiptOrderNo());
-            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.RECEIPT);
-            inventoryHistory.setSkuId(detail.getSkuId());
-            inventoryHistory.setQuantity(detail.getQuantity());
-            inventoryHistory.setWarehouseId(detail.getWarehouseId());
-            inventoryHistory.setAmount(detail.getAmount());
-            inventoryHistory.setBeforeQuantity(detail.getBeforeQuantity());
-            inventoryHistory.setAfterQuantity(detail.getAfterQuantity());
-            inventoryHistoryList.add(inventoryHistory);
-        });
-        inventoryHistoryService.saveBatch(inventoryHistoryList);
     }
 
     /**

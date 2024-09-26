@@ -14,10 +14,8 @@ import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.wms.domain.bo.InventoryBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
-import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
@@ -26,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -78,13 +75,13 @@ public class ShipmentOrderService {
     private LambdaQueryWrapper<ShipmentOrder> buildQueryWrapper(ShipmentOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ShipmentOrder> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StringUtils.isNotBlank(bo.getShipmentOrderNo()), ShipmentOrder::getShipmentOrderNo, bo.getShipmentOrderNo());
-        lqw.eq(bo.getShipmentOrderType() != null, ShipmentOrder::getShipmentOrderType, bo.getShipmentOrderType());
+        lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getShipmentOrderNo, bo.getOrderNo());
+        lqw.eq(bo.getOrderType() != null, ShipmentOrder::getShipmentOrderType, bo.getOrderType());
         lqw.eq(StringUtils.isNotBlank(bo.getOrderNo()), ShipmentOrder::getOrderNo, bo.getOrderNo());
         lqw.eq(bo.getMerchantId() != null, ShipmentOrder::getMerchantId, bo.getMerchantId());
-        lqw.eq(bo.getReceivableAmount() != null, ShipmentOrder::getReceivableAmount, bo.getReceivableAmount());
+        lqw.eq(bo.getAmount() != null, ShipmentOrder::getReceivableAmount, bo.getAmount());
         lqw.eq(bo.getTotalQuantity() != null, ShipmentOrder::getTotalQuantity, bo.getTotalQuantity());
-        lqw.eq(bo.getShipmentOrderStatus() != null, ShipmentOrder::getShipmentOrderStatus, bo.getShipmentOrderStatus());
+        lqw.eq(bo.getOrderStatus() != null, ShipmentOrder::getShipmentOrderStatus, bo.getOrderStatus());
         lqw.orderByDesc(BaseEntity::getCreateTime);
         return lqw;
     }
@@ -95,7 +92,7 @@ public class ShipmentOrderService {
     @Transactional
     public void insertByBo(ShipmentOrderBo bo) {
         // 校验出库单号唯一性
-        validateShipmentOrderNo(bo.getShipmentOrderNo());
+        validateShipmentOrderNo(bo.getOrderNo());
         // 创建出库单
         ShipmentOrder add = MapstructUtils.convert(bo, ShipmentOrder.class);
         shipmentOrderMapper.insert(add);
@@ -160,30 +157,13 @@ public class ShipmentOrderService {
         } else {
             updateByBo(bo);
         }
-        List<ShipmentOrderDetailBo> details = bo.getDetails();
-        List<InventoryBo> inventoryList = MapstructUtils.convert(details, InventoryBo.class);
         // 3.更新库存：Inventory表
-        inventoryService.subtractInventoryQuantity(inventoryList);
+        inventoryService.subtract(bo.getDetails());
 
         // 4.创建库存记录
-        saveInventoryHistory(bo);
+        inventoryHistoryService.saveInventoryHistory(bo);
     }
 
-    private void saveInventoryHistory(ShipmentOrderBo bo){
-        List<InventoryHistory> inventoryHistoryList = new LinkedList<>();
-        bo.getDetails().forEach(detail -> {
-            InventoryHistory inventoryHistory = new InventoryHistory();
-            inventoryHistory.setOrderId(bo.getId());
-            inventoryHistory.setOrderNo(bo.getShipmentOrderNo());
-            inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.SHIPMENT);
-            inventoryHistory.setSkuId(detail.getSkuId());
-            inventoryHistory.setQuantity(detail.getQuantity().negate());
-            inventoryHistory.setWarehouseId(detail.getWarehouseId());
-            inventoryHistory.setAmount(detail.getAmount());
-            inventoryHistoryList.add(inventoryHistory);
-        });
-        inventoryHistoryService.saveBatch(inventoryHistoryList);
-    }
 
     private void validateBeforeShipment(ShipmentOrderBo bo) {
         if (CollUtil.isEmpty(bo.getDetails())) {
