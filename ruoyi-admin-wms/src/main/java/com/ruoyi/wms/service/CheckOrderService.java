@@ -15,10 +15,10 @@ import com.ruoyi.wms.domain.bo.CheckOrderBo;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.entity.CheckOrder;
 import com.ruoyi.wms.domain.entity.CheckOrderDetail;
-import com.ruoyi.wms.domain.entity.InventoryHistory;
 import com.ruoyi.wms.domain.vo.CheckOrderVo;
 import com.ruoyi.wms.mapper.CheckOrderMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -158,22 +158,23 @@ public class CheckOrderService {
         // 保存库存 inventory
         inventoryService.updateInventory(details);
         // 新增库存记录 inventory history
-        this.addInventoryHistory(details, bo.getId(), bo.getOrderNo());
+        CheckOrderBo filterBo = this.filterCheckOrderDetail(bo);
+        inventoryHistoryService.saveInventoryHistory(filterBo, ServiceConstants.InventoryHistoryOrderType.CHECK, true);
     }
 
-    private void addInventoryHistory(List<CheckOrderDetailBo> details, Long checkOrderId, String checkOrderNo){
-        List<InventoryHistory> list = details.stream()
-            .map(detail -> {
-                BigDecimal result = detail.getCheckQuantity().subtract(detail.getQuantity());
-                InventoryHistory inventoryHistory = new InventoryHistory();
-                inventoryHistory.setSkuId(detail.getSkuId());
-                inventoryHistory.setWarehouseId(detail.getWarehouseId());
-                inventoryHistory.setQuantity(result);
-                inventoryHistory.setOrderId(checkOrderId);
-                inventoryHistory.setOrderNo(checkOrderNo);
-                inventoryHistory.setOrderType(ServiceConstants.InventoryHistoryOrderType.CHECK);
-                return inventoryHistory;
-            }).filter(it -> it.getQuantity().compareTo(BigDecimal.ZERO) != 0).toList();
-        inventoryHistoryService.saveBatch(list);
+    private CheckOrderBo filterCheckOrderDetail(CheckOrderBo bo) {
+        CheckOrderBo filterBo = SerializationUtils.clone(bo);
+        List<CheckOrderDetailBo> details = filterBo.getDetails().stream().filter(detail -> {
+            BigDecimal result = detail.getCheckQuantity().subtract(detail.getQuantity());
+            return result.signum() != 0;
+        }).map(detail->{
+            BigDecimal result = detail.getCheckQuantity().subtract(detail.getQuantity());
+            detail.setBeforeQuantity(detail.getQuantity());
+            detail.setAfterQuantity(detail.getCheckQuantity());
+            detail.setQuantity(result);
+            return detail;
+        }).toList();
+        filterBo.setDetails(details);
+        return filterBo;
     }
 }
