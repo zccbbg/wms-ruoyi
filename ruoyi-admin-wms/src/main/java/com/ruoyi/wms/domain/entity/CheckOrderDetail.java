@@ -26,4 +26,8 @@ public class CheckOrderDetail extends BaseOrderDetail {
      */
     private Long warehouseId;
 
+    /**
+     * 库存id
+     */
+    private Long inventoryId;
 }
