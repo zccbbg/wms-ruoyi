@@ -6,7 +6,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap id="inventoryVoMap" type="com.ruoyi.wms.domain.vo.InventoryVo">
         <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo" />
-        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
     </resultMap>
 
     <sql id="selectVoListByBo">
