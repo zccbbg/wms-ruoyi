@@ -104,17 +104,7 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     }
 
     public TableDataInfo<InventoryVo> queryWarehouseBoardList(InventoryBo bo, PageQuery pageQuery) {
-            TableDataInfo<InventoryVo> tableDataInfo = TableDataInfo.build(inventoryMapper.selectBoardPageByWarehouse(pageQuery.build(), bo));
-            if (CollUtil.isEmpty(tableDataInfo.getRows())) {
-                return tableDataInfo;
-            }
-            Set<Long> skuIds = tableDataInfo.getRows().stream().map(InventoryVo::getSkuId).collect(Collectors.toSet());
-            Map<Long, ItemSkuVo> skuMap = itemSkuService.queryVosByIds(skuIds).stream().collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-            tableDataInfo.getRows().forEach(it -> {
-                ItemSkuVo itemSku = skuMap.get(it.getSkuId());
-                it.setItemSku(itemSku);
-            });
-            return tableDataInfo;
+            return TableDataInfo.build(inventoryMapper.queryWarehouseBoardList(pageQuery.build(), bo));
     }
 
     public TableDataInfo<InventoryVo> queryItemBoardList(InventoryBo bo, PageQuery pageQuery) {
