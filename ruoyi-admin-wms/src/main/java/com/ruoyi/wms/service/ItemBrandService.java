@@ -1,27 +1,26 @@
 package com.ruoyi.wms.service;
 
-import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.constant.HttpStatus;
+import com.ruoyi.common.core.exception.ServiceException;
+import com.ruoyi.common.core.utils.MapstructUtils;
+import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.ItemBrandBo;
 import com.ruoyi.wms.domain.entity.Item;
+import com.ruoyi.wms.domain.entity.ItemBrand;
+import com.ruoyi.wms.domain.vo.ItemBrandVo;
+import com.ruoyi.wms.mapper.ItemBrandMapper;
 import com.ruoyi.wms.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.ruoyi.wms.domain.bo.ItemBrandBo;
-import com.ruoyi.wms.domain.vo.ItemBrandVo;
-import com.ruoyi.wms.domain.entity.ItemBrand;
-import com.ruoyi.wms.mapper.ItemBrandMapper;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 商品品牌Service业务层处理
@@ -96,7 +95,7 @@ public class ItemBrandService {
         LambdaQueryWrapper<Item> itemLambdaQueryWrapper = Wrappers.lambdaQuery();
         itemLambdaQueryWrapper.eq(Item::getItemBrand, id);
         if (itemMapper.exists(itemLambdaQueryWrapper)) {
-            throw new ServiceException("品牌已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"该品牌已有业务关联，无法删除！");
         }
     }
 }

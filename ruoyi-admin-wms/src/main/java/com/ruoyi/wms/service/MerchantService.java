@@ -3,20 +3,20 @@ package com.ruoyi.wms.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.constant.HttpStatus;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.MerchantBo;
 import com.ruoyi.wms.domain.entity.Merchant;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.vo.MerchantVo;
 import com.ruoyi.wms.mapper.MerchantMapper;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.ruoyi.wms.domain.bo.MerchantBo;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,7 +97,7 @@ public class MerchantService {
         receiptOrderLqw.eq(ReceiptOrder::getMerchantId, id);
         Long receiptOrderCount = receiptOrderMapper.selectCount(receiptOrderLqw);
         if (receiptOrderCount != null && receiptOrderCount > 0) {
-            throw new ServiceException("企业已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"该企业已有业务关联，无法删除！");
         }
     }
 
