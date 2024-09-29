@@ -10,16 +10,16 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.MovementOrderDetailBo;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.MovementOrderDetailVo;
 import com.ruoyi.wms.mapper.MovementOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 库存移动详情Service业务层处理
@@ -112,16 +112,7 @@ public class MovementOrderDetailService extends ServiceImpl<MovementOrderDetailM
         if (CollUtil.isEmpty(details)) {
             return Collections.emptyList();
         }
-        Set<Long> skuIds = details
-            .stream()
-            .map(MovementOrderDetailVo::getSkuId)
-            .collect(Collectors.toSet());
-        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-            .stream()
-            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-        details.forEach(detail -> {
-            detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-        });
+        itemSkuService.setItemSkuMap(details);
         return details;
     }
 }

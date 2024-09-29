@@ -91,7 +91,4 @@ public class ItemSkuVo implements Serializable {
      */
     @ExcelProperty(value = "销售价(元)")
     private BigDecimal sellingPrice;
-
-    private ItemVo item;
-
 }

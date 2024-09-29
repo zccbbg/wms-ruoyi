@@ -4,14 +4,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wms.mapper.ItemSkuMapper">
 
-    <resultMap id="itemSkuVoMap" type="com.ruoyi.wms.domain.vo.ItemSkuVo">
+    <resultMap id="itemSkuMapVo" type="com.ruoyi.wms.domain.vo.ItemSkuMapVo">
         <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo">
+            <id property="id" column="item_id"/> <!-- 映射 item 的 id -->
+        </association>
+        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo">
+            <id property="id" column="sku_id"/> <!-- 映射 item 的 id -->
         </association>
     </resultMap>
 
-    <select id="selectByBo" resultMap="itemSkuVoMap">
+    <select id="queryItemSkuMapVos" resultMap="itemSkuMapVo">
         select
+            sku.id as sku_id,
             sku.*,
+            item.id as item_id,
+            item.*
+        from wms_item_sku sku
+        inner join wms_item item on sku.item_id=item.id
+        where sku.id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryItemSkuMapVo" resultMap="itemSkuMapVo">
+        select
+        sku.id as sku_id,
+        sku.*,
+        item.id as item_id,
+        item.*
+        from wms_item_sku sku
+        inner join wms_item item on sku.item_id=item.id
+        where sku.id = #{id}
+    </select>
+
+    <select id="selectByBo" resultMap="itemSkuMapVo">
+        select
+            sku.id as sku_id,
+            sku.*,
+            item.id as item_id,
             item.*
         from wms_item_sku sku
         inner join wms_item item on sku.item_id=item.id

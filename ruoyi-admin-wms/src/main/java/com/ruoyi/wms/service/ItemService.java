@@ -13,8 +13,8 @@ import com.ruoyi.wms.domain.bo.ItemBo;
 import com.ruoyi.wms.domain.bo.ItemSkuBo;
 import com.ruoyi.wms.domain.entity.Item;
 import com.ruoyi.wms.domain.entity.ItemCategory;
-import com.ruoyi.wms.domain.entity.ItemSku;
 import com.ruoyi.wms.domain.vo.ItemCategoryVo;
+import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.ItemVo;
 import com.ruoyi.wms.mapper.ItemCategoryMapper;
 import com.ruoyi.wms.mapper.ItemMapper;
@@ -36,7 +36,6 @@ public class ItemService {
     private final ItemMapper itemMapper;
     private final ItemSkuService itemSkuService;
     private final ItemCategoryMapper itemCategoryMapper;
-    private final InventoryService inventoryService;
 
     /**
      * 查询物料
@@ -44,7 +43,7 @@ public class ItemService {
 
     public ItemVo queryById(Long id) {
         ItemVo item = itemMapper.selectVoById(id);
-        item.setSku(itemSkuService.queryListByItemId(id));
+        item.setSku(itemSkuService.queryByItemId(id));
         return item;
     }
 
@@ -169,7 +168,7 @@ public class ItemService {
      */
     @Transactional
     public void deleteById(Long id) {
-        List<Long> skuIds = itemSkuService.queryByItemIds(List.of(id)).stream().map(ItemSku::getId).toList();
+        List<Long> skuIds = itemSkuService.queryByItemId(id).stream().map(ItemSkuVo::getId).toList();
         itemMapper.deleteById(id);
         itemSkuService.deleteByIds(skuIds);
     }

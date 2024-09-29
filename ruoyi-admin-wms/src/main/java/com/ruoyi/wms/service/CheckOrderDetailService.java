@@ -11,7 +11,6 @@ import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.CheckOrderDetailBo;
 import com.ruoyi.wms.domain.entity.CheckOrderDetail;
 import com.ruoyi.wms.domain.vo.CheckOrderDetailVo;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.mapper.CheckOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 库存盘点单据详情Service业务层处理
@@ -53,11 +49,7 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         if (CollUtil.isEmpty(result.getRecords())) {
             return TableDataInfo.build(result);
         }
-        Set<Long> skuIds = result.getRecords().stream().map(CheckOrderDetailVo::getSkuId).collect(Collectors.toSet());
-        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-            .stream()
-            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-        result.getRecords().forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
+        itemSkuService.setItemSkuMap(result.getRecords());
         return TableDataInfo.build(result);
     }
 
@@ -116,19 +108,7 @@ public class CheckOrderDetailService extends ServiceImpl<CheckOrderDetailMapper,
         CheckOrderDetailBo bo = new CheckOrderDetailBo();
         bo.setOrderId(checkOrderId);
         List<CheckOrderDetailVo> details = queryList(bo);
-        if (CollUtil.isNotEmpty(details)) {
-            Set<Long> skuIds = details
-                .stream()
-                .map(CheckOrderDetailVo::getSkuId)
-                .collect(Collectors.toSet());
-            Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-                .stream()
-                .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-            details.forEach(it -> {
-                it.setItemSku(itemSkuMap.get(it.getSkuId()));
-            });
-
-        }
+        itemSkuService.setItemSkuMap(details);
         return details;
     }
 }

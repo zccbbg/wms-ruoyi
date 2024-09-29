@@ -12,6 +12,7 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
 import com.ruoyi.wms.domain.bo.ItemSkuBo;
+import com.ruoyi.wms.domain.vo.ItemSkuMapVo;
 import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.service.ItemSkuService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,7 +36,7 @@ public class ItemSkuController extends BaseController {
      */
     @GetMapping("/list")
     @SaCheckPermission("wms:item:list")
-    public TableDataInfo<ItemSkuVo> list(ItemSkuBo bo, PageQuery pageQuery) {
+    public TableDataInfo<ItemSkuMapVo> list(ItemSkuBo bo, PageQuery pageQuery) {
         return itemSkuService.queryPageList(bo, pageQuery);
     }
     /**

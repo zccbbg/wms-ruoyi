@@ -56,4 +56,6 @@ public class BaseOrderDetailVo implements Serializable {
     private Long warehouseId;
 
     private ItemSkuVo itemSku;
+
+    private ItemVo item;
 }

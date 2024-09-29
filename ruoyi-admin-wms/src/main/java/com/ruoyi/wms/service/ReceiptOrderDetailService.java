@@ -9,18 +9,18 @@ import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
+import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
+import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
 import com.ruoyi.wms.mapper.ReceiptOrderDetailMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
-import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 入库单详情Service业务层处理
@@ -117,14 +117,7 @@ public class ReceiptOrderDetailService extends ServiceImpl<ReceiptOrderDetailMap
         if (CollUtil.isEmpty(details)) {
             return Collections.emptyList();
         }
-        Set<Long> skuIds = details
-            .stream()
-            .map(ReceiptOrderDetailVo::getSkuId)
-            .collect(Collectors.toSet());
-        Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-            .stream()
-            .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-        details.forEach(detail -> detail.setItemSku(itemSkuMap.get(detail.getSkuId())));
+        itemSkuService.setItemSkuMap(details);
         return details;
     }
 }

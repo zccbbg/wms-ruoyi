@@ -10,16 +10,15 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
-import com.ruoyi.wms.domain.vo.ItemSkuVo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderDetailVo;
 import com.ruoyi.wms.mapper.ShipmentOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 出库单详情Service业务层处理
@@ -104,20 +103,7 @@ public class ShipmentOrderDetailService extends ServiceImpl<ShipmentOrderDetailM
         ShipmentOrderDetailBo bo = new ShipmentOrderDetailBo();
         bo.setOrderId(shipmentOrderId);
         List<ShipmentOrderDetailVo> details = queryList(bo);
-        if (CollUtil.isNotEmpty(details)) {
-            // 查规格
-            Set<Long> skuIds = details
-                .stream()
-                .map(ShipmentOrderDetailVo::getSkuId)
-                .collect(Collectors.toSet());
-            Map<Long, ItemSkuVo> itemSkuMap = itemSkuService.queryVosByIds(skuIds)
-                .stream()
-                .collect(Collectors.toMap(ItemSkuVo::getId, Function.identity()));
-
-            details.forEach(detail -> {
-                detail.setItemSku(itemSkuMap.get(detail.getSkuId()));
-            });
-        }
+        itemSkuService.setItemSkuMap(details);
         return details;
     }
 }
