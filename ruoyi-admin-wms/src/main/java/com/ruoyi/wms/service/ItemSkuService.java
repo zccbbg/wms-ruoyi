@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.HttpStatus;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.exception.base.BaseException;
 import com.ruoyi.common.core.utils.MapstructUtils;
@@ -20,7 +21,6 @@ import com.ruoyi.wms.mapper.ItemSkuMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,18 +109,18 @@ public class ItemSkuService extends ServiceImpl<ItemSkuMapper, ItemSku> {
         // 只有一个不能删除
         ItemSku itemSku = itemSkuMapper.selectById(id);
 
-        if(queryByItemId(itemSku.getItemId()).size() > 1){
-            throw new BaseException("至少包含一个商品规格");
+        if(queryByItemId(itemSku.getItemId()).size() <= 1){
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"至少包含一个商品规格！");
         }
         // 校验库存是否已关联
         if (inventoryService.existsBySkuIds(List.of(id))) {
-            throw new ServiceException("规格" + itemSku.getSkuName() + "已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"该规格已有业务关联，无法删除！");
         }
     }
 
     private void validateSkuIdsBeforeDelete(Collection<Long> skuIds) {
         if (inventoryService.existsBySkuIds(skuIds)) {
-            throw new ServiceException("商品已有业务关联，无法删除！", HttpStatus.CONFLICT.value());
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"该商品已有业务关联，无法删除！");
         }
     }
     /**
