@@ -5,14 +5,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.wms.mapper.InventoryHistoryMapper">
 
     <resultMap id="inventoryHistoryVoMap" type="com.ruoyi.wms.domain.vo.InventoryHistoryVo">
-        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo" />
-        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo" />
+        <association property="itemSku" javaType="com.ruoyi.wms.domain.vo.ItemSkuVo">
+            <id property="id" column="sku_id"/> <!-- 映射 itemSku 的 id -->
+        </association>
+        <association property="item" javaType="com.ruoyi.wms.domain.vo.ItemVo">
+            <id property="id" column="item_id"/> <!-- 映射 item 的 id -->
+        </association>
     </resultMap>
 
     <select id="selectVoPageByBo" resultMap="inventoryHistoryVoMap">
         select
         history.*,
+        sku.id as sku_id,
         sku.*,
+        item.id as item_id,
         item.*
         from wms_inventory_history history
         left join wms_item_sku sku on history.sku_id=sku.id
