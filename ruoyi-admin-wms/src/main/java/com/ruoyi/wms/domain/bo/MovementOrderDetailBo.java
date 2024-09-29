@@ -2,8 +2,10 @@ package com.ruoyi.wms.domain.bo;
 
 import com.ruoyi.common.core.validate.AddGroup;
 import com.ruoyi.common.core.validate.EditGroup;
+import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.entity.MovementOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +19,10 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = MovementOrderDetail.class, reverseConvertGenerate = false)
+@AutoMappers({
+    @AutoMapper(target = MovementOrderDetail.class, reverseConvertGenerate = false),
+    @AutoMapper(target = Inventory.class, reverseConvertGenerate = false)
+})
 public class MovementOrderDetailBo extends BaseOrderDetailBo {
 
     /**

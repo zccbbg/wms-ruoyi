@@ -1,5 +1,6 @@
 package com.ruoyi.wms.domain.bo;
 
+import com.ruoyi.wms.domain.entity.Inventory;
 import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -17,6 +18,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AutoMappers({
     @AutoMapper(target = ReceiptOrderDetail.class, reverseConvertGenerate = false),
+    @AutoMapper(target = Inventory.class, reverseConvertGenerate = false)
 })
 public class ReceiptOrderDetailBo extends BaseOrderDetailBo {
 

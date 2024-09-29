@@ -167,22 +167,22 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
     public void add(List<? extends BaseOrderDetailBo> details) {
         List<Inventory> addList = new LinkedList<>();
         List<Inventory> updateList = new LinkedList<>();
-        details.forEach(inventoryBo -> {
+        details.forEach(orderDetailsBo -> {
             LambdaQueryWrapper<Inventory> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Inventory::getWarehouseId, inventoryBo.getWarehouseId());
-            wrapper.eq(Inventory::getSkuId, inventoryBo.getSkuId());
+            wrapper.eq(Inventory::getWarehouseId, orderDetailsBo.getWarehouseId());
+            wrapper.eq(Inventory::getSkuId, orderDetailsBo.getSkuId());
             Inventory result = inventoryMapper.selectOne(wrapper);
             if(result!=null){
                 BigDecimal before = result.getQuantity();
-                BigDecimal after = before.add(inventoryBo.getQuantity());
+                BigDecimal after = before.add(orderDetailsBo.getQuantity());
                 result.setQuantity(after);
-                inventoryBo.setAfterQuantity(after);
-                inventoryBo.setBeforeQuantity(before);
+                orderDetailsBo.setAfterQuantity(after);
+                orderDetailsBo.setBeforeQuantity(before);
                 updateList.add(result);
             }else {
-                inventoryBo.setBeforeQuantity(BigDecimal.ZERO);
-                inventoryBo.setAfterQuantity(inventoryBo.getQuantity());
-                Inventory inventory = MapstructUtils.convert(inventoryBo, Inventory.class);
+                orderDetailsBo.setBeforeQuantity(BigDecimal.ZERO);
+                orderDetailsBo.setAfterQuantity(orderDetailsBo.getQuantity());
+                Inventory inventory = MapstructUtils.convert(orderDetailsBo, Inventory.class);
                 addList.add(inventory);
             }
         });
