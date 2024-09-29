@@ -223,4 +223,10 @@ public class InventoryService extends ServiceImpl<InventoryMapper, Inventory> {
         });
         updateBatchById(updateList);
     }
+
+    public boolean existsByWarehouseId(Long warehouseId) {
+        LambdaQueryWrapper<Inventory> lqw = Wrappers.lambdaQuery();
+        lqw.eq(Inventory::getWarehouseId, warehouseId);
+        return inventoryMapper.exists(lqw);
+    }
 }

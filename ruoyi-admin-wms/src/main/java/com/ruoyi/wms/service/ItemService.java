@@ -42,9 +42,7 @@ public class ItemService {
      */
 
     public ItemVo queryById(Long id) {
-        ItemVo item = itemMapper.selectVoById(id);
-        item.setSku(itemSkuService.queryByItemId(id));
-        return item;
+        return itemMapper.selectVoById(id);
     }
 
     /**

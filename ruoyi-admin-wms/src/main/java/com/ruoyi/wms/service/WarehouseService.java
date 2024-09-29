@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.constant.HttpStatus;
+import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
@@ -34,6 +36,7 @@ import java.util.Objects;
 public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
 
     private final WarehouseMapper warehouseMapper;
+    private final InventoryService inventoryService;
 
     /**
      * 查询仓库
@@ -56,7 +59,6 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
     /**
      * 查询仓库列表
      */
-
     public List<WarehouseVo> queryList(WarehouseBo bo) {
         LambdaQueryWrapper<Warehouse> lqw = buildQueryWrapper(bo);
         return warehouseMapper.selectVoList(lqw);
@@ -122,7 +124,9 @@ public class WarehouseService extends ServiceImpl<WarehouseMapper, Warehouse> {
     }
 
     private void validIdBeforeDelete(Long id) {
-        // todo 查看仓库下面是否有商品
+        if (inventoryService.existsByWarehouseId(id)) {
+            throw new ServiceException("删除失败", HttpStatus.CONFLICT,"该仓库已有业务关联，无法删除！");
+        }
     }
 
     /**

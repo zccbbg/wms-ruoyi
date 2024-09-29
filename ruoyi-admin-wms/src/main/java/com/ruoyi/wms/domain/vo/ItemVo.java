@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 
 @Data
@@ -65,6 +64,4 @@ public class ItemVo implements Serializable {
      * 类别
      */
     private ItemCategoryVo itemCategoryInfo;
-
-    private List<ItemSkuVo> sku;
 }
