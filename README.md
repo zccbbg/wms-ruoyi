@@ -16,7 +16,8 @@
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 ## 在线体验
-- 最新版V2演示地址：http://kucun.ichengle.top
+- 最近版V2 Lite演示地址：http://cangku.ichengle.top/
+- 最新版V2 Advance演示地址：http://kucun.ichengle.top
 - 旧版V1演示地址：http://wms.ichengle.top
 
 ## 若依wms功能
@@ -46,6 +47,8 @@ https://docs.ichengle.top/wms/open/run2.html
 https://docs.ichengle.top/wms/open/ops2.html
 
 ## 演示图
+![首页](docs/首页.png)
+![大屏](docs/大屏.png)
 ![入库单](docs/入库单.jpg)
 ![编辑入库单](docs/编辑入库单.jpg)
 ![打印](docs/打印.jpg)
@@ -61,11 +64,8 @@ https://docs.ichengle.top/wms/open/ops2.html
 #### github
 [https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
 
-## CSDN若依技术专栏
-- 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
-- 后端技术：https://blog.csdn.net/qq_27575627/category_12331868.html
-- 前端技术：https://blog.csdn.net/qq_27575627/category_12331867.html
-- 运维：https://blog.csdn.net/qq_27575627/category_12332546.html
+## CSDN实战技术专栏
+https://blog.csdn.net/qq_27575627/category_12331868.html
 
 ## 贡献代码
 
