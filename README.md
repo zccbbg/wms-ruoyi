@@ -15,17 +15,30 @@
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
+
+## 前端项目地址
+#### gitee
+[https://gitee.com/zccbbg/ruo-yi-wms-vue](https://gitee.com/zccbbg/ruo-yi-wms-vue)
+
+#### github
+[https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
+
+## CSDN实战技术专栏
+关注文末公众号回复：星球
+
 ## 在线体验
 - 最近版V2 Lite演示地址：http://cangku.ichengle.top/
 - 最新版V2 Advance演示地址：http://kucun.ichengle.top
 - 旧版V1演示地址：http://wms.ichengle.top
-- 
+
 ## 不同分支介绍
-lite: jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
+`lite` jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
 
-advance: jdk17+vue3，支持多仓库、多库区，记录生产日期、过期日期、sn，可适配一物一码，操作相对复杂。
+`advance` jdk17+vue3，支持多仓库、多库区，记录生产日期、过期日期、sn，可适配一物一码，操作相对复杂。
 
-v1：jdk8+vue2
+`v1` jdk8+vue2
+
+`master` 同步lite分支
 
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
@@ -63,16 +76,6 @@ https://docs.ichengle.top/wms/open/ops2.html
 ![库存统计](docs/库存统计.jpg)
 ![库存明细](docs/库存明细.jpg)
 ![库存记录](docs/库存记录.jpg)
-
-## 前端项目地址
-#### gitee
-[https://gitee.com/zccbbg/ruo-yi-wms-vue](https://gitee.com/zccbbg/ruo-yi-wms-vue)
-
-#### github
-[https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
-
-## CSDN实战技术专栏
-https://blog.csdn.net/qq_27575627/category_12331868.html
 
 ## 贡献代码
 
