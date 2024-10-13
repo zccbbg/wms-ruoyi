@@ -78,7 +78,7 @@ https://docs.ichengle.top/wms/open/ops2.html
 ![库存记录](docs/库存记录.jpg)
 
 ## 大厂、央国企内推
-![首页](docs/内推.png)
+![内推](docs/内推.png)
 
 ## 贡献代码
 
