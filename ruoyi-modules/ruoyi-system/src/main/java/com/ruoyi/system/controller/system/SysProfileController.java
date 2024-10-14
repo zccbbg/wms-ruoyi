@@ -1,5 +1,6 @@
 package com.ruoyi.system.controller.system;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
@@ -76,10 +77,12 @@ public class SysProfileController extends BaseController {
 
     /**
      * 重置密码
+     * SaCheckRole：防止线上用户随意更改密码，用户可以将其注释掉
      *
      * @param newPassword 新密码
      * @param oldPassword 旧密码
      */
+    @SaCheckRole("admin")
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping("/updatePwd")
     public R<Void> updatePwd(String oldPassword, String newPassword) {
