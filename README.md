@@ -23,7 +23,7 @@
 #### github
 [https://github.com/zccbbg/RuoYi-WMS-VUE](https://github.com/zccbbg/RuoYi-WMS-VUE)
 
-## CSDN实战技术专栏
+## 若依实战技术专栏
 关注文末公众号回复：星球
 
 ## 在线体验
