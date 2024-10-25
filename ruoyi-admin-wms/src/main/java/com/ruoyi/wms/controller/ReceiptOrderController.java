@@ -76,10 +76,10 @@ public class ReceiptOrderController extends BaseController {
     @Log(title = "入库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
         bo.setOrderStatus(ServiceConstants.ReceiptOrderStatus.PENDING);
-        receiptOrderService.insertByBo(bo);
-        return R.ok();
+        Long id = receiptOrderService.insertByBo(bo);
+        return R.ok(id);
     }
 
     /**
