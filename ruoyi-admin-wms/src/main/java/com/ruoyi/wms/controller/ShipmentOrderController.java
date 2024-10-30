@@ -76,9 +76,9 @@ public class ShipmentOrderController extends BaseController {
     @Log(title = "出库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
-        shipmentOrderService.insertByBo(bo);
-        return R.ok();
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
+        Long id = shipmentOrderService.insertByBo(bo);
+        return R.ok(id);
     }
 
     /**
