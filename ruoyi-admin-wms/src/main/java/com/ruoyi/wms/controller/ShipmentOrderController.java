@@ -69,6 +69,12 @@ public class ShipmentOrderController extends BaseController {
         return R.ok(shipmentOrderService.queryById(id));
     }
 
+    @SaCheckPermission("wms:receipt:all")
+    @GetMapping("/getIdByNo")
+    public R<Long> getId(@RequestParam String orderNo) {
+        return R.ok(shipmentOrderService.queryIdByOrderNo(orderNo));
+    }
+
     /**
      * 新增出库单
      */

@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.constant.HttpStatus;
@@ -17,9 +18,11 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
+import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
 import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
+import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderDetailVo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
@@ -183,5 +186,10 @@ public class ShipmentOrderService {
         if (CollUtil.isEmpty(bo.getDetails())) {
             throw new BaseException("商品明细不能为空！");
         }
+    }
+
+    public Long queryIdByOrderNo(String orderNo) {
+        ShipmentOrderVo shipmentOrder = shipmentOrderMapper.selectVoOne(new QueryWrapper<ShipmentOrder>().eq("order_no",orderNo));
+        return shipmentOrder != null ? shipmentOrder.getId() : null;
     }
 }

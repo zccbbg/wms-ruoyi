@@ -69,6 +69,12 @@ public class ReceiptOrderController extends BaseController {
         return R.ok(receiptOrderService.queryById(id));
     }
 
+    @SaCheckPermission("wms:receipt:all")
+    @GetMapping("/getIdByNo")
+    public R<Long> getId(@RequestParam String orderNo) {
+        return R.ok(receiptOrderService.queryIdByOrderNo(orderNo));
+    }
+
     /**
      * 暂存入库单
      */

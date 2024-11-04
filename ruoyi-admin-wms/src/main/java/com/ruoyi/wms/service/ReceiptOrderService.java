@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -53,6 +54,11 @@ public class ReceiptOrderService {
         Assert.notNull(receiptOrderVo, "入库单不存在");
         receiptOrderVo.setDetails(receiptOrderDetailService.queryByReceiptOrderId(id));
         return receiptOrderVo;
+    }
+
+    public Long queryIdByOrderNo(String orderNo){
+        ReceiptOrderVo receiptOrderVo = receiptOrderMapper.selectVoOne(new QueryWrapper<ReceiptOrder>().eq("order_no",orderNo));
+        return receiptOrderVo != null ? receiptOrderVo.getId() : null;
     }
 
     /**
