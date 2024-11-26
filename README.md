@@ -53,6 +53,9 @@
 10. 库存记录：查看当前物料库存操作记录
 11. 库存明细：存放明细，分：仓库库区、商品两个维度
 
+## 大厂本硕博单身群
+![单身群](docs/danshen.jpg)
+
 ## 更新记录
 > 参考：[UpdateHistory.md](docs/UpdateHistory.md)
 
