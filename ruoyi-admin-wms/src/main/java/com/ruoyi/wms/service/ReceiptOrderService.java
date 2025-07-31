@@ -1,8 +1,10 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,16 +21,15 @@ import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
 import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
 import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
+import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
 import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
 import com.ruoyi.wms.mapper.ReceiptOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 入库单Service业务层处理
@@ -53,6 +54,11 @@ public class ReceiptOrderService {
         Assert.notNull(receiptOrderVo, "入库单不存在");
         receiptOrderVo.setDetails(receiptOrderDetailService.queryByReceiptOrderId(id));
         return receiptOrderVo;
+    }
+
+    public Long queryIdByOrderNo(String orderNo){
+        ReceiptOrderVo receiptOrderVo = receiptOrderMapper.selectVoOne(new QueryWrapper<ReceiptOrder>().eq("order_no",orderNo));
+        return receiptOrderVo != null ? receiptOrderVo.getId() : null;
     }
 
     /**
@@ -89,7 +95,7 @@ public class ReceiptOrderService {
      * 暂存入库单
      */
     @Transactional
-    public void insertByBo(ReceiptOrderBo bo) {
+    public Long insertByBo(ReceiptOrderBo bo) {
         // 校验入库单号唯一性
         validateReceiptOrderNo(bo.getOrderNo());
         // 创建入库单
@@ -103,6 +109,7 @@ public class ReceiptOrderService {
         });
         // 创建入库单明细
         receiptOrderDetailService.saveDetails(addDetailList);
+        return add.getId();
     }
 
     /**
@@ -148,6 +155,13 @@ public class ReceiptOrderService {
         receiptOrderMapper.updateById(update);
         // 保存入库单明细
         List<ReceiptOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ReceiptOrderDetail.class);
+        //需要考虑detail删除
+        List<ReceiptOrderDetailVo> dbList = receiptOrderDetailService.queryByReceiptOrderId(bo.getId());
+        Set<Long> ids = detailList.stream().filter(it -> it.getId() != null).map(it -> it.getId()).collect(Collectors.toSet());
+        List<ReceiptOrderDetailVo> delList = dbList.stream().filter(it -> !ids.contains(it.getId())).collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(delList)) {
+            receiptOrderDetailService.deleteByIds(delList.stream().map(it->it.getId()).collect(Collectors.toList()));
+        }
         detailList.forEach(it -> it.setOrderId(bo.getId()));
         receiptOrderDetailService.saveDetails(detailList);
     }

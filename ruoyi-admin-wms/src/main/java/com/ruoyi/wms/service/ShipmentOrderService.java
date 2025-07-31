@@ -1,8 +1,10 @@
 package com.ruoyi.wms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.constant.HttpStatus;
@@ -16,8 +18,12 @@ import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderBo;
 import com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo;
+import com.ruoyi.wms.domain.entity.ReceiptOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrder;
 import com.ruoyi.wms.domain.entity.ShipmentOrderDetail;
+import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
+import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
+import com.ruoyi.wms.domain.vo.ShipmentOrderDetailVo;
 import com.ruoyi.wms.domain.vo.ShipmentOrderVo;
 import com.ruoyi.wms.mapper.ShipmentOrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 出库单Service业务层处理
@@ -90,7 +98,7 @@ public class ShipmentOrderService {
      * 暂存出库单
      */
     @Transactional
-    public void insertByBo(ShipmentOrderBo bo) {
+    public Long insertByBo(ShipmentOrderBo bo) {
         // 校验出库单号唯一性
         validateShipmentOrderNo(bo.getOrderNo());
         // 创建出库单
@@ -101,6 +109,7 @@ public class ShipmentOrderService {
         List<ShipmentOrderDetail> addDetailList = MapstructUtils.convert(detailBoList, ShipmentOrderDetail.class);
         addDetailList.forEach(it -> it.setOrderId(add.getId()));
         shipmentOrderDetailService.saveDetails(addDetailList);
+        return add.getId();
     }
 
     public void validateShipmentOrderNo(String shipmentOrderNo) {
@@ -121,6 +130,14 @@ public class ShipmentOrderService {
         shipmentOrderMapper.updateById(update);
         // 保存出库单明细
         List<ShipmentOrderDetail> detailList = MapstructUtils.convert(bo.getDetails(), ShipmentOrderDetail.class);
+
+        //需要考虑detail删除
+        List<ShipmentOrderDetailVo> dbList = shipmentOrderDetailService.queryByShipmentOrderId(bo.getId());
+        Set<Long> ids = detailList.stream().filter(it -> it.getId() != null).map(it -> it.getId()).collect(Collectors.toSet());
+        List<ShipmentOrderDetailVo> delList = dbList.stream().filter(it -> !ids.contains(it.getId())).collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(delList)) {
+            shipmentOrderDetailService.deleteByIds(delList.stream().map(it->it.getId()).collect(Collectors.toList()));
+        }
         detailList.forEach(it -> it.setOrderId(bo.getId()));
         shipmentOrderDetailService.saveDetails(detailList);
     }
@@ -169,5 +186,10 @@ public class ShipmentOrderService {
         if (CollUtil.isEmpty(bo.getDetails())) {
             throw new BaseException("商品明细不能为空！");
         }
+    }
+
+    public Long queryIdByOrderNo(String orderNo) {
+        ShipmentOrderVo shipmentOrder = shipmentOrderMapper.selectVoOne(new QueryWrapper<ShipmentOrder>().eq("order_no",orderNo));
+        return shipmentOrder != null ? shipmentOrder.getId() : null;
     }
 }

@@ -69,6 +69,12 @@ public class ShipmentOrderController extends BaseController {
         return R.ok(shipmentOrderService.queryById(id));
     }
 
+    @SaCheckPermission("wms:receipt:all")
+    @GetMapping("/getIdByNo")
+    public R<Long> getId(@RequestParam String orderNo) {
+        return R.ok(shipmentOrderService.queryIdByOrderNo(orderNo));
+    }
+
     /**
      * 新增出库单
      */
@@ -76,9 +82,9 @@ public class ShipmentOrderController extends BaseController {
     @Log(title = "出库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
-        shipmentOrderService.insertByBo(bo);
-        return R.ok();
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody ShipmentOrderBo bo) {
+        Long id = shipmentOrderService.insertByBo(bo);
+        return R.ok(id);
     }
 
     /**

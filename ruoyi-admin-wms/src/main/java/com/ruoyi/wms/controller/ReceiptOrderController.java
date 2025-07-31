@@ -69,6 +69,12 @@ public class ReceiptOrderController extends BaseController {
         return R.ok(receiptOrderService.queryById(id));
     }
 
+    @SaCheckPermission("wms:receipt:all")
+    @GetMapping("/getIdByNo")
+    public R<Long> getId(@RequestParam String orderNo) {
+        return R.ok(receiptOrderService.queryIdByOrderNo(orderNo));
+    }
+
     /**
      * 暂存入库单
      */
@@ -76,10 +82,10 @@ public class ReceiptOrderController extends BaseController {
     @Log(title = "入库单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody ReceiptOrderBo bo) {
         bo.setOrderStatus(ServiceConstants.ReceiptOrderStatus.PENDING);
-        receiptOrderService.insertByBo(bo);
-        return R.ok();
+        Long id = receiptOrderService.insertByBo(bo);
+        return R.ok(id);
     }
 
     /**
