@@ -27,7 +27,7 @@
 关注文末公众号回复：星球
 
 ## 在线体验
-http://cangku.ichengle.top/
+https://wms.ichengle.top/
 
 ## 不同分支介绍
 `lite` jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
