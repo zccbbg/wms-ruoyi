@@ -1,0 +1,18 @@
+# 企业微信 AI Bot 网关配置（占位默认值）
+# 真实 botId / secret 需在 application-{profile}.yml 中覆盖，或通过环境变量注入
+wecom:
+  bot:
+    enabled: false  # dev 默认禁用，prod 启用
+    bot-id: ${WECOM_BOT_ID:}
+    secret: ${WECOM_BOT_SECRET:}
+    ws-url: wss://openws.work.weixin.qq.com
+    heartbeat-interval-millis: 30000
+    request-timeout-millis: 10000
+    max-reconnect-attempts: 10
+    max-auth-failure-attempts: 5
+    business-core-threads: 10
+    business-max-threads: 20
+    business-queue-capacity: 100
+    business-timeout-seconds: 10
+    wms-base-url: ""
+    bind-base-url: ${WECOM_BIND_BASE_URL:http://localhost:8080}

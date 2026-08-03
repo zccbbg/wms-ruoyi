@@ -1,6 +1,7 @@
-FROM anapsix/alpine-java:8_server-jre_unlimited
+# Eclipse Temurin JDK 17 JRE on Alpine（v1.1 决策文档：项目已统一 JDK 17）
+FROM eclipse-temurin:17-jre-alpine
 
-MAINTAINER Lion Li
+LABEL maintainer="wms-ruoyi"
 
 RUN mkdir -p /ruoyi/server/logs \
     /ruoyi/server/temp \
@@ -8,16 +9,19 @@ RUN mkdir -p /ruoyi/server/logs \
 
 WORKDIR /ruoyi/server
 
-ENV SERVER_PORT=8080
+ENV SERVER_PORT=8080 \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    JAVA_OPTS=""
 
 EXPOSE ${SERVER_PORT}
 
 ADD ./target/ruoyi-admin.jar ./app.jar
 
-ENTRYPOINT ["java", \
-            "-Djava.security.egd=file:/dev/./urandom", \
-            "-Dserver.port=${SERVER_PORT}", \
-            # 应用名称 如果想区分集群节点监控 改成不同的名称即可
-#            "-Dskywalking.agent.service_name=ruoyi-server", \
-#            "-javaagent:/ruoyi/skywalking/agent/skywalking-agent.jar", \
-            "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", \
+    "exec java $JAVA_OPTS \
+        -Djava.security.egd=file:/dev/./urandom \
+        -Dserver.port=${SERVER_PORT} \
+        -Dfile.encoding=UTF-8 \
+        -Duser.timezone=Asia/Shanghai \
+        -jar app.jar"]

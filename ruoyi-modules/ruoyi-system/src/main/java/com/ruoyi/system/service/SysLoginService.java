@@ -337,4 +337,40 @@ public class SysLoginService {
         // 登录成功 清空错误次数
         RedisUtils.deleteObject(errorKey);
     }
+
+    /**
+     * 企业微信 AI Bot 短令牌签发（v1.1 决策文档 §5.6）。
+     *
+     * <p>机器人网关已通过 openId 绑定 → userId 查得后，调用本方法获取 Sa-Token
+     * 短期 token，再以该 token 调用 ruoyi-wms 内部 API（同进程内直接注入 bean）。</p>
+     *
+     * <p>要点：
+     * <ul>
+     *   <li>无密码校验（已通过 openId 绑定 = 隐式身份验证）</li>
+     *   <li>使用 {@link DeviceType#PC}（机器人走 PC 权限模型）</li>
+     *   <li>token 有效期通过 Sa-Token 全局 {@code timeout} 配置（默认 30 分钟）</li>
+     * </ul>
+     *
+     * @param userId  WMS 系统用户 ID
+     * @return        Sa-Token token value
+     */
+    public String botLogin(Long userId) {
+        if (userId == null) {
+            log.info("bot login rejected: null userId");
+            throw new UserException("user.not.exists", "null");
+        }
+        SysUserVo user = userMapper.selectVoById(userId);
+        if (ObjectUtil.isNull(user)) {
+            log.info("bot login user {} not found", userId);
+            throw new UserException("user.not.exists", userId);
+        }
+        if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
+            log.info("bot login user {} disabled", userId);
+            throw new UserException("user.blocked", userId);
+        }
+        LoginUser loginUser = buildLoginUser(user);
+        LoginHelper.loginByDevice(loginUser, DeviceType.PC);
+        log.info("bot login issued token for userId={}", userId);
+        return StpUtil.getTokenValue();
+    }
 }

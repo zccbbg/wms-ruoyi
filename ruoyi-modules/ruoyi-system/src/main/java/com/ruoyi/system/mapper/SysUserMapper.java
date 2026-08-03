@@ -66,4 +66,21 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     Long countUserById(Long userId);
 
     List<SysUserExportVo> selectUserExportList(Wrapper<SysUser> sysUserWrapper);
+
+    /**
+     * 根据 wecomOpenId 查 userId（v1 机器人绑定用）。
+     *
+     * @param openId 企业微信 openId
+     * @return userId；未绑定返回 {@code null}
+     */
+    Long selectUserIdByWecomOpenId(@Param("openId") String openId);
+
+    /**
+     * 更新用户的 wecomOpenId（v1 机器人绑定用；传 null 视为解绑）。
+     *
+     * @param userId WMS 用户 ID
+     * @param openId 企业微信 openId
+     * @return 成功更新行数
+     */
+    int updateWecomOpenId(@Param("userId") Long userId, @Param("openId") String openId);
 }

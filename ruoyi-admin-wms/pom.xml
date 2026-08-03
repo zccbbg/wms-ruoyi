@@ -56,6 +56,12 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
+        <!-- 企业微信 AI Bot 网关（v1.1 决策文档） -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-wecom-gateway</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

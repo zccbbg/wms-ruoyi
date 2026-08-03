@@ -321,6 +321,18 @@
             </dependency>
 
             <dependency>
+                <groupId>io.github.cloudsen</groupId>
+                <artifactId>wx-aibot-java-sdk</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-wecom-gateway</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-wms-service</artifactId>
                 <version>${revision}</version>
@@ -333,6 +345,7 @@
         <module>ruoyi-admin-wms</module>
         <module>ruoyi-common</module>
         <module>ruoyi-modules</module>
+        <module>ruoyi-wecom-gateway</module>
     </modules>
     <packaging>pom</packaging>
 

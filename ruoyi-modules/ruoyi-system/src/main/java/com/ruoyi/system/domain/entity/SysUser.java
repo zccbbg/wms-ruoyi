@@ -152,6 +152,11 @@ public class SysUser extends BaseEntity {
     @TableField(exist = false)
     private Long roleId;
 
+    /**
+     * 企业微信 openId（用于 WMS 绑定，v1.1 决策文档 §5.6）
+     */
+    private String wecomOpenId;
+
     public SysUser(Long userId) {
         this.userId = userId;
     }
